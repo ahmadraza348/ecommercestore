@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::get('/', [HomePageController::class, 'index'])->name('index');
+// Route::get('/register', [HomePageController::class, 'index'])->name('front.register');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
