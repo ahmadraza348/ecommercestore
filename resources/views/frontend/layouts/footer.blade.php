@@ -1,6 +1,6 @@
 <footer>
     <!-- footer top start -->
-    <div class="footer-top bg-black pt-14 pb-14">
+    <div class="footer-top bg-black pt-14 pb-14 mt-5">
         <div class="container">
             <div class="footer-top-wrapper">
                 <div class="newsletter__wrap">

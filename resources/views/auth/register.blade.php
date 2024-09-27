@@ -1,52 +1,151 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('frontend.layouts.layout')
+@section('content')  
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <!-- login register wrapper start -->
+    <div class="login-register-wrapper">
+        <div class="container">
+            <div class="member-area-from-wrap">
+                <div class="row justify-content-center">
+    
+                    <!-- Register Content Start -->
+                    <div class="col-lg-8">
+                        @include('message')
+                        <div class="login-reg-form-wrap mt-md-34 mt-sm-34">
+                            <h2>Register</h2>
+                            <form method="POST" action="{{ route('register') }}">
+                                @csrf
+                    
+                                <!-- First Name and Last Name -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="first_name">First Name</label>
+                                            <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="First Name" required />
+                                            @error('first_name')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="last_name">Last Name</label>
+                                            <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Last Name" required />
+                                            @error('last_name')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Username and Email -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="username">Username</label>
+                                            <input type="text" id="username" name="username" value="{{ old('username') }}" placeholder="Username" required />
+                                            @error('username')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="email">Email</label>
+                                            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Enter your Email" required />
+                                            @error('email')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Phone and Gender -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="phone">Phone</label>
+                                            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Enter your Phone Number" required />
+                                            @error('phone')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="gender">Gender</label>
+                                            <select name="gender" id="gender" >
+                                                <option value="">Select Gender</option>
+                                                <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                                                <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                                                <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Other</option>
+                                            </select>
+                                            @error('gender')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Date of Birth -->
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="dob">Date of Birth</label>
+                                            <input type="date" id="dob" name="dob" value="{{ old('dob') }}" placeholder="Date of Birth" />
+                                            @error('dob')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Password and Confirm Password -->
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="password">Password</label>
+                                            <input type="password" id="password" name="password" placeholder="Enter your Password" required />
+                                            @error('password')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="single-input-item">
+                                            <label class="form-label" for="password_confirmation">Confirm Password</label>
+                                            <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Repeat your Password" required />
+                                            @error('password_confirmation')
+                                                <p class="text-danger">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Newsletter Subscription -->
+                                <div class="single-input-item">
+                                    <div class="login-reg-form-meta">
+                                        <div class="remember-meta">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="subnewsletter">
+                                                <label class="custom-control-label" for="subnewsletter">Subscribe to Our Newsletter</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <!-- Submit Button -->
+                                <div class="single-input-item">
+                                    <button type="submit" class="sqr-btn">Register</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Register Content End -->
+    
+                </div>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+    
+@endsection

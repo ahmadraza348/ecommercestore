@@ -25,11 +25,58 @@
 </head>
 
 <body>
-
+   
     <div class="wrapper">
         <!-- header area start -->
         @include('frontend.layouts.header')
+    
         <!-- header area end -->
+        
+
+    <!-- breadcrumb area start -->
+    
+    <div class="breadcrumb-area" style="display: {{ in_array(Route::currentRouteName(), ['home']) ? 'none' : 'block' }};">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-wrap">
+                        <nav aria-label="breadcrumb">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                @if (Route::currentRouteName() != 'home')
+                                    <!-- Dynamic Breadcrumb Items -->
+                                    @php
+                                        $segments = Request::segments();
+                                    @endphp
+                                    @foreach ($segments as $index => $segment)
+                                        @php
+                                            $url = '';
+                                            for ($i = 0; $i <= $index; $i++) {
+                                                $url .= '/' . $segments[$i];
+                                            }
+                                        @endphp
+                                        @if ($index < count($segments) - 1)
+                                            <li class="breadcrumb-item">
+                                                <a href="{{ url($url) }}">{{ ucfirst($segment) }}</a>
+                                            </li>
+                                        @else
+                                            <li class="breadcrumb-item active" aria-current="page">{{ ucfirst($segment) }}</li>
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <li class="breadcrumb-item active" aria-current="page">Home</li>
+                                @endif
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- breadcrumb area end -->
+ 
+
         @yield('content')
         <!-- footer area start -->
         @include('frontend.layouts.footer')

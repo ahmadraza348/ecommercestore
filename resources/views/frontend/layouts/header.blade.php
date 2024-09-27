@@ -157,6 +157,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
+                    <style>
+                        .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
+                            display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'password.request', 'password.reset']) ? 'none' : 'block' }};
+                        }
+                    </style>
+                    
                     <div class="main-header-inner">
                         <div class="category-toggle-wrap">
                             <div class="category-toggle">
