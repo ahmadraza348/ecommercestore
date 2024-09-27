@@ -137,6 +137,8 @@
                                 <div class="single-input-item">
                                     <button type="submit" class="sqr-btn">Register</button>
                                 </div>
+                                <p class="mt-2">Alredy have an account? <a class="forget-pwd " href="{{route('login')}}">Login Now</a> </p> 
+
                             </form>
                         </div>
                     </div>

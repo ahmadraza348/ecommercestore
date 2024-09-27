@@ -20,20 +20,33 @@
                     <div class="header-top-right float-md-right float-none">
                         <nav>
                             <ul>
-                                <li>
-                                    <div class="dropdown header-top-dropdown">
-                                        <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"
-                                            aria-haspopup="true" aria-expanded="false">
-                                            my account
-                                            <i class="fa fa-angle-down"></i>
-                                        </a>
-                                        <div class="dropdown-menu" aria-labelledby="myaccount">
-                                            <a class="dropdown-item" href="my-account.html">my account</a>
-                                            <a class="dropdown-item" href="login-register.html"> login</a>
-                                            <a class="dropdown-item" href="login-register.html">register</a>
+                                @if (!Auth::check())
+<li>                                    <a  href="{{ route('login') }}"> login</a>
+</li>                                @else
+                                    <li>
+                                        <div class="dropdown header-top-dropdown">
+                                            <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                my account
+                                                <i class="fa fa-angle-down"></i>
+                                            </a>
+
+                                            <div class="dropdown-menu" aria-labelledby="myaccount">
+                                                <a class="dropdown-item" href="my-account.html">My Account</a>
+                                                <form method="POST" action="{{ route('logout') }}">
+                                                    @csrf
+                        
+                                                    <x-dropdown-link :href="route('logout')"
+                                                            onclick="event.preventDefault();
+                                                                        this.closest('form').submit();">
+                                                        {{ __('Log Out') }}
+                                                    </x-dropdown-link>                                           
+                                            </div>
+
+
                                         </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                @endif
                                 <li>
                                     <a href="#">my wishlist</a>
                                 </li>
@@ -58,8 +71,8 @@
             <div class="row align-items-center">
                 <div class="col-lg-3">
                     <div class="brand-logo">
-                        <a href="index.html">
-                            <img src="{{asset('frontend/assets/img/logo/logo.png')}}" alt="brand logo">
+                        <a href="{{ route('home') }}">
+                            <img src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="brand logo">
                         </a>
                     </div>
                 </div> <!-- end logo area -->
@@ -111,7 +124,8 @@
                                 <ul class="cart-list">
                                     <li>
                                         <div class="cart-img">
-                                            <a href="product-details.html"><img src="{{asset('frontend/assets/img/cart/cart-1.jpg')}}"
+                                            <a href="product-details.html"><img
+                                                    src="{{ asset('frontend/assets/img/cart/cart-1.jpg') }}"
                                                     alt=""></a>
                                         </div>
                                         <div class="cart-info">
@@ -124,7 +138,8 @@
                                     </li>
                                     <li>
                                         <div class="cart-img">
-                                            <a href="product-details.html"><img src="{{asset('frontend/assets/img/cart/cart-2.jpg')}}"
+                                            <a href="product-details.html"><img
+                                                    src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
                                                     alt=""></a>
                                         </div>
                                         <div class="cart-info">
@@ -162,7 +177,7 @@
                             display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'password.request', 'password.reset']) ? 'none' : 'block' }};
                         }
                     </style>
-                    
+
                     <div class="main-header-inner">
                         <div class="category-toggle-wrap">
                             <div class="category-toggle">
@@ -191,7 +206,8 @@
                                             <li class="menu-item-has-children">
                                                 <a href="shop-grid-left-sidebar.html">headphone</a>
                                                 <ul>
-                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a></li>
+                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a>
+                                                    </li>
                                                     <li><a href="shop-grid-left-sidebar.html">Mobile Headphone</a></li>
                                                     <li><a href="shop-grid-left-sidebar.html">Wireless
                                                             Headphone</a></li>
@@ -210,7 +226,8 @@
                                             <li class="menu-item-has-children">
                                                 <a href="shop-grid-left-sidebar.html">headphone</a>
                                                 <ul>
-                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a></li>
+                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a>
+                                                    </li>
                                                     <li><a href="shop-grid-left-sidebar.html">Mobile Headphone</a></li>
                                                     <li><a href="shop-grid-left-sidebar.html">Wireless
                                                             Headphone</a></li>
@@ -236,7 +253,8 @@
                                             <li class="menu-item-has-children">
                                                 <a href="shop-grid-left-sidebar.html">headphone</a>
                                                 <ul>
-                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a></li>
+                                                    <li><a href="shop-grid-left-sidebar.html">Desktop Headphone</a>
+                                                    </li>
                                                     <li><a href="shop-grid-left-sidebar.html">Mobile Headphone</a></li>
                                                     <li><a href="shop-grid-left-sidebar.html">Wireless
                                                             Headphone</a></li>
@@ -272,7 +290,8 @@
                                             electronic</a></li>
                                     <li><a href="shop-grid-left-sidebar.html"><i class="fa fa-tablet"></i>
                                             tablet</a></li>
-                                    <li><a href="shop-grid-left-sidebar.html"><i class="fa fa-book"></i> books</a></li>
+                                    <li><a href="shop-grid-left-sidebar.html"><i class="fa fa-book"></i> books</a>
+                                    </li>
                                     <li><a href="shop-grid-left-sidebar.html"><i class="fa fa-microchip"></i>
                                             microchip</a></li>
                                     <li><a href="shop-grid-left-sidebar.html"><i class="fa fa-bullhorn"></i>
@@ -283,7 +302,8 @@
                         <div class="main-menu">
                             <nav id="mobile-menu">
                                 <ul>
-                                    <li class="active"><a href="#"><i class="fa fa-home"></i>Home <i class="fa fa-angle-down"></i></a>
+                                    <li class="active"><a href="#"><i class="fa fa-home"></i>Home <i
+                                                class="fa fa-angle-down"></i></a>
                                         <ul class="dropdown">
                                             <li><a href="index.html">Home version 01</a></li>
                                             <li><a href="index-2.html">Home version 02</a></li>
@@ -337,7 +357,8 @@
                                     </li>
                                     <li><a href="#">shop <i class="fa fa-angle-down"></i></a>
                                         <ul class="dropdown">
-                                            <li><a href="#">shop grid layout <i class="fa fa-angle-right"></i></a>
+                                            <li><a href="#">shop grid layout <i
+                                                        class="fa fa-angle-right"></i></a>
                                                 <ul class="dropdown">
                                                     <li><a href="shop-grid-left-sidebar.html">shop grid left
                                                             sidebar</a></li>
@@ -353,7 +374,8 @@
                                                             column</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="#">shop list layout <i class="fa fa-angle-right"></i></a>
+                                            <li><a href="#">shop list layout <i
+                                                        class="fa fa-angle-right"></i></a>
                                                 <ul class="dropdown">
                                                     <li><a href="shop-list-left-sidebar.html">shop list left
                                                             sidebar</a></li>
@@ -362,7 +384,8 @@
                                                     <li><a href="shop-list-full.html">shop list full width</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="#">products details <i class="fa fa-angle-right"></i></a>
+                                            <li><a href="#">products details <i
+                                                        class="fa fa-angle-right"></i></a>
                                                 <ul class="dropdown">
                                                     <li><a href="product-details.html">product details</a></li>
                                                     <li><a href="product-details-affiliate.html">product

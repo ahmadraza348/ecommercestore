@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'username' => ['required', 'max:255', 'unique:' . User::class . ',user_name'],
+            'username' => ['required', 'max:255', 'unique:' . User::class . ',username'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -53,6 +53,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
         Session()->flash('success', 'You have registered successfully.');
-        return redirect(route('index'));
+        return redirect(route('home'));
     }
 }
