@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+Route::get('/admin', [HomePageController::class, 'index'])->name('home');
+
 Route::get('/', [HomePageController::class, 'index'])->name('home');
 // Route::get('/register', [HomePageController::class, 'index'])->name('front.register');
 

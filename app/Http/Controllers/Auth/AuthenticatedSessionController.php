@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-Session()->flash('success', 'User Logged in successfully');
+ toastr()->success('You have logged in  successfully.');
         return redirect()->intended(route('home', absolute: false));
     }
 
@@ -41,7 +41,7 @@ Session()->flash('success', 'User Logged in successfully');
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
+ toastr()->success('You have logged out successfully.');
         return redirect('/');
     }
 }

@@ -52,7 +52,9 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        Session()->flash('success', 'You have registered successfully.');
+
+                toastr()->success('You have registered successfully.');
+
         return redirect(route('home'));
     }
 }
