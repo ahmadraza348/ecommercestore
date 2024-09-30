@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Frontend\HomePageController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -13,6 +14,16 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+     // Admin User Routes
+     Route::get('user', [AdminUserController::class, 'show'])->name('admin.user.show');
+     Route::get('user/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
+     Route::post('user/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
+     Route::get('user/add', [AdminUserController::class, 'add'])->name('admin.user.add');
+     Route::post('user/store', [AdminUserController::class, 'store'])->name('admin.user.store');
+     Route::get('user/edit/{id}', [AdminUserController::class, 'edit'])->name('admin.user.edit');
+     Route::post('user/update/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
+     Route::get('user/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
 
 });
 Route::prefix('admin')->group(function () {
