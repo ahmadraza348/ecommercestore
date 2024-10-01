@@ -23,7 +23,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
      Route::post('user/store', [AdminUserController::class, 'store'])->name('admin.user.store');
      Route::get('user/edit/{id}', [AdminUserController::class, 'edit'])->name('admin.user.edit');
      Route::post('user/update/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
-     Route::get('user/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
+     Route::delete('user/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
 
 });
 Route::prefix('admin')->group(function () {

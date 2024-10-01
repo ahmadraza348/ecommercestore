@@ -53,9 +53,12 @@
 
 
     <script src="{{ asset('backend/assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{asset('backend/assets/js/moment.min.js')}}"></script>
 
     <script src="{{ asset('backend/assets/plugins/apexchart/apexcharts.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/apexchart/chart-data.js') }}"></script>
+    <script src="{{asset('backend/assets/plugins/sweetalert/sweetalert2.all.min.js')}}"></script>
+<script src="{{asset('backend/assets/plugins/sweetalert/sweetalerts.min.js')}}"></script>
 
     <script src="{{ asset('backend/assets/js/script.js') }}"></script>
 </body>

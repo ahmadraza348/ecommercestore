@@ -65,9 +65,15 @@
                                     <a href="{{ route('admin.user.edit', ['id' => $user->id]) }}" class="me-3">
                                         <img src="{{asset('backend/assets/img/icons/edit.svg')}}" alt="edit">
                                     </a>
-                                    <a href="{{ route('admin.user.delete', ['id' => $user->id]) }}" class="me-3 confirm-text">
-                                        <img src="{{asset('backend/assets/img/icons/delete.svg')}}" alt="delete">
+                                    <a href="javascript:void(0)" class="me-3 confirm-text" onclick="document.getElementById('delete-form-{{ $user->id }}').submit();">
+                                        <img src="{{ asset('backend/assets/img/icons/delete.svg') }}" alt="delete">
                                     </a>
+                                    
+                                    <form id="delete-form-{{ $user->id }}" action="{{ route('admin.user.delete', ['id' => $user->id]) }}" method="POST" style="display: none;">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                    
                                 </td>
                             </tr>
                             @endforeach
