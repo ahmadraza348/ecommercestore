@@ -94,17 +94,15 @@ class AdminUserController extends Controller
     }
     public function profile_update(Request $request, $id)
 {
+    // dd($request->all());
     $request->validate([
         'first_name' => 'required|max:30',
         'last_name' => 'required|max:30',
         'username' => 'required|max:30|unique:users,username,' . $id,
         'email' => 'required|email|unique:users,email,' . $id,
-        'phone' => 'nullable|digits_between:10,15',
-        'gender' => 'nullable|string|max:10',
-        'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
     ]);
 
-    $user = User::findOrFail($id);
+    $user = Admin::findOrFail($id);
     $user->first_name = $request->first_name;
     $user->last_name = $request->last_name;
     $user->username = $request->username;
@@ -119,14 +117,14 @@ class AdminUserController extends Controller
         $user->password = Hash::make($request->password);
     }
 
-    if ($request->hasFile('profile_image')) {
-        $imagePath = $request->file('profile_image')->store('profile_images', 'public');
-        $user->profile_image = $imagePath;
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('profile', 'public');
+        $user->image = $imagePath;
     }
 
     $user->save();
-
-    return redirect()->back()->with('success', 'Profile updated successfully.');
+toastr()->success('Profile updated successfully.');
+    return redirect()->back();
 }
 
 }
