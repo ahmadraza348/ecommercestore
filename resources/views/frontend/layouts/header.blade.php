@@ -40,7 +40,8 @@
                                                             onclick="event.preventDefault();
                                                                         this.closest('form').submit();">
                                                         {{ __('Log Out') }}
-                                                    </x-dropdown-link>                                           
+                                                    </x-dropdown-link>   
+                                                </form>                                        
                                             </div>
 
 
@@ -174,7 +175,7 @@
                 <div class="col-lg-12">
                     <style>
                         .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
-                            display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'password.request', 'password.reset']) ? 'none' : 'block' }};
+                            display: {{ in_array(Route::currentRouteName(), ['login', 'register','verification.notice', 'password.request', 'password.reset']) ? 'none' : 'block' }};
                         }
                     </style>
 
