@@ -18,24 +18,34 @@ class AuthenticationTest extends TestCase
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
-    {
-        $user = User::factory()->create();
+{
+    // Create a user with a known password and email
+    $user = User::factory()->create([
+        'username' => 'testuser',
+        'email' => 'testuser@example.com',
+        'password' => bcrypt('password'), 
+    ]);
 
-        $response = $this->post('/login', [
-            'email' => $user->email,
-            'password' => 'password',
-        ]);
+    // Attempt to log in with the username and password
+    $response = $this->post('/login', [
+        'username' => 'testuser', 
+        'password' => 'password', 
+    ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
-    }
+    // Check if the user is authenticated as the created user
+    $this->assertAuthenticatedAs($user);
+
+    // Assert the user is redirected to the 'home' route
+    $response->assertRedirect(route('home'));
+}
+
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
 
         $this->post('/login', [
-            'email' => $user->email,
+            'username' => $user->username,
             'password' => 'wrong-password',
         ]);
 

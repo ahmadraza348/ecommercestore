@@ -7,9 +7,9 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Frontend\HomePageController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/hash', function () {
+    return Hash::make('ahmadraza');
+});
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
