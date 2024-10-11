@@ -206,6 +206,8 @@
     <script src="{{ asset('frontend/assets/js/main.js') }}"></script>
     <!-- Switcher JS [Please Remove this when Choose your Final Projct] -->
     <script src="{{ asset('frontend/assets/js/switcher.js') }}"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.5.1" ></script>
+
 </body>
 
 
