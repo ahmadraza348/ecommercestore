@@ -27,12 +27,12 @@
                                         <div class="dropdown header-top-dropdown">
                                             <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"
                                                 aria-haspopup="true" aria-expanded="false">
-                                                my account
+                                                My Account
                                                 <i class="fa fa-angle-down"></i>
                                             </a>
 
                                             <div class="dropdown-menu" aria-labelledby="myaccount">
-                                                <a class="dropdown-item" href="my-account.html">My Account</a>
+                                                <a class="dropdown-item" href="{{route('profile.edit')}}"> Account</a>
                                                 <form method="POST" action="{{ route('logout') }}">
                                                     @csrf
                         
@@ -175,7 +175,7 @@
                 <div class="col-lg-12">
                     <style>
                         .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
-                            display: {{ in_array(Route::currentRouteName(), ['login', 'register','verification.notice', 'password.request', 'password.reset']) ? 'none' : 'block' }};
+                            display: {{ in_array(Route::currentRouteName(), ['login', 'register','profile.edit','verification.notice', 'password.request', 'password.reset']) ? 'none' : 'block' }};
                         }
                     </style>
 
