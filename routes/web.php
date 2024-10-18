@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Frontend\HomePageController;
 
@@ -16,16 +17,23 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-     // Admin User Routes
-     Route::get('user', [AdminUserController::class, 'show'])->name('admin.user.show');
-     Route::get('user/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
-     Route::post('user/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
-     Route::get('user/add', [AdminUserController::class, 'add'])->name('admin.user.add');
-     Route::post('user/store', [AdminUserController::class, 'store'])->name('admin.user.store');
-     Route::get('user/edit/{id}', [AdminUserController::class, 'edit'])->name('admin.user.edit');
-     Route::post('user/update/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
-     Route::get('user/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
+    // Admin User Routes
+    Route::prefix('user')->group(function () {
+        Route::get('/', [AdminUserController::class, 'show'])->name('admin.user.show');
+        Route::get('/add', [AdminUserController::class, 'add'])->name('admin.user.add');
+        Route::post('/store', [AdminUserController::class, 'store'])->name('admin.user.store');
+        Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('admin.user.edit');
+        Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
+        Route::get('/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
+        Route::get('/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
+        Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
+    });
 
+    Route::resource('category', CategoryController::class)->names('category');
+
+    // Separate routes for profile functionality
+    Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
+    Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
 });
 Route::prefix('admin')->group(function () {
     Route::get('login', [AuthController::class, 'login'])->name('admin.login');
@@ -49,4 +57,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

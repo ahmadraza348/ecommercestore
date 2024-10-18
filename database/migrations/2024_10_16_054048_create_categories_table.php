@@ -16,13 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('image')->nullable();
-            $table->string('description')->nullable();
+            $table->longText('description')->nullable();
             $table->integer('parent_id')->nullable();
-            $table->string('meta_title')->nullable();
-            $table->string('meta_keywords')->nullable();
-            $table->string('meta_description')->nullable();
-            $table->string('type')->nullable();
-            $table->string('status')->default(1);
+            $table->string('is_featured')->default('0','inactive');
+            $table->string('status')->default('1','active');
             $table->timestamps();
         });
     }

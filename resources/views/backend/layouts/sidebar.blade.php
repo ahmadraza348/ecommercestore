@@ -9,10 +9,17 @@
                     </a>
                 </li>
                 
-                <li class="{{ request()->route()->getName() == 'admin.user.show' ? 'active' : '' }}">
+                <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                     <a href="{{ route('admin.user.show') }}">
                         <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
                         <span>Admin Users</span>
+                    </a>
+                </li>
+                       
+                <li class="{{ request()->routeIs('category.*') ? 'active' : '' }}">
+                    <a href="{{ route('category.index') }}">
+                        <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                        <span>Category</span>
                     </a>
                 </li>
                        
