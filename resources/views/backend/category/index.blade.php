@@ -74,7 +74,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="" class="me-3">
+                                            <a href="{{ route('category.edit', $category->id) }}" class="me-3">
                                                 <img src="{{ asset('backend/assets/img/icons/edit.svg') }}" alt="edit">
                                             </a>
                                             <!-- Delete Form (hidden) -->
