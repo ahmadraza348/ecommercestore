@@ -56,7 +56,6 @@ $data['categories'] = Category::orderBy('name', 'asc')->with('parent')->get();
         $category->image = $imageName; // Save the image name if uploaded
         $category->status = $request->status;
         $category->description = $request->description;
-        $category->is_featured = $request->is_featured; // Default to 0 if not checked
     
         // Save the category
         $category->save();
