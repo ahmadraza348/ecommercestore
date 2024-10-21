@@ -50,7 +50,7 @@
                             </div>
 
                             <!-- Parent Category -->
-                            <div class="col-lg-6 col-sm-12">
+                            {{-- <div class="col-lg-6 col-sm-12">
                                 <div class="form-group mb-0">
                                     <label class="form-label" for="parent_id">Select Category*</label>
                                     <select name="parent_id" class="form-control">
@@ -69,7 +69,35 @@
                                         @endforeach
                                     </select>
                                 </div>
+                            </div> --}}
+
+                            <div class="col-lg-6 col-sm-12">
+                                <div class="form-group mb-0">
+                                    <label class="form-label" for="parent_id">Select Category*</label>
+                                    <select name="parent_id" class="form-control">
+                                        <option value="">None</option>
+                                        @foreach ($categories as $parentCategory)
+                                            <!-- Ensure current category is excluded and parent category is selected -->
+                                            <option value="{{ $parentCategory->id }}" 
+                                                {{ old('parent_id', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}>
+                                                {{ $parentCategory->name }}
+                                            </option>
+                                            
+                                            <!-- Include subcategories and check for parent selection -->
+                                            @if (count($parentCategory->subcategory))
+                                                @include('backend.category.partialcategory', [
+                                                    'subcategories' => $parentCategory->subcategory,
+                                                    'dash' => '-- ',
+                                                    'category' => $category  // Pass the current category for preselection
+                                                ])
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
+                            
+                            
+                            
 
                             <!-- Status -->
                             <div class="col-lg-6 col-sm-12">

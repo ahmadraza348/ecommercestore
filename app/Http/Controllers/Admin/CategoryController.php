@@ -14,8 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-$data['categories'] = Category::orderBy('name', 'asc')->with('parent')->get();
-// dd($data['category']);
+        $data['categories'] = Category::orderBy('id', 'ASC')->with('parent')->get();
         return view('backend.category.index', $data);
     }
 
@@ -24,7 +23,7 @@ $data['categories'] = Category::orderBy('name', 'asc')->with('parent')->get();
      */
     public function create()
     {
-        $data['categories'] = Category::with('subcategory.subcategory')->whereNull('parent_id')->orderby('name', 'asc')->get();
+        $data['categories'] = Category::with('subcategory')->whereNull('parent_id')->orderby('name', 'asc')->get();
         return view('backend.category.create', $data);
     }
     
@@ -81,16 +80,22 @@ $data['categories'] = Category::orderBy('name', 'asc')->with('parent')->get();
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $data['category'] = Category::findOrFail($id);
-        $data['categories'] = Category::with('subcategory.subcategory')->whereNull('parent_id')->orderby('name', 'asc')->get();
-
-        return view('backend.category.edit', $data);
+        // Fetch the current category being edited
+        $category = Category::findOrFail($id);
+        
+        // Fetch all categories except the one being edited
+        $categories = Category::with('subcategory')
+            ->whereNull('parent_id')
+            ->where('id', '!=', $id)  // Exclude current category
+            ->orderby('name', 'asc')
+            ->get();
+    
+        // Pass the categories and the category being edited to the view
+        return view('backend.category.edit', compact('category', 'categories'));
     }
+    
 
     /**
      * Update the specified resource in storage.
