@@ -86,11 +86,12 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         
         // Fetch all categories except the one being edited
-        $categories = Category::with('subcategory')
-            ->whereNull('parent_id')
+        $categories = Category::with('subcategory.subcategory')
+            ->whereNull('parent_id')  // Include parent category
             ->where('id', '!=', $id)  // Exclude current category
             ->orderby('name', 'asc')
             ->get();
+            // dd($categories);
     
         // Pass the categories and the category being edited to the view
         return view('backend.category.edit', compact('category', 'categories'));
