@@ -23,12 +23,7 @@
                     <table class="table datanew">
                         <thead>
                             <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
+                                
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Username</th>
@@ -40,12 +35,7 @@
                         <tbody>
                             @foreach ($adminusers as $user)
                             <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
+                               
                                 <td>
                                     <a href="javascript:void(0);" class="product-img">
                                         <img src="{{ $user->image ? asset('storage/' . $user->image) : asset('backend/assets/img/customer/customer1.jpg') }}" alt="profile image" style="width:60px; height:60px; border-radius:100px;">
@@ -69,7 +59,7 @@
                                    <span class="badge rounded-pill bg-info">Supeadmin</span>
                                     @else
                                     
- <a href="{{ route('admin.user.delete', ['id' => $user->id]) }}" class="me-3 " >
+                                    <a href="{{ route('admin.user.delete', ['id' => $user->id]) }}"onclick="return confirm('Are You Sure to permanently delete this?')" class="me-3 " >
                                         <img src="{{ asset('backend/assets/img/icons/delete.svg') }}" alt="delete">
                                     </a>
                                     @endif

@@ -30,6 +30,8 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     });
 
     Route::resource('category', CategoryController::class)->names('category');
+    Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
+
 
     // Separate routes for profile functionality
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');

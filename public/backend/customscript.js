@@ -29,3 +29,36 @@
             reader.readAsDataURL(file);
         }
     }
+
+    // Bulk Delete
+
+    // Select All Categories
+    function selectAll(selectAllCheckbox) {
+        const checkboxes = document.querySelectorAll('.select-category');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        toggleDeleteButton();
+    }
+
+    // Show/Hide Delete Button
+    function toggleDeleteButton() {
+        const selected = document.querySelectorAll('.select-category:checked').length;
+        const deleteButton = document.getElementById('delete-selected-btn');
+        deleteButton.style.display = selected > 0 ? 'block' : 'none';
+    }
+
+    // Bulk Delete Selected Categories
+    function deleteSelectedCategories() {
+        if (confirm('Are you sure you want to delete the selected categories?')) {
+            const selectedIds = [];
+            document.querySelectorAll('.select-category:checked').forEach((checkbox) => {
+                selectedIds.push(checkbox.getAttribute('data-id'));
+            });
+
+            if (selectedIds.length > 0) {
+                document.getElementById('category-ids').value = selectedIds.join(',');
+                document.getElementById('bulk-delete-form').submit();
+            }
+        }
+    }

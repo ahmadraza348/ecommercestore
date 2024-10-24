@@ -160,5 +160,14 @@ class CategoryController extends Controller
         toastr()->success('Category Deleted Successfully');
         return redirect()->back();
     }
+
+    public function bulkDelete(Request $request)
+{
+    $categoryIds = explode(',', $request->category_ids);
+    Category::whereIn('id', $categoryIds)->delete();
+    toastr()->success('categories deleted successfully.');
+    return redirect()->back();
+
     
+}
 }
