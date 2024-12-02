@@ -35,4 +35,10 @@ class Category extends Model
         $category->metaTag()->delete();
     });
 }
+
+public function products()
+{
+    return $this->belongsToMany(Product::class, 'relational_categories', 'category_id', 'product_id');
+}
+
 }

@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data['categories'] = Category::orderBy('id', 'ASC')->with('parent')->get();
+        $data['categories_data'] = Category::orderBy('id', 'ASC')->with('parent')->get();
         return view('backend.category.index', $data);
     }
 

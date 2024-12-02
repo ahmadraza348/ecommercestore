@@ -9,6 +9,7 @@ use App\Models\Category;
 class HomePageController extends Controller
 {
     public function index(){
-        return view('frontend.index');
+        $data['featured_categories'] = Category::where(['status'=>1,'is_featured'=>1 ])->with('products')->get();
+        return view('frontend.index', $data);
     }
 }

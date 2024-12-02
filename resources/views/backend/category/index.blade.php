@@ -43,7 +43,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($categories as $category)
+                                @foreach ($categories_data as $category)
                                     <tr>
                                         <td>
                                             <label class="checkboxs">
