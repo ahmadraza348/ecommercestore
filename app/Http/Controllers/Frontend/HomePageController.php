@@ -9,7 +9,7 @@ use App\Models\Product;
 
 class HomePageController extends Controller
 {
-    // did
+
     public function index()
     {
         $data['featured_categories'] = Category::where(['status' => 1, 'is_featured' => 1])->with('products')->get();
