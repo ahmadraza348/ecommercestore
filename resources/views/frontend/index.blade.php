@@ -133,60 +133,9 @@
                                             <div class="featured-carousel-active2 row arrow-space slick-arrow-style"
                                                 data-row="2">
 
-                                                @foreach ($category_tab->products()->where('status', 'active')->take(8)->get() as $product)
+                                                @foreach ($category_tab->products()->where('status', 'active')->take(8)->get() as $item)
                                                     <div class="col">
-                                                        <div class="product-item fix mb-30">
-                                                            <div class="product-thumb">
-                                                                <a href="product-details.html">
-                                                                    <img src="{{ $product->featured_image ? asset('storage/' . $product->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                                        class="img-pri" alt="">
-                                                                    <img src="{{ $product->back_image ? asset('storage/' . $product->back_image) : asset('backend/assets/img/noimage.png') }}"
-                                                                        class="img-sec" alt="">
-                                                                </a>
-                                                                <div class="product-label">
-                                                                    <span>{{ $product->label }}</span>
-                                                                </div>
-                                                                <div class="product-action-link">
-                                                                    <a href="#" data-toggle="modal"
-                                                                        data-target="#quick_view">
-                                                                        <span data-toggle="tooltip" data-placement="left"
-                                                                            title="Quick view"><i
-                                                                                class="fa fa-search"></i></span> </a>
-                                                                    <a href="#" data-toggle="tooltip"
-                                                                        data-placement="left" title="Wishlist"><i
-                                                                            class="fa fa-heart-o"></i></a>
-                                                                    <a href="#" data-toggle="tooltip"
-                                                                        data-placement="left" title="Compare"><i
-                                                                            class="fa fa-refresh"></i></a>
-                                                                    <a href="#" data-toggle="tooltip"
-                                                                        data-placement="left" title="Add to cart"><i
-                                                                            class="fa fa-shopping-cart"></i></a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="product-content">
-                                                                <h4><a
-                                                                        href="product-details.html">{{ $product->name }}</a>
-                                                                </h4>
-                                                                <div class="pricebox">
-                                                                    <span class="regular-price">{{ $product->sale_price }}
-                                                                        PKR</span>
-                                                                    <div class="ratings">
-                                                                        <span class="good"><i
-                                                                                class="fa fa-star"></i></span>
-                                                                        <span class="good"><i
-                                                                                class="fa fa-star"></i></span>
-                                                                        <span class="good"><i
-                                                                                class="fa fa-star"></i></span>
-                                                                        <span class="good"><i
-                                                                                class="fa fa-star"></i></span>
-                                                                        <span><i class="fa fa-star"></i></span>
-                                                                        <div class="pro-review">
-                                                                            <span>1 review(s)</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        @include('frontend.partials.pro_slide')
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -199,8 +148,7 @@
                         <div class="banner-statistic banner-style-4 pb-36">
                             <div class="img-container fix img-full">
                                 <a href="#">
-                                    <img src="{{ asset('frontend/assets/img/banner/home3_static5.jpg') }}"
-                                        alt="">
+                                    <img src="{{ asset('frontend/assets/img/banner/home3_static5.jpg') }}" alt="">
                                 </a>
                             </div>
                         </div>
@@ -230,48 +178,13 @@
                             </div> <!-- section title end -->
                             <!-- featured category start -->
                             <div class="featured-carousel-active slick-padding slick-arrow-style">
+                                {{-- @foreach ($featured_pro as $item)
+                                @include('frontend.partials.pro_slide')
+                                @endforeach --}}
                                 @foreach ($featured_pro as $item)
-                                    <div class="product-item fix">
-                                        <div class="product-thumb">
-                                            <a href="product-details.html">
-                                                <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                    class="img-pri" alt="">
-                                                <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                    class="img-sec" alt="">
-                                            </a>
-                                            <div class="product-label">
-                                                <span>{{ $item->label }}</span>
-                                            </div>
-                                            <div class="product-action-link">
-                                                <a href="#" data-toggle="modal" data-target="#quick_view"> <span
-                                                        data-toggle="tooltip" data-placement="left" title="Quick view"><i
-                                                            class="fa fa-search"></i></span> </a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Wishlist"><i class="fa fa-heart-o"></i></a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Compare"><i class="fa fa-refresh"></i></a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="product-content">
-                                            <h4><a href="product-details.html">{{ $item->name }}</a></h4>
-                                            <div class="pricebox">
-                                                <span class="regular-price">{{ $item->sale_price }} PKR</span>
-                                                <div class="ratings">
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span><i class="fa fa-star"></i></span>
-                                                    <div class="pro-review">
-                                                        <span>1 review(s)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @include('frontend.partials.pro_slide', ['item' => $item])
                                 @endforeach
+
                             </div>
                             <!-- featured category end -->
                         </div>
@@ -280,168 +193,80 @@
                 </div>
 
             </div>
-            <div class="container">
-                <div class="banner-statistic pt-28 pb-36">
-                    <div class="img-container fix img-full">
-                        <a href="#">
-                            <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
-                        </a>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="banner-statistic pt-28 pb-36">
+            <div class="img-container fix img-full">
+                <a href="#">
+                    <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
+                </a>
+            </div>
+        </div>
 
-                <!-- banner statistic end -->
-                @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
-                    <div class="product-feature-wrapper mb-lg-6">
-                        <div class="container">
-                            <div class="row">
-                                <!-- hot deals area start -->
-                                <div class="col-lg-6">
-                                    <div class="hot-deals-wrap3 mb-30 mb-md-36 mb-sm-22 mt-xs-28">
-                                        <div class="section-title-2 d-flex justify-content-between mb-28">
-                                            <h3>Hot Sale</h3>
-                                            {{-- Items currently on promotion or clearance sales. --}}
-                                            <div class="category-append"></div>
-                                        </div> <!-- section title end -->
-                                        <div class="deals-carousel-active2 slick-padding slick-arrow-style">
-                                            @foreach ($sale_pro as $item)
-                                                <div class="product-item fix">
-                                                    <div class="product-thumb">
-                                                        <a href="product-details.html">
-                                                            <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                                class="img-pri" alt="">
-                                                            <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                                class="img-sec" alt="">
-                                                        </a>
-                                                        <div class="product-label">
-                                                            <span>{{ $item->label }}</span>
-                                                        </div>
-                                                        <div class="product-action-link">
-                                                            <a href="#" data-toggle="modal"
-                                                                data-target="#quick_view">
-                                                                <span data-toggle="tooltip" data-placement="left"
-                                                                    title="Quick view"><i class="fa fa-search"></i></span>
-                                                            </a>
-                                                            <a href="#" data-toggle="tooltip" data-placement="left"
-                                                                title="Wishlist"><i class="fa fa-heart-o"></i></a>
-                                                            <a href="#" data-toggle="tooltip" data-placement="left"
-                                                                title="Compare"><i class="fa fa-refresh"></i></a>
-                                                            <a href="#" data-toggle="tooltip" data-placement="left"
-                                                                title="Add to cart"><i
-                                                                    class="fa fa-shopping-cart"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <h4><a href="product-details.html">{{ $item->name }}</a></h4>
-                                                        <div class="pricebox">
-                                                            <span class="regular-price">{{ $item->sale_price }} PKR</span>
-                                                            <div class="ratings">
-                                                                <span class="good"><i class="fa fa-star"></i></span>
-                                                                <span class="good"><i class="fa fa-star"></i></span>
-                                                                <span class="good"><i class="fa fa-star"></i></span>
-                                                                <span class="good"><i class="fa fa-star"></i></span>
-                                                                <span><i class="fa fa-star"></i></span>
-                                                                <div class="pro-review">
-                                                                    <span>1 review(s)</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                            </div>
+        <!-- banner statistic end -->
+        @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
+            <div class="product-feature-wrapper mb-lg-6">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="hot-deals-wrap3 mb-30 mb-md-36 mb-sm-22 mt-xs-28">
+                                <div class="section-title-2 d-flex justify-content-between mb-28">
+                                    <h3>Hot Sale</h3>
+                                    {{-- Items currently on promotion or clearance sales. --}}
+                                    <div class="category-append"></div>
+                                    <div class="deals-carousel-active2 slick-padding slick-arrow-style">
+                                        @foreach ($sale_pro as $item)
+                                            @include('frontend.partials.pro_slide')
+                                        @endforeach
                                     </div>
                                 </div>
-                            </div></div>
-                    </div>
-                @endif
-                <!-- hot deals area end -->
-                <!-- most view area start -->
-                @if (!empty($hot_deals_pro) && $hot_deals_pro->isNotEmpty())
-                    <div class="col-lg-6">
-                        <div class="hot-deals-wrap3 mb-30 mb-md-22 mb-sm-22 mt-sm-14">
-                            <div class="section-title-2 d-flex justify-content-between mb-28">
-                                <h3>Hot Deals</h3>
-                                {{-- Products with limited-time discounts or seasonal relevance. --}}
-                                <div class="category-append"></div>
-                            </div> <!-- section title end -->
-                            <div class="deals-carousel-active2 slick-padding slick-arrow-style">
-                                @foreach ($hot_deals_pro as $item)
-                                    <div class="product-item fix">
-                                        <div class="product-thumb">
-                                            <a href="product-details.html">
-                                                <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                    class="img-pri" alt="">
-                                                <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                                    class="img-sec" alt="">
-                                            </a>
-                                            <div class="product-label">
-                                                <span>{{ $item->label }}</span>
-                                            </div>
-                                            <div class="product-action-link">
-                                                <a href="#" data-toggle="modal" data-target="#quick_view">
-                                                    <span data-toggle="tooltip" data-placement="left"
-                                                        title="Quick view"><i class="fa fa-search"></i></span>
-                                                </a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Wishlist"><i class="fa fa-heart-o"></i></a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Compare"><i class="fa fa-refresh"></i></a>
-                                                <a href="#" data-toggle="tooltip" data-placement="left"
-                                                    title="Add to cart"><i class="fa fa-shopping-cart"></i></a>
-                                            </div>
-                                        </div>
-                                        <div class="product-content">
-                                            <h4><a href="product-details.html">{{ $item->name }}</a></h4>
-                                            <div class="pricebox">
-                                                <span class="regular-price">{{ $item->sale_price }} PKR</span>
-                                                <div class="ratings">
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span class="good"><i class="fa fa-star"></i></span>
-                                                    <span><i class="fa fa-star"></i></span>
-                                                    <div class="pro-review">
-                                                        <span>1 review(s)</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
                             </div>
                         </div>
                     </div>
-                @endif
-                <!-- most view area end -->
-            </div>
-        </div>
-    </div>
-
-    </div>
-    <!-- banner statistic start -->
-    <div class="banner-statistic pt-28 pb-30 pb-sm-0">
-        <div class="row">
-            <div class="col-lg-7 col-md-7">
-                <div class="img-container fix img-full mb-sm-30">
-                    <a href="#">
-                        <img src="{{ asset('frontend/assets/img/banner/banner_static2.jpg') }}" alt="">
-                    </a>
+                </div>
+        @endif
+        <!-- hot deals area end -->
+        <!-- most view area start -->
+        @if (!empty($hot_deals_pro) && $hot_deals_pro->isNotEmpty())
+            <div class="col-lg-6">
+                <div class="hot-deals-wrap3 mb-30 mb-md-22 mb-sm-22 mt-sm-14">
+                    <div class="section-title-2 d-flex justify-content-between mb-28">
+                        <h3>Hot Deals</h3>
+                        {{-- Products with limited-time discounts or seasonal relevance. --}}
+                        <div class="category-append"></div>
+                    </div> <!-- section title end -->
+                    <div class="deals-carousel-active2 slick-padding slick-arrow-style">
+                        @foreach ($hot_deals_pro as $item)
+                            @include('frontend.partials.pro_slide')
+                        @endforeach
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-5 col-md-5">
-                <div class="img-container fix img-full mb-sm-30">
-                    <a href="#">
-                        <img src="{{ asset('frontend/assets/img/banner/banner_static3.jpg') }}" alt="">
-                    </a>
+        @endif
+        <!-- most view area end -->
+
+        <!-- banner statistic start -->
+        <div class="banner-statistic pt-28 pb-30 pb-sm-0">
+            <div class="row">
+                <div class="col-lg-7 col-md-7">
+                    <div class="img-container fix img-full mb-sm-30">
+                        <a href="#">
+                            <img src="{{ asset('frontend/assets/img/banner/banner_static2.jpg') }}" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5">
+                    <div class="img-container fix img-full mb-sm-30">
+                        <a href="#">
+                            <img src="{{ asset('frontend/assets/img/banner/banner_static3.jpg') }}" alt="">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- banner statistic end -->
-    </div>
-    </div>
 
-    {{-- Featured Products --}}
+    </div>
 
 
     {{-- 3  sliderrs --}}
@@ -458,161 +283,6 @@
                             <div class="category-append"></div>
                         </div> <!-- section title end -->
                         <div class="category-carousel-active row" data-row="3">
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
                             <div class="col">
                                 <div class="category-item">
                                     <div class="category-thumb">
@@ -689,162 +359,6 @@
                                     </div>
                                 </div> <!-- end single item -->
                             </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-
                         </div>
                     </div>
                 </div>
@@ -889,162 +403,6 @@
                                     </div>
                                 </div> <!-- end single item -->
                             </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-
                         </div>
                     </div>
                 </div>
@@ -1068,46 +426,7 @@
                 <!-- featured category start -->
                 <div class="latest-product-active slick-padding slick-arrow-style">
                     @foreach ($new_arrival_pro as $item)
-                        <div class="product-item fix">
-                            <div class="product-thumb">
-                                <a href="product-details.html">
-                                    <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                        class="img-pri" alt="">
-                                    <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-                                        class="img-sec" alt="">
-                                </a>
-                                <div class="product-label">
-                                    <span>{{ $item->label }}</span>
-                                </div>
-                                <div class="product-action-link">
-                                    <a href="#" data-toggle="modal" data-target="#quick_view"> <span
-                                            data-toggle="tooltip" data-placement="left" title="Quick view"><i
-                                                class="fa fa-search"></i></span> </a>
-                                    <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i
-                                            class="fa fa-heart-o"></i></a>
-                                    <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i
-                                            class="fa fa-refresh"></i></a>
-                                    <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i
-                                            class="fa fa-shopping-cart"></i></a>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="product-details.html">{{ $item->name }}</a></h4>
-                                <div class="pricebox">
-                                    <span class="regular-price">{{ $item->sale_price }} PKR</span>
-                                    <div class="ratings">
-                                        <span class="good"><i class="fa fa-star"></i></span>
-                                        <span class="good"><i class="fa fa-star"></i></span>
-                                        <span class="good"><i class="fa fa-star"></i></span>
-                                        <span class="good"><i class="fa fa-star"></i></span>
-                                        <span><i class="fa fa-star"></i></span>
-                                        <div class="pro-review">
-                                            <span>1 review(s)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @include('frontend.partials.pro_slide')
                     @endforeach
                 </div>
                 <!-- featured category end -->

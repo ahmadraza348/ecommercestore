@@ -18,4 +18,9 @@ class HomePageController extends Controller
         $data['new_arrival_pro'] = Product::where(['status' => 1, 'label' => 'new'])->take(6)->get();
         return view('frontend.index', $data);
     }
+    public function getProduct($id)
+    {
+        $product = Product::where('id', $id)->where('status', 1)->with('gallery_images')->firstOrFail();
+        return response()->json($product);
+    }
 }

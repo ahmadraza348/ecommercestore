@@ -19,6 +19,7 @@ Route::get('/hash', function () {
 });
 Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageController::class, 'index'])->name('shop');
+Route::get('product/{id}', [HomePageController::class, 'getProduct']);
 
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
