@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\ShopPageController;
+use App\Http\Controllers\Frontend\ProductPageController;
 use App\Http\Controllers\Admin\AttributevalueController;
 
 Route::get('/hash', function () {
@@ -19,7 +20,8 @@ Route::get('/hash', function () {
 });
 Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageController::class, 'index'])->name('shop');
-Route::get('product/{id}', [HomePageController::class, 'getProduct']);
+Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
+Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {

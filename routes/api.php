@@ -9,4 +9,10 @@ use App\Http\Controllers\Api\HomePageController;
 // })->middleware('auth:sanctum');
 
 
-Route::get('/categories', [HomePageController::class, 'fetch_categories'])->name('api.categories.fetch');
+
+Route::get('/featured-categories', [HomePageController::class, 'fetch_featured_categories'])->name('api.featured_categories.fetch');
+Route::get('/featured-products', [HomePageController::class, 'fetch_featured_products'])->name('api.featured_products.fetch');
+Route::get('/hot-deals', [HomePageController::class, 'fetch_hot_deals'])->name('api.hot_deals.fetch');
+Route::get('/sale-products', [HomePageController::class, 'fetch_sale_products'])->name('api.sale_products.fetch');
+Route::get('/new-arrivals', [HomePageController::class, 'fetch_new_arrivals'])->name('api.new_arrivals.fetch');
+Route::get('/brands', [HomePageController::class, 'fetch_brands'])->name('api.brands.fetch');

@@ -53,4 +53,9 @@ class Product extends Model
             });
         
         }
+        // public function getImageNameAttribute($value)
+        // {
+        
+        //         return public_path($value);
+        // }
 }

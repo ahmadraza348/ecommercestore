@@ -1,6 +1,6 @@
 <div class="product-item fix mb-30">
     <div class="product-thumb">
-        <a href="product-details.html">
+        <a href="{{ route('pro.details', ['slug' => $item->slug]) }}">
             <img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
                 class="img-pri" alt="">
             <img src="{{ $item->back_image ? asset('storage/' . $item->back_image) : asset('backend/assets/img/noimage.png') }}"
@@ -36,7 +36,7 @@
     </div>
     <div class="product-content">
         <h4><a
-                href="product-details.html">{{ $item->name }}</a>
+                href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
         </h4>
         <div class="pricebox">
             <span class="regular-price">{{ $item->sale_price }}

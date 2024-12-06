@@ -17,11 +17,13 @@
     <link href="{{ asset('frontend/assets/css/font-awesome.min.css') }}" rel="stylesheet">
     <!-- helper class css -->
     <link href="{{ asset('frontend/assets/css/helper.min.css') }}" rel="stylesheet">
-    <!-- Plugins CSS -->
     <link href="{{ asset('frontend/assets/css/plugins.css') }}" rel="stylesheet">
-    <!-- Main Style CSS -->
+    <!-- Plugins CSS -->
     <link href="{{ asset('frontend/assets/css/style.css') }}" rel="stylesheet">
+    <!-- Main Style CSS -->
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body>
@@ -97,15 +99,15 @@
 
 
     <!--All jQuery, Third Party Plugins & Activation (main.js) Files-->
+    <script src="{{ asset('frontend/assets/js/vendor/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/vendor/modernizr-3.6.0.min.js') }}"></script>
     <!-- Jquery Min Js -->
-    <script src="{{ asset('frontend/assets/js/vendor/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('frontend/assets/js/plugins.js') }}"></script>
     <!-- Popper Min Js -->
     <script src="{{ asset('frontend/assets/js/vendor/popper.min.js') }}"></script>
     <!-- Bootstrap Min Js -->
     <script src="{{ asset('frontend/assets/js/vendor/bootstrap.min.js') }}"></script>
     <!-- Plugins Js-->
-    <script src="{{ asset('frontend/assets/js/plugins.js') }}"></script>
     <!-- Ajax Mail Js -->
     <script src="{{ asset('frontend/assets/js/ajax-mail.js') }}"></script>
     <!-- Active Js -->
@@ -113,6 +115,7 @@
     <!-- Switcher JS [Please Remove this when Choose your Final Projct] -->
     <script src="{{ asset('frontend/assets/js/switcher.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.5.1" ></script>
+
 
     
 

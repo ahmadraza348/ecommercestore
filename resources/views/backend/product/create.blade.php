@@ -594,37 +594,70 @@
             files.forEach((file, index) => {
                 if (validImageTypes.includes(file.type)) {
                     const reader = new FileReader();
+                    // reader.onload = function(e) {
+                    //     const imgContainer = document.createElement('div');
+                    //     imgContainer.style.display = 'flex';
+                    //     imgContainer.style.flexDirection = 'column';
+                    //     imgContainer.style.alignItems = 'center';
+                    //     imgContainer.style.margin = '10px';
+
+                    //     const img = document.createElement('img');
+                    //     img.src = e.target.result;
+                    //     img.style.width = '100px';
+                    //     img.style.height = '100px';
+                    //     img.style.borderRadius = '5px';
+                    //     img.style.border = '1px solid #ddd';
+                    //     img.style.objectFit = 'cover';
+
+                    //     const colorSelect = document.createElement('select');
+                    //     colorSelect.name = `colors[${index}]`;
+                    //     colorSelect.style.marginTop = '5px';
+
+                    //     const colors = @json($attribute_colors);
+                    //     colorSelect.innerHTML = '<option value="">Select Color</option>';
+                    //     colors.forEach(color => {
+                    //         const option = document.createElement('option');
+                    //         option.value = color.id;
+                    //         option.text = color.name;
+                    //         colorSelect.appendChild(option);
+                    //     });
+                    //     imgContainer.appendChild(img);
+                    //     imgContainer.appendChild(colorSelect);
+                    //     galleryImagePreviewContainer.appendChild(imgContainer);
+                    // };
                     reader.onload = function(e) {
-                        const imgContainer = document.createElement('div');
-                        imgContainer.style.display = 'flex';
-                        imgContainer.style.flexDirection = 'column';
-                        imgContainer.style.alignItems = 'center';
-                        imgContainer.style.margin = '10px';
+    const imgContainer = document.createElement('div');
+    imgContainer.style.display = 'flex';
+    imgContainer.style.flexDirection = 'column';
+    imgContainer.style.alignItems = 'center';
+    imgContainer.style.margin = '10px';
 
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.width = '100px';
-                        img.style.height = '100px';
-                        img.style.borderRadius = '5px';
-                        img.style.border = '1px solid #ddd';
-                        img.style.objectFit = 'cover';
+    const img = document.createElement('img');
+    img.src = e.target.result;
+    img.style.width = '100px';
+    img.style.height = '100px';
+    img.style.borderRadius = '5px';
+    img.style.border = '1px solid #ddd';
+    img.style.objectFit = 'cover';
 
-                        const colorSelect = document.createElement('select');
-                        colorSelect.name = `colors[${index}]`;
-                        colorSelect.style.marginTop = '5px';
+    const colorSelect = document.createElement('select');
+    colorSelect.name = `colors[${index}]`; // Ensure name is dynamic
+    colorSelect.style.marginTop = '5px';
 
-                        const colors = @json($attribute_colors);
-                        colorSelect.innerHTML = '<option value="">Select Color</option>';
-                        colors.forEach(color => {
-                            const option = document.createElement('option');
-                            option.value = color.id;
-                            option.text = color.name;
-                            colorSelect.appendChild(option);
-                        });
-                        imgContainer.appendChild(img);
-                        imgContainer.appendChild(colorSelect);
-                        galleryImagePreviewContainer.appendChild(imgContainer);
-                    };
+    const colors = @json($attribute_colors);
+    colorSelect.innerHTML = '<option value="">Select Color</option>';
+    colors.forEach(color => {
+        const option = document.createElement('option');
+        option.value = color.id;
+        option.text = color.name;
+        colorSelect.appendChild(option);
+    });
+
+    imgContainer.appendChild(img);
+    imgContainer.appendChild(colorSelect);
+    galleryImagePreviewContainer.appendChild(imgContainer);
+};
+
                     reader.readAsDataURL(file);
                 } else {
                     alert('Please select valid image files (JPG, JPEG, PNG) for gallery images.');

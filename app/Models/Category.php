@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+    public function getImageNameAttribute($value)
+{
+
+        return public_path($value);
+}
 
     protected $fillable = ['name', 'slug', 'parent_id', 'image', 'is_featured', 'description', 'status'];
 

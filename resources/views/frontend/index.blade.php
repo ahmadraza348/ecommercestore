@@ -6,30 +6,7 @@
             <div class="col-lg-12">
                 <div class="slider-wrapper-area">
                     <div class="hero-slider-active hero__1 slick-dot-style hero-dot">
-                        <div class="single-slider"
-                            style="background-image: url({{ asset('frontend/assets/img/slider/slider11_bg.jpg') }}">
-                            <div class="container p-0">
-                                <div class="slider-main-content">
-                                    <div class="slider-content-img">
-                                        <img src="{{ asset('frontend/assets/img/slider/slider11_lable1.png') }}"
-                                            alt="">
-                                        <img src="{{ asset('frontend/assets/img/slider/slider11_lable2.png') }}"
-                                            alt="">
-                                        <img src="{{ asset('frontend/assets/img/slider/slider11_lable3.png') }}"
-                                            alt="">
-                                    </div>
-                                    <div class="slider-text">
-                                        <div class="slider-label">
-                                            <img src="{{ asset('frontend/assets/img/slider/slider11_lable4.png') }}"
-                                                alt="">
-                                        </div>
-                                        <h1>headphones az12</h1>
-                                        <p>Typi Non Habent Claritatem Insitam; Est Usus Legentis</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="single-slider"
+                          <div class="single-slider"
                             style="background-image: url({{ asset('frontend/assets/img/slider/slider12_bg.jpg') }}">
                             <div class="container p-0">
                                 <div class="slider-main-content">
@@ -178,9 +155,7 @@
                             </div> <!-- section title end -->
                             <!-- featured category start -->
                             <div class="featured-carousel-active slick-padding slick-arrow-style">
-                                {{-- @foreach ($featured_pro as $item)
-                                @include('frontend.partials.pro_slide')
-                                @endforeach --}}
+                             
                                 @foreach ($featured_pro as $item)
                                     @include('frontend.partials.pro_slide', ['item' => $item])
                                 @endforeach
@@ -217,7 +192,7 @@
                                     <div class="category-append"></div>
                                     <div class="deals-carousel-active2 slick-padding slick-arrow-style">
                                         @foreach ($sale_pro as $item)
-                                            @include('frontend.partials.pro_slide')
+                                            @include('frontend.partials.pro_slide', ['item' => $item])
                                         @endforeach
                                     </div>
                                 </div>
@@ -238,7 +213,7 @@
                     </div> <!-- section title end -->
                     <div class="deals-carousel-active2 slick-padding slick-arrow-style">
                         @foreach ($hot_deals_pro as $item)
-                            @include('frontend.partials.pro_slide')
+                            @include('frontend.partials.pro_slide', ['item' => $item])
                         @endforeach
                     </div>
                 </div>
@@ -426,7 +401,7 @@
                 <!-- featured category start -->
                 <div class="latest-product-active slick-padding slick-arrow-style">
                     @foreach ($new_arrival_pro as $item)
-                        @include('frontend.partials.pro_slide')
+                        @include('frontend.partials.pro_slide', ['item' => $item])
                     @endforeach
                 </div>
                 <!-- featured category end -->
@@ -451,34 +426,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="brand-active slick-padding slick-arrow-style">
+                        @foreach ($brands as $item)
                         <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br1.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br2.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br3.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br4.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br5.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br6.png') }}"
-                                    alt=""></a>
-                        </div>
-                        <div class="brand-item text-center">
-                            <a href="#"><img src="{{ asset('frontend/assets/img/brand/br4.png') }}"
-                                    alt=""></a>
-                        </div>
+                          <a href="{{ route('shop', ['slug' => 'brand/' . $item->slug]) }}"><img style="width:150px; height:150px" src="{{ asset('storage/' . $item->image)}}"
+                                  alt=""></a>
+                      </div>                              
+                      @endforeach                       
                     </div>
                 </div>
             </div>

@@ -108,16 +108,32 @@ class ProductController extends Controller
             $product = Product::create($data);
 
             // Store Product Gallery Images
+            // if ($request->hasFile('gallery_images')) {
+            //     foreach ($request->file('gallery_images') as $galleryImage) {
+            //         $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
+            //         $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
+            //         ProImages::create([
+            //             'product_id' => $product->id,
+            //             'image' => $publicGalleryPath,
+                        
+            //         ]);
+            //     }
+            // }
             if ($request->hasFile('gallery_images')) {
-                foreach ($request->file('gallery_images') as $galleryImage) {
+                $colors = $request->input('colors'); // Get color IDs from the request
+            
+                foreach ($request->file('gallery_images') as $index => $galleryImage) {
                     $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
                     $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
+            
                     ProImages::create([
                         'product_id' => $product->id,
-                        'image' => $publicGalleryPath
+                        'image' => $publicGalleryPath,
+                        'color_id' => $colors[$index] ?? null // Map the color ID if available
                     ]);
                 }
             }
+            
 
             // Store Product Categories
             // $categories = $request->input('category', []);
