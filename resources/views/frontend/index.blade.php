@@ -69,6 +69,7 @@
             </div>
         </div>
     </div>
+    
     <!-- home banner area end -->
 
     {{-- Featured Categories --}}

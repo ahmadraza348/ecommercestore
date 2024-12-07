@@ -109,7 +109,7 @@
         var selectedAttributeId = this.value;
 
         // Replace '1' with the actual ID of the "Color" attribute in your database
-        if (selectedAttributeId == '3') { // Assuming 1 is the ID for "Color"
+        if (selectedAttributeId == '1') { // Assuming 1 is the ID for "Color"
             colorInput.style.display = 'block';
         } else {
             colorInput.style.display = 'none';
