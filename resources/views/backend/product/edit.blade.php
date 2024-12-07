@@ -359,7 +359,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="col-lg-12">
+                                        {{-- <div class="col-lg-12">
                                             <div class="form-group">
                                                 <label for="gallery_images">Gallery Images*</label>
                                                 <div class="image-upload">
@@ -403,7 +403,54 @@
                                                 </div>
 
                                             </div>
-                                        </div>
+                                        </div> --}}
+
+                                        <div class="col-lg-12">
+    <div class="form-group">
+        <label for="gallery_images">Gallery Images*</label>
+        <div class="image-upload">
+            <input type="file" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Only jpg, jpeg, and png files allowed"
+                id="gallery_images" name="gallery_images[]" multiple
+                onchange="validateAndPreviewGalleryImages(event)">
+            <small class="text-muted">Max 1200x1200px, 200KB per image</small>
+            <div class="image-uploads">
+                <img src="{{ asset('backend/assets/img/icons/upload.svg') }}" alt="upload icon">
+                <h4>Drag and drop a file to upload</h4>
+            </div>
+        </div>
+        <div class="text-danger">
+            @error('gallery_images[]')
+                {{ $message }}
+            @enderror
+        </div>
+        <div id="galleryImagePreviewContainer" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
+
+        <div class="mt-2">
+            <label for="current_gallery_images">Current Gallery Images</label>
+            @foreach ($pro_data->gallery_images as $image)
+                <div class="gallery-image" id="gallery-image-{{ $image->id }}" style="display: inline-block; margin: 10px;">
+                    <img src="{{ asset('storage/' . $image->image) }}" alt="Gallery Image"
+                        style="max-width: 200px; max-height: 200px; margin-bottom: 5px;">
+                    <select name="existing_colors[{{ $image->id }}]" class="form-select" style="margin-top: 5px;">
+                        <option value="">Select Color</option>
+                        @foreach ($attribute_colors as $color)
+                            <option value="{{ $color->id }}" 
+                                {{ $image->color_id == $color->id ? 'selected' : '' }}>
+                                {{ $color->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="button" class="delete-gallery-image btn btn-danger btn-sm mt-2"
+                        data-id="{{ $image->id }}">
+                        Delete
+                    </button>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
                                     </div>
                                 </div>
                             </div>

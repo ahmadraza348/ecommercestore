@@ -299,18 +299,34 @@ class ProductController extends Controller
             // Update Product
             $product->update($data);
     
-            // Update Product Gallery Images
-            if ($request->hasFile('gallery_images')) {
-                ProImages::where('product_id', $id)->delete();
-                foreach ($request->file('gallery_images') as $galleryImage) {
-                    $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
-                    $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
-                    ProImages::create([
-                        'product_id' => $product->id,
-                        'image' => $publicGalleryPath
-                    ]);
-                }
-            }
+           // Update Product Gallery Images
+if ($request->hasFile('gallery_images')) {
+    // Delete existing gallery images for the product
+    ProImages::where('product_id', $id)->delete();
+
+    // Process each uploaded gallery image
+    foreach ($request->file('gallery_images') as $index => $galleryImage) {
+        $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
+        $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
+
+        ProImages::create([
+            'product_id' => $product->id,
+            'image' => $publicGalleryPath,
+            'color_id' => $request->input('color_ids')[$index] ?? null, // Capture color_id for each image
+        ]);
+    }
+}
+
+// Update color_id for existing gallery images
+if ($request->has('existing_colors')) {
+    foreach ($request->existing_colors as $imageId => $colorId) {
+        $galleryImage = ProImages::find($imageId);
+        if ($galleryImage) {
+            $galleryImage->update(['color_id' => $colorId]);
+        }
+    }
+}
+
     
             // Update Product Categories
             // $categories = $request->input('category', []);
