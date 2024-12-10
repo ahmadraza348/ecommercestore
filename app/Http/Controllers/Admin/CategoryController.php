@@ -6,6 +6,8 @@ use App\Models\MetaTag;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\RelationalCategory;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -161,18 +163,46 @@ class CategoryController extends Controller
     public function destroy(Request $request, string $id)
     {
         $category = Category::findOrFail($id);
+     RelationalCategory::where('category_id', $category->id )->delete();
+    //    $relational_categories->delete();
+
         $category->delete();
         toastr()->success('Category Deleted Successfully');
         return redirect()->back();
     }
 
     public function bulkDelete(Request $request)
-{
-    $categoryIds = explode(',', $request->category_ids);
-    Category::whereIn('id', $categoryIds)->delete();
-    toastr()->success('categories deleted successfully.');
-    return redirect()->back();
-
+    {
+        // Validate incoming request
+        $request->validate([
+            'category_ids' => 'required|string', // Ensure category_ids is provided and is a string
+        ]);
     
-}
+        $categoryIds = explode(',', $request->category_ids);
+    
+        try {
+            // Begin database transaction
+            DB::beginTransaction();
+    
+            // Delete relational categories
+            RelationalCategory::whereIn('category_id', $categoryIds)->delete();
+    
+            // Delete categories
+            Category::whereIn('id', $categoryIds)->delete();
+    
+            // Commit transaction
+            DB::commit();
+    
+            toastr()->success('Categories deleted successfully.');
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+    
+            toastr()->error('Failed to delete categories: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
+    
+        return redirect()->back();
+    }
+    
 }
