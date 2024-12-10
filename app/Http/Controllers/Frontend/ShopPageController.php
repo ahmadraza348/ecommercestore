@@ -9,59 +9,43 @@ use App\Models\Product;
 
 class ShopPageController extends Controller
 {
-  
-    public function index($slug = null, $subslug = null, $childslug = null, $superchildslug = null)
-    {
-        // Fetch all parent categories for the default slider
-        $categories = Category::where('status', 1)->whereNull('parent_id')->with('subcategories')->get();
-    
-        // Default: Show parent categories in slider and all latest products
-        $sliderCategories = $categories;
-        $productsQuery = Product::query();
-    
-        $currentCategory = null;
-    
-        if ($slug) {
-            // Fetch the current parent category
-            $currentCategory = Category::where('slug', $slug)->with('subcategories')->first();
-    
-            if ($currentCategory && $subslug) {
-                // Fetch the subcategory
-                $currentCategory = $currentCategory->subcategories->where('slug', $subslug)->first();
-    
-                if ($currentCategory && $childslug) {
-                    // Fetch the child category
-                    $currentCategory = $currentCategory->subcategories->where('slug', $childslug)->first();
-    
-                    if ($currentCategory && $superchildslug) {
-                        // Fetch the superchild category
-                        $currentCategory = $currentCategory->subcategories->where('slug', $superchildslug)->first();
-                    }
-                }
-            }
-    
-            if ($currentCategory) {
-                // If a specific category is found, set subcategories for the slider
-                $sliderCategories = $currentCategory->subcategories;
-    
-                // Fetch products related to this category
-                $productsQuery = $currentCategory->products();
+
+public function index($slug = null, $subslug = null, $childslug = null, $superchildslug = null)
+{
+    // Default values
+    $sliderCategories = Category::where('status', 1)->whereNull('parent_id')->with('subcategories')->get(); // Parent categories shown in the slider by default
+    $productsQuery = Product::query(); // Query to fetch all products by default
+    $currentCategory = null; // Variable to hold the current category
+
+    // Handle category navigation through slugs
+    if ($slug) {
+        $currentCategory = Category::with('subcategories')->where('slug', $slug)->first();
+
+        // Navigate through subcategories, child categories, and superchild categories if provided
+        foreach ([$subslug, $childslug, $superchildslug] as $currentSlug) {
+            if ($currentCategory && $currentSlug) {
+                $currentCategory = $currentCategory->subcategories->where('slug', $currentSlug)->first();
             }
         }
-    
-        // Retrieve the products for the current category or default
-        $products = $productsQuery->latest()->paginate(12);
-    
-        // Return to the view
-        return view('frontend.shop', [
-            'categories' => $categories, // Parent categories for the navbar
-            'sliderCategories' => $sliderCategories, // Categories to display in the slider
-            'products' => $products, // Products to display on the shop page
-            'currentCategory' => $currentCategory, // Current category for breadcrumb or title
-        ]);
+
+        // If a specific category is found, update slider categories and products
+        if ($currentCategory) {
+            $sliderCategories = $currentCategory->subcategories; // Subcategories for the slider
+            $productsQuery = $currentCategory->products(); // Products belonging to the current category
+        }
     }
-    
-    
+
+    // Retrieve products for the selected category or all products by default
+    $products = $productsQuery->latest()->paginate(12);
+
+    // Return data to the shop view
+    return view('frontend.shop', [
+        'sliderCategories' => $sliderCategories, // Categories to display in the slider
+        'products' => $products,              // Paginated products for the shop page
+        'currentCategory' => $currentCategory // Current category for breadcrumbs or title
+    ]);
+}
+
     
     }
     
