@@ -36,7 +36,7 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
     }
 
     // Retrieve products for the selected category or all products by default
-    $products = $productsQuery->latest()->paginate(12);
+    $products = $productsQuery->latest()->paginate(1);
 
     // Return data to the shop view
     return view('frontend.shop', [

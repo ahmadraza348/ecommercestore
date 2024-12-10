@@ -117,7 +117,7 @@
                 <!-- sidebar end -->
 
                 <!-- product main wrap start -->
-                <div class="col-lg-9 order-1 order-lg-2">
+                {{-- <div class="col-lg-9 order-1 order-lg-2">
                     <div class="shop-banner img-full">
                         <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
                     </div>
@@ -215,7 +215,100 @@
                     </div>
                     <!-- end pagination area -->
 
+                </div> --}}
+
+                <div class="col-lg-9 order-1 order-lg-2">
+    <div class="shop-banner img-full">
+        <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
+    </div>
+    <!-- product view wrapper area start -->
+    <div class="shop-product-wrapper pt-34">
+        <!-- shop product top wrap start -->
+        <div class="shop-top-bar">
+            <div class="row">
+                <div class="col-lg-7 col-md-6">
+                    <div class="top-bar-left">
+                        <div class="product-view-mode mr-70 mr-sm-0">
+                            <a class="active" href="#" data-target="grid"><i class="fa fa-th"></i></a>
+                            <a href="#" data-target="list"><i class="fa fa-list"></i></a>
+                        </div>
+                        <div class="product-amount">
+                            <p>Showing {{ $products->firstItem() }}–{{ $products->lastItem() }} of {{ $products->total() }} results</p>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-lg-5 col-md-6">
+                    <div class="top-bar-right">
+                        <div class="product-short">
+                            <p>Sort By : </p>
+                            <select class="nice-select" name="sortby">
+                                <option value="trending">Relevance</option>
+                                <option value="sales">Name (A - Z)</option>
+                                <option value="sales">Name (Z - A)</option>
+                                <option value="rating">Price (Low &gt; High)</option>
+                                <option value="date">Rating (Lowest)</option>
+                                <option value="price-asc">Model (A - Z)</option>
+                                <option value="price-asc">Model (Z - A)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- shop product top wrap start -->
+
+        <!-- product item start -->
+        <div class="shop-product-wrap grid row">
+            <div class="col-lg-12">
+                <!-- featured category area start -->
+                @if ($sliderCategories->isNotEmpty())
+                <div class="feature-category-area mt-md-70">
+                    <div class="section-title mb-30">
+                        <div class="title-icon">
+                            <i class="fa fa-bookmark"></i>
+                        </div>
+                        <h3>Shop By Category</h3>
+                    </div>
+                    <div class="featured-carousel-active slick-padding slick-arrow-style">
+                        @foreach ($sliderCategories as $item)
+                            <div class="product-item fix mb-30">
+                                <div class="product-thumb">
+                                    <a href="{{ route('shop', ['slug' => $item->slug]) }}">
+                                        <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('uploads/categories/' . $item->image) : asset('backend/assets/img/noimage.png') }}" class="img-pri" alt="">
+                                    </a>
+                                </div>
+                                <div class="product-content">
+                                    <h4><a href="{{ route('shop', ['slug' => $item->slug]) }}">{{ $item->name }}</a></h4>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            @foreach ($products as $item)
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                
+                @include('frontend.partials.pro_slide', ['item' => $item])
+            </div> 
+            @endforeach
+        </div>
+        <!-- product item end -->
+    </div>
+    <!-- product view wrapper area end -->
+
+    <!-- start pagination area -->
+    <div class="paginatoin-area text-center pt-28">
+        <div class="row">
+            <div class="col-12">
+                {{ $products->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
+    </div>
+    <!-- end pagination area -->
+</div>
+
                 <!-- product main wrap end -->
             </div>
         </div>
