@@ -39,6 +39,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
     });
+Route::post('/categories/import', [CategoryController::class, 'import'])->name('categories.import');
 
     Route::resource('category', CategoryController::class)->names('category');
     Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');

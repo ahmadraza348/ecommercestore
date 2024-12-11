@@ -7,21 +7,29 @@
                 <div class="page-title">
                     <h4>Manage Categories</h4>
                     <h6>Manage your Product Categories </h6>
-                    
+
                 </div>
                 <div class="page-btn">
-                    
+
                 </div>
                 <div class="page-btn">
                     <a href="{{ route('category.create') }}" class="btn btn-added"><img
                             src="{{ asset('backend/assets/img/icons/plus.svg') }}" alt="img">Add Category</a>
                 </div>
-        
+
             </div>
+            <form action="{{ route('categories.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group d-flex">
+                    <input type="file" name="categories_file" id="categories_file" class="form-control" required>
+                    <button type="submit" class="btn btn-primary">Import </button>
+                </div>
+            </form>
+
 
 
             <div class="card">
-                
+
                 <div class="card-body">
 
                     <div class="table-responsive">
@@ -47,15 +55,16 @@
                                     <tr>
                                         <td>
                                             <label class="checkboxs">
-                                                <input type="checkbox" class="select-category" data-id="{{ $category->id }}" onchange="toggleDeleteButton()">
+                                                <input type="checkbox" class="select-category" data-id="{{ $category->id }}"
+                                                    onchange="toggleDeleteButton()">
                                                 <span class="checkmarks"></span>
                                             </label>
                                         </td>
                                         <td>
                                             <a href="javascript:void(0);" class="product-img">
-                                                <img src="{{ $category->image ? asset('uploads/categories/' . $category->image) : asset('backend/assets/img/noimage.png') }}" 
-                                                     alt="profile image" 
-                                                     style="width:60px; height:60px; border-radius:100px;">
+                                                <img src="{{ $category->image ? asset('uploads/categories/' . $category->image) : asset('backend/assets/img/noimage.png') }}"
+                                                    alt="profile image"
+                                                    style="width:60px; height:60px; border-radius:100px;">
                                             </a>
                                         </td>
                                         <td>{{ $category->name }} </td>
@@ -82,16 +91,20 @@
                                             <a href="{{ route('category.edit', $category->id) }}" class="me-3">
                                                 <img src="{{ asset('backend/assets/img/icons/edit.svg') }}" alt="edit">
                                             </a>
-            
+
                                             <!-- Delete Form (hidden) -->
-                                            <form id="deleteCat-{{ $category->id }}" action="{{ route('category.destroy', $category->id) }}" method="POST" style="display: none;">
+                                            <form id="deleteCat-{{ $category->id }}"
+                                                action="{{ route('category.destroy', $category->id) }}" method="POST"
+                                                style="display: none;">
                                                 @csrf
                                                 @method('delete')
                                             </form>
-                                            
+
                                             <!-- Delete Icon -->
-                                            <a onclick="if(confirm('Are you sure to permanently delete this?')) { document.getElementById('deleteCat-{{ $category->id }}').submit(); } return false;" class="me-3">
-                                                <img src="{{ asset('backend/assets/img/icons/delete.svg') }}" alt="delete">
+                                            <a onclick="if(confirm('Are you sure to permanently delete this?')) { document.getElementById('deleteCat-{{ $category->id }}').submit(); } return false;"
+                                                class="me-3">
+                                                <img src="{{ asset('backend/assets/img/icons/delete.svg') }}"
+                                                    alt="delete">
                                             </a>
                                         </td>
                                     </tr>
@@ -100,7 +113,8 @@
                         </table>
                     </div>
 
-                    <button id="delete-selected-btn" class="btn btn-danger btn-sm mt-3" style="display: none; " onclick="deleteSelectedCategories()">Delete Selected</button>
+                    <button id="delete-selected-btn" class="btn btn-danger btn-sm mt-3" style="display: none; "
+                        onclick="deleteSelectedCategories()">Delete Selected</button>
                 </div>
             </div>
 
@@ -113,5 +127,5 @@
 
         </div>
     </div>
-  
+
 @endsection

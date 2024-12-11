@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\RelationalCategory;
 use Illuminate\Support\Facades\DB;
+    use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CategoriesImport;
 
 class CategoryController extends Controller
 {
@@ -204,5 +206,24 @@ class CategoryController extends Controller
     
         return redirect()->back();
     }
-    
+
+
+public function import(Request $request)
+{
+    // Validate the uploaded file
+    $request->validate([
+        'categories_file' => 'required|mimes:xlsx,csv',
+    ]);
+
+    // Import the file using Laravel Excel
+    try {
+        Excel::import(new CategoriesImport, $request->file('categories_file'));
+        return redirect()->back();
+        
+            toastr()->success('Categories imported successfully!.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to import categories: ' . $e->getMessage());
+    }
+}
+
 }
