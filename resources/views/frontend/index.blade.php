@@ -172,6 +172,9 @@
         </div>
     </div>
     <div class="container">
+        
+        <!-- banner statistic end -->
+        @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
         <div class="banner-statistic pt-28 pb-36">
             <div class="img-container fix img-full">
                 <a href="#">
@@ -179,9 +182,6 @@
                 </a>
             </div>
         </div>
-
-        <!-- banner statistic end -->
-        @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
             <div class="product-feature-wrapper mb-lg-6">
                 <div class="container">
                     <div class="row">
@@ -412,6 +412,8 @@
     <!-- latest product end -->
 
     <!-- brand area start -->
+        @if (!empty($brands) && $brands->isNotEmpty())
+
     <div class="brand-area pt-28 pb-30">
         <div class="container">
             <div class="row">
@@ -438,5 +440,6 @@
             </div>
         </div>
     </div>
+    @endif
     <!-- brand area end -->
 @endsection

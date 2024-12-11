@@ -19,6 +19,7 @@ return array(
     'da91a01b5badbe5394c83814ef5982ea' => $vendorDir . '/php-flasher/flasher/helpers.php',
     'a4a119a56e50fbb293281d9a48007e0e' => $vendorDir . '/symfony/polyfill-php80/bootstrap.php',
     '7b11c4dc42b3b3023073cb14e519683c' => $vendorDir . '/ralouphie/getallheaders/src/getallheaders.php',
+    '2cffec82183ee1cea088009cef9a6fc3' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
     '35a6ad97d21e794e7e22a17d806652e4' => $vendorDir . '/nunomaduro/termwind/src/Functions.php',
     'ea5fe30a29a003841e935d35db82069e' => $vendorDir . '/php-flasher/flasher-toastr/functions.php',
     '8c15924acd8bcdca7d143b74c5c435ae' => $vendorDir . '/php-flasher/flasher-toastr/helpers.php',
