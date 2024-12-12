@@ -17,6 +17,14 @@
                 </div>
 
             </div>
+             <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group d-flex">
+                    <input type="file" name="products_file" id="products_file" class="form-control" required>
+                    <button type="submit" class="btn btn-primary">Import </button>
+                </div>
+            </form>
+
 
 
             <div class="card">

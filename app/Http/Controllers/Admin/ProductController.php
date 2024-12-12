@@ -435,4 +435,22 @@ public function bulkDelete(Request $request)
 
     
 }
+
+public function import(Request $request)
+{
+    // Validate the uploaded file
+    $request->validate([
+        'products_file' => 'required|mimes:xlsx,csv',
+    ]);
+
+    // Import the file using Laravel Excel
+    try {
+        Excel::import(new CategoriesImport, $request->file('products_file'));
+        return redirect()->back();
+        
+            toastr()->success('Categories imported successfully!.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to import categories: ' . $e->getMessage());
+    }
+}
 }
