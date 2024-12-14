@@ -119,7 +119,7 @@
                                     <!-- Image Preview -->
                                     <div class="mt-2">
                                         @if ($category->image)
-                                            <img id="imagePreview" src="{{ asset('uploads/categories/' . $category->image) }}" alt="Image Preview" style="max-width: 200px; max-height: 200px;">
+                                            <img id="imagePreview" src="{{ asset('storage/' . $category->image) }}" alt="Image Preview" style="max-width: 200px; max-height: 200px;">
                                         @else
                                             <img id="imagePreview" src="#" alt="Image Preview" style="display: none; max-width: 200px; max-height: 200px;">
                                         @endif

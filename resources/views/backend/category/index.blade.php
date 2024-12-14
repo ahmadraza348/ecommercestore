@@ -62,7 +62,7 @@
                                         </td>
                                         <td>
                                             <a href="javascript:void(0);" class="product-img">
-                                                <img src="{{ $category->image ? asset('uploads/categories/' . $category->image) : asset('backend/assets/img/noimage.png') }}"
+                                                <img src="{{ $category->image ? asset('storage/' . $category->image) : asset('backend/assets/img/noimage.png') }}"
                                                     alt="profile image"
                                                     style="width:60px; height:60px; border-radius:100px;">
                                             </a>

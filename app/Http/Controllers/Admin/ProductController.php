@@ -16,6 +16,8 @@ use App\Models\AttributeValue;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
 
 class ProductController extends Controller
 {
@@ -50,10 +52,10 @@ class ProductController extends Controller
                 'sale_price' => 'required|numeric|max:99999',
                 'barcode' => 'required|string|max:255',
                 'stock' => 'required|integer|max:99999',
-                'featured_image' => 'required|image|mimes:jpg,jpeg,png|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png|max:200',
+                'featured_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:200',
+                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
                 'gallery_images' => 'required|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png|max:200',
+                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
                  'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
             ];
 
@@ -107,18 +109,6 @@ class ProductController extends Controller
             // Create Product
             $product = Product::create($data);
 
-            // Store Product Gallery Images
-            // if ($request->hasFile('gallery_images')) {
-            //     foreach ($request->file('gallery_images') as $galleryImage) {
-            //         $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
-            //         $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
-            //         ProImages::create([
-            //             'product_id' => $product->id,
-            //             'image' => $publicGalleryPath,
-                        
-            //         ]);
-            //     }
-            // }
             if ($request->hasFile('gallery_images')) {
                 $colors = $request->input('colors'); // Get color IDs from the request
             
@@ -135,14 +125,6 @@ class ProductController extends Controller
             }
             
 
-            // Store Product Categories
-            // $categories = $request->input('category', []);
-            // $subcategories = $request->input('subcategory', []);
-            // $childcategories = $request->input('childcategory', []);
-            // $allCategories = array_merge($categories, $subcategories, $childcategories);
-            // $product->procategories()->attach($allCategories);
-
-            
             $categories = $request->input('category', []);
             $subcategories = $request->input('subcategory', []);
             $childcategories = $request->input('childcategory', []);
@@ -240,10 +222,10 @@ class ProductController extends Controller
                 'sale_price' => 'required|numeric|max:99999',
                 'barcode' => 'required|string|max:255',
                 'stock' => 'required|integer|max:99999',
-                'featured_image' => 'nullable|image|mimes:jpg,jpeg,png|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png|max:200',
+                'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
+                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
                 'gallery_images' => 'nullable|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png|max:200',
+                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
                 'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
             ];
     
@@ -328,14 +310,7 @@ if ($request->has('existing_colors')) {
 }
 
     
-            // Update Product Categories
-            // $categories = $request->input('category', []);
-            // $subcategories = $request->input('subcategory', []);
-            // $childcategories = $request->input('childcategory', []);
-            // $allCategories = array_merge($categories, $subcategories, $childcategories);
-            // $product->procategories()->sync($allCategories);
-// dd($product);
-            if ($request->has('category')) {
+           if ($request->has('category')) {
                 // First, detach old categories from the brand
                 RelationalCategory::where('metaable_id', $product->id)
                     ->where('metaable_type', Product::class)
@@ -445,7 +420,7 @@ public function import(Request $request)
 
     // Import the file using Laravel Excel
     try {
-        Excel::import(new CategoriesImport, $request->file('products_file'));
+        Excel::import(new ProductsImport, $request->file('products_file'));
         return redirect()->back();
         
             toastr()->success('Categories imported successfully!.');

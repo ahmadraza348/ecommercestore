@@ -69,7 +69,7 @@
     <div class="form-group mb-0" id="colorinput" style="display: none;">
         <label class="form-label" for="slug">Select Color</label>
         <div class="form-control-wrap">
-            <input type="color" name="colorcode" id="colorcode" value="#ff0000"
+            <input type="color" name="colorcode" id="colorcode" value="#000000"
                 class="" value="{{ old('colorcode') }}">
         </div>
     </div>
@@ -109,7 +109,7 @@
         var selectedAttributeId = this.value;
 
         // Replace '1' with the actual ID of the "Color" attribute in your database
-        if (selectedAttributeId == '1') { // Assuming 1 is the ID for "Color"
+        if (selectedAttributeId == '4') { // Assuming 1 is the ID for "Color"
             colorInput.style.display = 'block';
         } else {
             colorInput.style.display = 'none';

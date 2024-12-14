@@ -13,9 +13,10 @@ class ShopPageController extends Controller
 public function index($slug = null, $subslug = null, $childslug = null, $superchildslug = null)
 {
     // Default values
-    $sliderCategories = Category::where('status', 1)->whereNull('parent_id')->with('subcategories')->get(); // Parent categories shown in the slider by default
-    $productsQuery = Product::query(); // Query to fetch all products by default
-    $currentCategory = null; // Variable to hold the current category
+    $shopPageCategories = Category::where('status', 1)->whereNull('parent_id')->get(); 
+
+    $productsQuery = Product::query(); 
+    $currentCategory = null; 
 
     // Handle category navigation through slugs
     if ($slug) {
@@ -30,17 +31,17 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
 
         // If a specific category is found, update slider categories and products
         if ($currentCategory) {
-            $sliderCategories = $currentCategory->subcategories; // Subcategories for the slider
+            $shopPageCategories = $currentCategory->subcategories; // Subcategories for the slider
             $productsQuery = $currentCategory->products(); // Products belonging to the current category
         }
     }
 
     // Retrieve products for the selected category or all products by default
-    $products = $productsQuery->latest()->paginate(1);
+    $products = $productsQuery->latest()->paginate(12);
 
     // Return data to the shop view
     return view('frontend.shop', [
-        'sliderCategories' => $sliderCategories, // Categories to display in the slider
+        'shopPageCategories' => $shopPageCategories, // Categories to display in the slider
         'products' => $products,              // Paginated products for the shop page
         'currentCategory' => $currentCategory // Current category for breadcrumbs or title
     ]);

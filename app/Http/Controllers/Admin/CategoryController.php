@@ -10,9 +10,11 @@ use App\Models\RelationalCategory;
 use Illuminate\Support\Facades\DB;
     use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\CategoriesImport;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -43,24 +45,20 @@ class CategoryController extends Controller
             'slug' => 'required|string|max:255|unique:categories,slug'
         ]);
     
-        // Store the image if it exists
-        if ($request->hasFile('image')) {
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/categories'), $imageName);
-        } else {
-            $imageName = null; // No image uploaded
-        }
-    
+   
         // Create the category
         $category = new Category();
         $category->name = $request->name;
         $category->slug = $request->slug;
         $category->parent_id = $request->parent_id; // Nullable field for parent category
-        $category->image = $imageName; // Save the image name if uploaded
         $category->status = $request->status;
         $category->description = $request->description;
         if($request->is_featured){
             $category->is_featured = $request->is_featured;
+        }
+        if ($request->hasFile('image')) {
+            $ImageName = time() . '_' . uniqid() . '.' . $request->file('image')->getClientOriginalExtension();
+            $category->image = $request->file('image')->storeAs('images/categories', $ImageName, 'public');
         }
     
         // Save the category
@@ -128,24 +126,15 @@ class CategoryController extends Controller
         if($request->is_featured){
             $category->is_featured = $request->is_featured;
         }
-    
-        // Handle image update
+
         if ($request->hasFile('image')) {
-            // Delete the old image if it exists
-            if ($category->image && file_exists(public_path('uploads/categories/' . $category->image))) {
-                unlink(public_path('uploads/categories/' . $category->image));
-            }
-    
-            // Upload the new image
-            $imageName = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads/categories'), $imageName);
-            $category->image = $imageName; // Save the new image name
+            $imageName = time() . '_' . uniqid() . '.' . $request->file('image')->getClientOriginalExtension();
+            $category->image = $request->file('image')->storeAs('images/categories', $imageName, 'public');
         }
-    
-        // Save the updated category
+
+        // Save the updated category data
         $category->save();
-    
-        // Update or create meta tags
+                // Update or create meta tags
         $metaTag = $category->metaTag ?: new MetaTag(); // If no meta tag exists, create a new one
         $metaTag->meta_title = $request->meta_title;
         $metaTag->meta_keywords = $request->meta_keywords;
