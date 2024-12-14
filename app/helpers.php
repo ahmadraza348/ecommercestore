@@ -12,4 +12,17 @@ if (!function_exists('check_admin_auth')) {
         }
         return view($routeName);
     }
+    if (!function_exists('buildCategorySlug')) {
+        function buildCategorySlug($category)
+        {
+            $slug = $category->slug;
+            $parent = $category->parent; // Assuming 'parent' relationship exists in your Category model
+            while ($parent) {
+                $slug = $parent->slug . '/' . $slug;
+                $parent = $parent->parent;
+            }
+            return $slug;
+        }
+    }
+    
 }

@@ -16,7 +16,7 @@
                                     <li class="title"><i class="fa fa-bars"></i> Categories</li>
                                     @foreach ($shopPageCategories as $item)
                                         <li>
-                                            <a href="{{ route('shop', ['slug' => $currentCategory->slug ?? $item->slug, 'subslug' => isset($currentCategory) ? $item->slug : null]) }}">
+                                            <a href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
                                                 {{ $item->name }}
                                             </a>
                                             <span>({{ $item->products->where('status', 'active')->count() }})</span>
@@ -26,6 +26,7 @@
                             </div>
                         </div>
                     @endif
+                    
                     
                         <!-- sidebar categorie start -->
 
@@ -177,7 +178,7 @@
                         @foreach ($shopPageCategories as $item)
                             <div class="product-item fix mb-30">
                                 <div class="product-thumb">
-                                    <a href="{{ route('shop', ['slug' => $currentCategory->slug ?? $item->slug, 'subslug' => isset($currentCategory) ? $item->slug : null]) }}">
+                                    <a href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
                                         <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}" class="img-pri" alt="">
                                     </a>
                                 </div>
