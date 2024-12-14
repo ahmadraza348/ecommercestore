@@ -373,7 +373,7 @@
                                                 <!-- Existing fields HTML -->
                                                 <div class="form-group m-2">
                                                     <label for="">Item Code*</label>
-                                                    <input type="text" name="itemcode[]"
+                                                    <input type="number" name="itemcode[]"
                                                         value="{{ old('itemcode.' . $index) }}" required
                                                         class="form-control" />
                                                     <div class="text-danger">
@@ -488,7 +488,7 @@
 
     <script>
         $(document).ready(function() {
-            var maxField = 10;
+            var maxField = 100;
             var addButton = $('.add_button');
             var wrapper = $('.field_wrapper');
             var fieldCounter = $('.field_wrapper .d-flex').length;
@@ -528,7 +528,7 @@
                 return `
             <div class="d-flex" style="justify-content:space-between; margin-top: 10px;">
                 <div class="form-group m-2">
-                    <input type="text" name="itemcode[]" value="${oldItemCode}" class="form-control" />
+                    <input type="number" name="itemcode[]" value="${oldItemCode}" class="form-control" />
                     <div class="text-danger">@error('itemcode[]'){{ $message }}@enderror</div>
                 </div>
                 <div class="form-group m-2">

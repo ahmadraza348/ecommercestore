@@ -6,7 +6,7 @@
             <div class="col-lg-12">
                 <div class="slider-wrapper-area">
                     <div class="hero-slider-active hero__1 slick-dot-style hero-dot">
-                          <div class="single-slider"
+                        <div class="single-slider"
                             style="background-image: url({{ asset('frontend/assets/img/slider/slider12_bg.jpg') }}">
                             <div class="container p-0">
                                 <div class="slider-main-content">
@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- home banner area end -->
 
     {{-- Featured Categories --}}
@@ -156,7 +156,7 @@
                             </div> <!-- section title end -->
                             <!-- featured category start -->
                             <div class="featured-carousel-active slick-padding slick-arrow-style">
-                             
+
                                 @foreach ($featured_pro as $item)
                                     @include('frontend.partials.pro_slide', ['item' => $item])
                                 @endforeach
@@ -169,35 +169,35 @@
                 </div>
 
             </div>
+            <div class="banner-statistic pt-28 pb-36">
+                <div class="img-container fix img-full">
+                    <a href="#">
+                        <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
+                    </a>
+                </div>
+            </div>
+
         </div>
     </div>
+
+    {{-- DOuble Slides Contaner --}}
     <div class="container">
-        
-        <!-- banner statistic end -->
-        @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
-        <div class="banner-statistic pt-28 pb-36">
-            <div class="img-container fix img-full">
-                <a href="#">
-                    <img src="{{ asset('frontend/assets/img/banner/banner_static1.jpg') }}" alt="">
-                </a>
-            </div>
-        </div>
-            <div class="product-feature-wrapper mb-lg-6">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="hot-deals-wrap3 mb-30 mb-md-36 mb-sm-22 mt-xs-28">
-                                <div class="section-title-2 d-flex justify-content-between mb-28">
-                                    <h3>Hot Sale</h3>
-                                    {{-- Items currently on promotion or clearance sales. --}}
-                                    <div class="category-append"></div>
-                                    <div class="deals-carousel-active2 slick-padding slick-arrow-style">
-                                        @foreach ($sale_pro as $item)
-                                            @include('frontend.partials.pro_slide', ['item' => $item])
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
+        <div class="row product-feature-wrapper mb-lg-6">
+            
+
+            <!-- banner statistic end -->
+            @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
+                <div class="col-lg-6">
+                    <div class="hot-deals-wrap3 mb-30 mb-md-22 mb-sm-22 mt-sm-14">
+                        <div class="section-title-2 d-flex justify-content-between mb-28">
+                            <h3>Hot Sale</h3>
+                            {{-- Products with limited-time discounts or seasonal relevance. --}}
+                            <div class="category-append"></div>
+                        </div> <!-- section title end -->
+                        <div class="deals-carousel-active2 slick-padding slick-arrow-style">
+                            @foreach ($sale_pro as $item)
+                                @include('frontend.partials.pro_slide', ['item' => $item])
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -220,6 +220,7 @@
                 </div>
             </div>
         @endif
+    </div>
         <!-- most view area end -->
 
         <!-- banner statistic start -->
@@ -412,34 +413,34 @@
     <!-- latest product end -->
 
     <!-- brand area start -->
-        @if (!empty($brands) && $brands->isNotEmpty())
-
-    <div class="brand-area pt-28 pb-30">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="section-title mb-30">
-                        <div class="title-icon">
-                            <i class="fa fa-crop"></i>
-                        </div>
-                        <h3>Popular Brand</h3>
-                    </div> <!-- section title end -->
+    @if (!empty($brands) && $brands->isNotEmpty())
+        <div class="brand-area pt-28 pb-30">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-title mb-30">
+                            <div class="title-icon">
+                                <i class="fa fa-crop"></i>
+                            </div>
+                            <h3>Popular Brand</h3>
+                        </div> <!-- section title end -->
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="brand-active slick-padding slick-arrow-style">
-                        @foreach ($brands as $item)
-                        <div class="brand-item text-center">
-                          <a href="{{ route('shop', ['slug' => 'brand/' . $item->slug]) }}"><img style="width:150px; height:150px" src="{{ asset('storage/' . $item->image)}}"
-                                  alt=""></a>
-                      </div>                              
-                      @endforeach                       
+                <div class="row">
+                    <div class="col-12">
+                        <div class="brand-active slick-padding slick-arrow-style">
+                            @foreach ($brands as $item)
+                                <div class="brand-item text-center">
+                                    <a href="{{ route('shop', ['slug' => 'brand/' . $item->slug]) }}"><img
+                                            style="width:150px; height:150px"
+                                            src="{{ asset('storage/' . $item->image) }}" alt=""></a>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
     <!-- brand area end -->
 @endsection

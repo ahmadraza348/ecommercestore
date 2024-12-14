@@ -13,34 +13,41 @@
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-category">
                                 <ul>
-                                    <li class="title"><i class="fa fa-bars"></i> categories</li>
+                                    <li class="title"><i class="fa fa-bars"></i> Categories</li>
                                     @foreach ($shopPageCategories as $item)
-                                       <li><a href="{{ route('shop', ['slug' => $item->slug]) }}">{{$item->name}}</a><span>({{$item->products->where('status', 'active')->count()}})</span></li>
+                                        <li>
+                                            <a href="{{ route('shop', ['slug' => $currentCategory->slug ?? $item->slug, 'subslug' => isset($currentCategory) ? $item->slug : null]) }}">
+                                                {{ $item->name }}
+                                            </a>
+                                            <span>({{ $item->products->where('status', 'active')->count() }})</span>
+                                        </li>
                                     @endforeach
-                            
                                 </ul>
                             </div>
                         </div>
-                        @endif
+                    @endif
+                    
                         <!-- sidebar categorie start -->
 
                         <!-- manufacturer start -->
+                        @if ($brands->isNotEmpty())
+
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-title mb-10">
                                 <h3>Manufacturers</h3>
                             </div>
                             <div class="sidebar-widget-body">
                                 <ul>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">calvin klein</a><span>(10)</span>
-                                    </li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">diesel</a><span>(12)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">polo</a><span>(20)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">Tommy
-                                            Hilfiger</a><span>(12)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">Versace</a><span>(16)</span></li>
+                                    @foreach ($shopPageBrands as $brand)
+                                    <li><i class="fa fa-angle-right"></i><a href="{{ route('shop', ['slug' => $brand->slug]) }}">{{ $brand->name }}</a><span>{{$brand->products->count()}}</span></li>
+                                @endforeach
                                 </ul>
                             </div>
                         </div>
+                        @endif
+
+
+
                         <!-- manufacturer end -->
 
                         <!-- pricing filter start -->
@@ -170,7 +177,7 @@
                         @foreach ($shopPageCategories as $item)
                             <div class="product-item fix mb-30">
                                 <div class="product-thumb">
-                                    <a href="{{ route('shop', ['slug' => $item->slug]) }}">
+                                    <a href="{{ route('shop', ['slug' => $currentCategory->slug ?? $item->slug, 'subslug' => isset($currentCategory) ? $item->slug : null]) }}">
                                         <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}" class="img-pri" alt="">
                                     </a>
                                 </div>

@@ -20,6 +20,9 @@ class Brand extends Model
         return $this->belongsToMany(Category::class, 'relational_categories', 'brand_id', 'category_id')
                     ->withTimestamps();
     }
+    public function products(){
+        return $this->hasMany(Product::class , 'brand_id');
+    }
     public static function boot()
     {
         parent::boot();

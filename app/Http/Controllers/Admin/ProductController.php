@@ -182,9 +182,11 @@ class ProductController extends Controller
         // Fetch product with its categories
         $data['pro_data'] = Product::with([
             'gallery_images',
-            'attributes'
+            'attributes' => function ($query) {
+                $query->orderBy('itemcode', 'asc');
+            }
         ])->findOrFail($id);
-   
+        
 
         $data['all_category_data'] = Category::where('status', '1')
             ->whereNull('parent_id')
