@@ -24,6 +24,92 @@
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <style>
+        /* Tree container with scroll bar */
+.tree-container {
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #d8373e;
+    max-height: 300px; /* Limit height to 300px */
+    overflow-y: auto; /* Enable vertical scrollbar */
+    overflow-x: hidden; /* Hide horizontal scroll */
+}
+
+/* Tree structure styling */
+.tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.tree li {
+    /* margin: 10px 0; */
+    padding-left: 10px;
+    position: relative;
+}
+
+/* Vertical and horizontal lines */
+.tree li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -10px;
+    border-left: 1px solid #d8373e;
+    height: 100%;
+    width: 1px;
+}
+
+.tree li::after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: -10px;
+    border-top: 1px solid #d8373e;
+    width: 10px;
+    height: 0;
+}
+
+/* Remove vertical line for last child */
+.tree li:last-child::before {
+    height: 15px;
+}
+
+/* Link styling */
+.tree li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: normal;
+    transition: all 0.3s ease;
+}
+
+.tree li a:hover {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Bold top-level categories */
+.category_li > a {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Styling for deeper levels */
+.tree li ul {
+    padding-left: 15px;
+}
+
+.tree li ul li a {
+    font-size: 13px;
+    color: #444;
+}
+
+    </style>
+
 </head>
 
 <body>
