@@ -6,63 +6,79 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Attribute;
 use App\Models\Brand;
 
 class ShopPageController extends Controller
 {
+public function index($slug = null, $subslug = null, $childslug = null, $superchildslug = null)
+{
+    // Default values for Shop Page
+    $shopPageCategories = Category::where('status', 1)->whereNull('parent_id')->get();
+    $shopPageBrands = Brand::where('status', 1)->get();
+    $shopPageAttributes = Attribute::where('status', 1)->with('attributevalue')->get();
+    $productsQuery = Product::query();
 
-    public function index($slug = null, $subslug = null, $childslug = null, $superchildslug = null)
-    {
-        // Default values for Shop Page
-        $shopPageCategories = Category::where('status', 1)->whereNull('parent_id')->get();
-        $shopPageBrands = Brand::where('status', 1)->get();
-        $productsQuery = Product::query();
-        $currentCategory = null;
-        $currentBrand = null;
+    // Initialize variables for the current category, brand, and attributes
+    $currentCategory = null;
+    $currentBrand = null;
+    $categorySpecificAttributes = $shopPageAttributes;
 
-        if ($slug) {
-            // parent category shop page
-            $currentBrand = Brand::with('categories')->where('slug', $slug)->first();
-            if ($currentBrand) {
-                // Fetch products and categories associated with the brand
-                $productsQuery = Product::where('brand_id', $currentBrand->id);
-                $shopPageCategories = $currentBrand->categories;
-            }
+    // Check if a category slug is provided
+    if ($slug) {
+        // Fetch the current category and related subcategories
+        $currentCategory = Category::with('subcategories')->where('slug', $slug)->first();
+        // Fetch attributes linked to the current category
+        if ($currentCategory) {
+            $categorySpecificAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
+                $query->where('category_id', $currentCategory->id);
+            })->with('attributevalue')->get();
+        }
 
-            $currentCategory = Category::with('subcategories')->where('slug', $slug)->first();
-            // If the current category is found, navigate through subcategories
-            foreach ([$subslug, $childslug, $superchildslug] as $currentSlug) {
-                if ($currentCategory && $currentSlug) {
-                    $currentCategory = $currentCategory->subcategories->where('slug', $currentSlug)->first();
+        // Check if the slug corresponds to a brand
+        $currentBrand = Brand::with('categories')->where('slug', $slug)->first();
+        if ($currentBrand) {
+            $productsQuery = Product::where('brand_id', $currentBrand->id);
+            $shopPageCategories = $currentBrand->categories;
+        }
+
+        // Process subcategory slugs (subslug, childslug, superchildslug)
+        foreach ([$subslug, $childslug, $superchildslug] as $currentSlug) {
+            if ($currentCategory && $currentSlug) {
+                $currentCategory = $currentCategory->subcategories->where('slug', $currentSlug)->first();
+
+                if ($currentCategory) {
+                    // Update attributes for the current subcategory
+                    $categorySpecificAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
+                        $query->where('category_id', $currentCategory->id);
+                    })->with('attributevalue')->get();
                 }
             }
-
-            // If a specific category is found, update categories, products, and brands
-            if ($currentCategory) {
-                $shopPageCategories = $currentCategory->subcategories;
-                $productsQuery = $currentCategory->products();
-
-                // Fetch brands associated with the current category
-                $shopPageBrands = Brand::whereHas('categories', function ($query) use ($currentCategory) {
-                    $query->where('category_id', $currentCategory->id);
-                })->get();
-            }
         }
 
-        // Handle brand slug for Brand Page
-        if ($slug) {
+        // If a specific category is found, update related data
+        if ($currentCategory) {
+            $shopPageCategories = $currentCategory->subcategories;
+            $productsQuery = $currentCategory->products();
+            $shopPageBrands = Brand::whereHas('categories', function ($query) use ($currentCategory) {
+                $query->where('category_id', $currentCategory->id);
+            })->get();
         }
-
-        // Retrieve paginated products
-        $products = $productsQuery->latest()->paginate(12);
-
-        // Return data to the shop view
-        return view('frontend.shop', [
-            'shopPageCategories' => $shopPageCategories, // Categories to display in the slider
-            'products' => $products,                    // Paginated products
-            'currentCategory' => $currentCategory,      // Current category for breadcrumbs
-            'shopPageBrands' => $shopPageBrands,        // Brands related to the category
-            'currentBrand' => $currentBrand             // Current brand for the brand page
-        ]);
     }
+
+    // Fetch paginated products
+    $products = $productsQuery->latest()->paginate(12);
+
+    // Return the shop page view with relevant data
+    return view('frontend.shop', [
+        'shopPageCategories' => $shopPageCategories,
+        'products' => $products,
+        'currentCategory' => $currentCategory,
+        'shopPageBrands' => $shopPageBrands,
+        'currentBrand' => $currentBrand,
+        'shopPageAttributes' => $categorySpecificAttributes,
+    ]);
+}
+
+
 }

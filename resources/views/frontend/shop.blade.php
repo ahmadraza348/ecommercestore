@@ -9,7 +9,7 @@
                 <div class="col-lg-3 order-2 order-lg-1">
                     <div class="shop-sidebar-wrap mt-md-28 mt-sm-28">
                         <!-- sidebar categorie start -->
-                        {{-- @if (!empty($shopPageCategories) && $shopPageCategories->isNotEmpty())
+                        @if (!empty($shopPageCategories) && $shopPageCategories->isNotEmpty())
                             <div class="sidebar-widget mb-30">
                                 <div class="sidebar-category">
                                     <ul>
@@ -25,57 +25,8 @@
                                     </ul>
                                 </div>
                             </div>
-                        @endif --}}
-                        @if (!empty($shopPageCategories) && $shopPageCategories->isNotEmpty())
-                            <div class="sidebar-widget ">
-                                <div class="sidebar-category">
-                                    <ul>
-                                        <li class="title"><i class="fa fa-bars"></i> Categories</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="tree-container mb-30">
-                                <ul id="tree1" class="tree">
-                                    @foreach ($shopPageCategories as $category_item)
-                                        <li class="category_li">
-                                            &#9737; <a href="#">{{ $category_item->name }}</a>
-                                            @if ($category_item->subcategories->isNotEmpty())
-                                                <ul>
-                                                    @foreach ($category_item->subcategories as $subcategoryItem)
-                                                        <li>
-                                                            &#9866; <a href="#">{{ $subcategoryItem->name }}</a>
-                                                            @if ($subcategoryItem->subcategories->isNotEmpty())
-                                                                <ul>
-                                                                    @foreach ($subcategoryItem->subcategories as $childCategoryItem)
-                                                                        <li>
-                                                                            &#9866;&#9866; <a
-                                                                                href="#">{{ $childCategoryItem->name }}</a>
-                                                                            @if ($childCategoryItem->subcategories->isNotEmpty())
-                                                                                <ul>
-                                                                                    @foreach ($childCategoryItem->subcategories as $superchildCategoryItem)
-                                                                                        <li>
-                                                                                            &#9866;&#9866;&#9866; <a
-                                                                                                href="#">{{ $superchildCategoryItem->name }}</a>
-                                                                                        </li>
-                                                                                    @endforeach
-                                                                                </ul>
-                                                                            @endif
-                                                                        </li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            @endif
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
                         @endif
-
-
-                        <!-- pricing filter start -->
+                         <!-- pricing filter start -->
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-title mb-10">
                                 <h3>filter by price</h3>
@@ -110,7 +61,10 @@
                                     <ul>
                                         @foreach ($shopPageBrands as $brand)
                                             <li> <a
-                                                    href="{{ route('shop', ['slug' => $brand->slug]) }}">{{ $brand->name }}</a><span>{{ $brand->products->count() }}</span>
+                                                    {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}
+                                                    >
+                                                    <input type="checkbox" name=""class="" id=""> {{ $brand->name }}</a>
+                                                    <span>({{ $brand->products->count() }})</span>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -119,22 +73,29 @@
                         @endif
                         <!-- manufacturer end -->
 
-
-
-                        <!-- product size start -->
+                        @if ($shopPageAttributes->isNotEmpty())
+                        @foreach ($shopPageAttributes as $attribute)    
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-title mb-10">
-                                <h3>size</h3>
+                                <h3>{{$attribute->name}}</h3>
                             </div>
                             <div class="sidebar-widget-body">
                                 <ul>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">s</a><span>(10)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">m</a><span>(12)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">l</a><span>(20)</span></li>
-                                    <li><i class="fa fa-angle-right"></i><a href="#">XL</a><span>(12)</span></li>
+                                    @foreach ($attribute->attributevalue as $value)
+                                    <li> <a
+                                        {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}
+                                        >
+                                        <input type="checkbox" name=""class="" id=""> {{ $value->name }}</a>
+                                        <span>({{ $value->products->count() }})</span>
+                                        {{-- <span>{{ $value->id }}</span> --}}
+                                </li>
+                                    @endforeach
+                               
                                 </ul>
                             </div>
                         </div>
+                        @endforeach
+                        @endif
                         <!-- product size end -->
 
                         <!-- product tag start -->
