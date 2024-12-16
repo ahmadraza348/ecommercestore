@@ -22,7 +22,6 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
     // Initialize variables for the current category, brand, and attributes
     $currentCategory = null;
     $currentBrand = null;
-    $categorySpecificAttributes = $shopPageAttributes;
 
     // Check if a category slug is provided
     if ($slug) {
@@ -30,7 +29,7 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
         $currentCategory = Category::with('subcategories')->where('slug', $slug)->first();
         // Fetch attributes linked to the current category
         if ($currentCategory) {
-            $categorySpecificAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
+            $shopPageAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
                 $query->where('category_id', $currentCategory->id);
             })->with('attributevalue')->get();
         }
@@ -49,7 +48,7 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
 
                 if ($currentCategory) {
                     // Update attributes for the current subcategory
-                    $categorySpecificAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
+                    $shopPageAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
                         $query->where('category_id', $currentCategory->id);
                     })->with('attributevalue')->get();
                 }
@@ -76,7 +75,7 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
         'currentCategory' => $currentCategory,
         'shopPageBrands' => $shopPageBrands,
         'currentBrand' => $currentBrand,
-        'shopPageAttributes' => $categorySpecificAttributes,
+        'shopPageAttributes' => $shopPageAttributes,
     ]);
 }
 
