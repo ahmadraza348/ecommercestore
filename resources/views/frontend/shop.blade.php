@@ -26,7 +26,7 @@
                                 </div>
                             </div>
                         @endif
-                         <!-- pricing filter start -->
+                        <!-- pricing filter start -->
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-title mb-10">
                                 <h3>filter by price</h3>
@@ -60,11 +60,10 @@
                                 <div class="sidebar-widget-body">
                                     <ul>
                                         @foreach ($shopPageBrands as $brand)
-                                            <li> <a
-                                                    {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}
-                                                    >
-                                                    <input type="checkbox" name=""class="" id=""> {{ $brand->name }}</a>
-                                                    <span>({{ $brand->products->count() }})</span>
+                                            <li> <a {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}>
+                                                    <input type="checkbox" name=""class="brand-filter"
+                                                        data-brand-id="{{ $brand->id }}"> {{ $brand->name }}</a>
+                                                <span>({{ $brand->products->count() }})</span>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -74,27 +73,26 @@
                         <!-- manufacturer end -->
 
                         @if ($shopPageAttributes->isNotEmpty())
-                        @foreach ($shopPageAttributes as $attribute)    
-                        <div class="sidebar-widget mb-30">
-                            <div class="sidebar-title mb-10">
-                                <h3>{{$attribute->name}}</h3>
-                            </div>
-                            <div class="sidebar-widget-body">
-                                <ul>
-                                    @foreach ($attribute->attributevalue as $value)
-                                    <li> <a
-                                        {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}
-                                        >
-                                        <input type="checkbox" name=""class="" id=""> {{ $value->name }}</a>
-                                        <span>({{ $value->products->count() }})</span>
-                                        {{-- <span>{{ $value->id }}</span> --}}
-                                </li>
-                                    @endforeach
-                               
-                                </ul>
-                            </div>
-                        </div>
-                        @endforeach
+                            @foreach ($shopPageAttributes as $attribute)
+                                <div class="sidebar-widget mb-30">
+                                    <div class="sidebar-title mb-10">
+                                        <h3>{{ $attribute->name }}</h3>
+                                    </div>
+                                    <div class="sidebar-widget-body">
+                                        <ul>
+                                            @foreach ($attribute->attributevalue as $value)
+                                                <li> <a {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}>
+                                                        <input type="checkbox" name=""class="" id="">
+                                                        {{ $value->name }}</a>
+                                                    <span>({{ $value->products->count() }})</span>
+                                                    {{-- <span>{{ $value->id }}</span> --}}
+                                                </li>
+                                            @endforeach
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            @endforeach
                         @endif
                         <!-- product size end -->
 
@@ -106,13 +104,7 @@
                             <div class="sidebar-widget-body">
                                 <div class="product-tag">
                                     <a href="#">camera</a>
-                                    <a href="#">computer</a>
-                                    <a href="#">tablet</a>
-                                    <a href="#">watch</a>
-                                    <a href="#">smart phones</a>
-                                    <a href="#">handbag</a>
-                                    <a href="#">shoe</a>
-                                    <a href="#">men</a>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -206,12 +198,19 @@
                                 @endif
                             </div>
 
-                            @foreach ($products as $item)
+                            @forelse ($products as $item)
                                 <div class="col-lg-3 col-md-4 col-sm-6">
-
                                     @include('frontend.partials.pro_slide', ['item' => $item])
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="col-12">
+                                    <div style="background-color:#d8373e; color:white" class="alert  text-center"
+                                        role="alert">
+                                        <h5> No Product Found</h5>
+                                    </div>
+                                </div>
+                            @endforelse
+
                         </div>
                         <!-- product item end -->
                     </div>
