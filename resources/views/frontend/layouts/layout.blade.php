@@ -23,6 +23,7 @@
     <!-- Main Style CSS -->
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body>
@@ -118,7 +119,20 @@
     <script defer src="https://unpkg.com/alpinejs@3.5.1"></script>
 
 </body>
-
+<script>
+    $(document).ready(function() {
+        $('.changeBrand').change(function() {
+            var ids = '';
+           $('.changeBrand').each(function(){
+               if(this.checked){
+                var id = $(this).val(); 
+                ids += id+',';
+            }
+           });
+           $('#get_sub_category_id').val(ids);
+        });
+    });
+</script>
 
 
 </html>

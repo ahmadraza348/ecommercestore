@@ -46,12 +46,11 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- pricing filter end -->
 
-
-                        <!-- sidebar categorie start -->
-
-                        <!-- manufacturer start -->
+                        <form method="post" id="FilterForm" action="">
+                            <input type="text"name="sub_category_id"id="get_sub_category_id">
+                        </form>
+                  
                         @if ($brands->isNotEmpty())
                             <div class="sidebar-widget mb-30">
                                 <div class="sidebar-title mb-10">
@@ -61,8 +60,8 @@
                                     <ul>
                                         @foreach ($shopPageBrands as $brand)
                                             <li> <a {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}>
-                                                    <input type="checkbox" name=""class="brand-filter"
-                                                        data-brand-id="{{ $brand->id }}"> {{ $brand->name }}</a>
+                                                    <input type="checkbox" name=""class="changeBrand"
+                                                        value="{{ $brand->id }}"> {{ $brand->name }}</a>
                                                 <span>({{ $brand->products->count() }})</span>
                                             </li>
                                         @endforeach
@@ -232,3 +231,5 @@
         </div>
     </div>
 @endsection
+
+
