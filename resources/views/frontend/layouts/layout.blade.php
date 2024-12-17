@@ -117,33 +117,6 @@
     <script src="{{ asset('frontend/assets/js/switcher.js') }}"></script>
     <script defer src="https://unpkg.com/alpinejs@3.5.1"></script>
 
-
-    <script>
-        $(document).on('change', '.brand-filter', function () {
-        let selectedBrands = [];
-        $('.brand-filter:checked').each(function () {
-            selectedBrands.push($(this).data('brand-id'));
-        });
-    
-        $.ajax({
-            url: "{{ route('shop.filter') }}", // Define the route for filtering
-            method: "POST",
-            data: {
-                brands: selectedBrands,
-                _token: "{{ csrf_token() }}" // Add CSRF token for security
-            },
-            success: function (response) {
-                $('#product-list').html(response.html); // Update the product list
-            },
-            error: function (xhr) {
-                console.error(xhr.responseText); // Log errors for debugging
-            }
-        });
-    });
-    
-    </script>
-
-
 </body>
 
 
