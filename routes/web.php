@@ -22,7 +22,7 @@ Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageController::class, 'index'])->name('shop');
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
-Route::post('/shop/filter', [ShopPageController::class, 'filterProducts'])->name('shop.filter');
+Route::post('/shop/filter-products', [ShopPageController::class, 'filterProductsByBrands'])->name('shop.filter');
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');

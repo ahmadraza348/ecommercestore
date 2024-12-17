@@ -78,6 +78,23 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
         'shopPageAttributes' => $shopPageAttributes,
     ]);
 }
+public function filterProductsByBrands(Request $request)
+{
+    $brandIds = $request->input('brand_ids', []); // Get selected brand IDs
+    $products = Product::query();
+
+    if (!empty($brandIds)) {
+        $products = $products->whereIn('brand_id', $brandIds);
+    }
+
+    $products = $products->latest()->paginate(12);
+
+    // Return partial view with updated products
+    return response()->json([
+        'html' => view('frontend.partials.pro_slide_list', ['products' => $products])->render()
+    ]);
+}
+
 
 
 }

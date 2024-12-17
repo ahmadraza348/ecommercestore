@@ -120,19 +120,40 @@
 
 </body>
 <script>
-    $(document).ready(function() {
-        $('.changeBrand').change(function() {
-            var ids = '';
-           $('.changeBrand').each(function(){
-               if(this.checked){
-                var id = $(this).val(); 
-                ids += id+',';
-            }
-           });
-           $('#get_sub_category_id').val(ids);
+    $(document).ready(function () {
+        $('.filter-brand').on('change', function () {
+            let selectedBrands = [];
+
+            // Get all checked brand IDs
+            $('.filter-brand:checked').each(function () {
+                selectedBrands.push($(this).val());
+            });
+
+            // AJAX Request to fetch filtered products
+            $.ajax({
+                url: "{{ route('shop.filter') }}", // Define this route in the backend
+                method: "POST",
+                data: {
+                    brand_ids: selectedBrands,
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function () {
+                    $('#loader').show(); // Show loader
+                },
+                success: function (response) {
+                    $('#product-list').html(response.html); // Update product list
+                },
+                complete: function () {
+                    $('#loader').hide(); // Hide loader
+                },
+                error: function () {
+                    alert("Something went wrong! Please try again.");
+                }
+            });
         });
     });
 </script>
+
 
 
 </html>
