@@ -78,66 +78,38 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
         'shopPageAttributes' => $shopPageAttributes,
     ]);
 }
-// OR Logic
+
 public function filterProductsByBrands(Request $request)
 {
-    // dd($request->all());
+    // Retrieve filter inputs from the request
     $brandIds = $request->input('brand_ids', []);
     $attributeValues = $request->input('attribute_values', []);
 
+    // Initialize the query
     $products = Product::query();
 
-    // Filter by selected brands
+    // Apply brand filter (AND logic)
     if (!empty($brandIds)) {
         $products->whereIn('brand_id', $brandIds);
     }
 
-    // Filter by selected attribute values
+    // Apply attribute values filter (AND logic)
     if (!empty($attributeValues)) {
-        $products->whereHas('attributes', function ($query) use ($attributeValues) {
-            $query->whereIn('attribute_value_id', $attributeValues);
-        });
+        foreach ($attributeValues as $attributeValueId) {
+            $products->whereHas('attributes', function ($query) use ($attributeValueId) {
+                $query->where('attribute_value_id', $attributeValueId);
+            });
+        }
     }
 
     // Fetch filtered products
     $products = $products->latest()->paginate(12);
 
+    // Return filtered products as JSON
     return response()->json([
         'html' => view('frontend.partials.pro_slide_list', ['products' => $products])->render()
     ]);
 }
-
-// public function filterProductsByBrands(Request $request)
-// {
-//     // Retrieve filter inputs from the request
-//     $brandIds = $request->input('brand_ids', []);
-//     $attributeValues = $request->input('attribute_values', []);
-
-//     // Initialize the query
-//     $products = Product::query();
-
-//     // Apply brand filter (AND logic)
-//     if (!empty($brandIds)) {
-//         $products->whereIn('brand_id', $brandIds);
-//     }
-
-//     // Apply attribute values filter (AND logic)
-//     if (!empty($attributeValues)) {
-//         foreach ($attributeValues as $attributeValueId) {
-//             $products->whereHas('attributes', function ($query) use ($attributeValueId) {
-//                 $query->where('attribute_value_id', $attributeValueId);
-//             });
-//         }
-//     }
-
-//     // Fetch filtered products
-//     $products = $products->latest()->paginate(12);
-
-//     // Return filtered products as JSON
-//     return response()->json([
-//         'html' => view('frontend.partials.pro_slide_list', ['products' => $products])->render()
-//     ]);
-// }
 
 
 }
