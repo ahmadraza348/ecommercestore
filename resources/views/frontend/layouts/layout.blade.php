@@ -119,14 +119,21 @@
     <script defer src="https://unpkg.com/alpinejs@3.5.1"></script>
 
 </body>
+
 <script>
     $(document).ready(function () {
-        $('.filter-brand').on('change', function () {
+        function fetchFilteredProducts() {
             let selectedBrands = [];
+            let selectedAttributes = [];
 
             // Get all checked brand IDs
             $('.filter-brand:checked').each(function () {
                 selectedBrands.push($(this).val());
+            });
+
+            // Get all checked attribute values
+            $('.filter-attribute:checked').each(function () {
+                selectedAttributes.push($(this).val());
             });
 
             // AJAX Request to fetch filtered products
@@ -135,6 +142,7 @@
                 method: "POST",
                 data: {
                     brand_ids: selectedBrands,
+                    attribute_values: selectedAttributes,
                     _token: "{{ csrf_token() }}"
                 },
                 beforeSend: function () {
@@ -150,10 +158,11 @@
                     alert("Something went wrong! Please try again.");
                 }
             });
-        });
+        }
+
+        // Trigger fetchFilteredProducts on change
+        $('.filter-brand, .filter-attribute').on('change', fetchFilteredProducts);
     });
 </script>
-
-
 
 </html>

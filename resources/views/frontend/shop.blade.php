@@ -48,30 +48,29 @@
                         </div>
 
                         <form method="post" id="FilterForm" action="">
-                            <input type="text"name="brand_idpweb"id="get_brand_idpweb">
                         </form>
-                  
+
                         @if ($brands->isNotEmpty())
-                        <div class="sidebar-widget mb-30">
-                            <div class="sidebar-title mb-10">
-                                <h3>Brands</h3>
+                            <div class="sidebar-widget mb-30">
+                                <div class="sidebar-title mb-10">
+                                    <h3>Brands</h3>
+                                </div>
+                                <div class="sidebar-widget-body">
+                                    <ul>
+                                        @foreach ($shopPageBrands as $brand)
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox" class="filter-brand" value="{{ $brand->id }}">
+                                                    {{ $brand->name }}
+                                                </label>
+                                                <span>({{ $brand->products->count() }})</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="sidebar-widget-body">
-                                <ul>
-                                    @foreach ($shopPageBrands as $brand)
-                                        <li>
-                                            <label>
-                                                <input type="checkbox" class="filter-brand" value="{{ $brand->id }}">
-                                                {{ $brand->name }}
-                                            </label>
-                                            <span>({{ $brand->products->count() }})</span>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    @endif
-                    
+                        @endif
+
                         <!-- manufacturer end -->
 
                         @if ($shopPageAttributes->isNotEmpty())
@@ -84,13 +83,12 @@
                                         <ul>
                                             @foreach ($attribute->attributevalue as $value)
                                                 <li> <a {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}>
-                                                        <input type="checkbox" name=""class="" id="">
+                                                        <input type="checkbox" name=""class="filter-attribute"value="{{$value->id}}" id="">
                                                         {{ $value->name }}</a>
                                                     <span>({{ $value->products->count() }})</span>
                                                     {{-- <span>{{ $value->id }}</span> --}}
                                                 </li>
                                             @endforeach
-
                                         </ul>
                                     </div>
                                 </div>
@@ -106,7 +104,7 @@
                             <div class="sidebar-widget-body">
                                 <div class="product-tag">
                                     <a href="#">camera</a>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -198,21 +196,27 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
-                            <div id="product-list" class="row">
-                                @forelse ($products as $item)
-                                    <div class="col-lg-3 col-md-4 col-sm-6">
-                                        @include('frontend.partials.pro_slide', ['item' => $item])
-                                    </div>
-                                @empty
-                                    <div class="col-12">
-                                        <div style="background-color:#d8373e; color:white" class="alert text-center" role="alert">
-                                            <h5>No Product Found</h5>
+                                <div id="loader" style="display: none; text-align: center;">
+                                    <img src="{{ asset('frontend/assets/loader.gif') }}" style="position:absolute; z-index:999" alt="Loading..." />
+                                </div>
+
+                                <div id="product-list" class="row">
+                                    @forelse ($products as $item)
+                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                            @include('frontend.partials.pro_slide', ['item' => $item])
                                         </div>
-                                    </div>
-                                @endforelse
+                                    @empty
+                                        <div class="col-12">
+                                            <div style="background-color:#d8373e; color:white" class="alert text-center"
+                                                role="alert">
+                                                <h5>No Product Found</h5>
+                                            </div>
+                                        </div>
+                                    @endforelse
+                                </div>
+
                             </div>
-                            
+
 
                         </div>
                         <!-- product item end -->
@@ -235,5 +239,3 @@
         </div>
     </div>
 @endsection
-
-
