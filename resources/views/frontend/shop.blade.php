@@ -48,8 +48,10 @@
                         </div>
 
                         <form method="post" id="FilterForm" action="">
+                            <input type="hidden" name="current_slug"
+                                value="{{ $currentCategory->slug ?? ($currentBrand->slug ?? '') }}">
                         </form>
-
+                        
                         @if ($brands->isNotEmpty())
                             <div class="sidebar-widget mb-30">
                                 <div class="sidebar-title mb-10">
@@ -71,8 +73,6 @@
                             </div>
                         @endif
 
-                        <!-- manufacturer end -->
-
                         @if ($shopPageAttributes->isNotEmpty())
                             @foreach ($shopPageAttributes as $attribute)
                                 <div class="sidebar-widget mb-30">
@@ -82,11 +82,13 @@
                                     <div class="sidebar-widget-body">
                                         <ul>
                                             @foreach ($attribute->attributevalue as $value)
-                                                <li> <a {{-- href="{{ route('shop', ['slug' => $brand->slug]) }}" --}}>
-                                                        <input type="checkbox" name=""class="filter-attribute"value="{{$value->id}}" id="">
-                                                        {{ $value->name }}</a>
-                                                    <span>({{ $value->products->count() }})</span>
-                                                    {{-- <span>{{ $value->id }}</span> --}}
+                                                <li>
+                                                     <a>
+                                                        <input type="checkbox" name=""class="filter-attribute"
+                                                            value="{{ $value->id }}" id="">
+                                                        {{ $value->name }}
+                                                    </a>
+                                                    <span>({{ $value->products->count() }})</span>                                                
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -94,8 +96,7 @@
                                 </div>
                             @endforeach
                         @endif
-                        <!-- product size end -->
-
+                      
                         <!-- product tag start -->
                         <div class="sidebar-widget mb-30">
                             <div class="sidebar-title mb-10">
@@ -197,7 +198,8 @@
                                     </div>
                                 @endif
                                 <div id="loader" style="display: none; text-align: center;">
-                                    <img src="{{ asset('frontend/assets/loader.gif') }}" style="position:absolute; z-index:999" alt="Loading..." />
+                                    <img src="{{ asset('frontend/assets/loader.gif') }}"
+                                        style="position:absolute; z-index:999" alt="Loading..." />
                                 </div>
 
                                 <div id="product-list" class="row">

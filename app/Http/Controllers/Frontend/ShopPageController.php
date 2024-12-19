@@ -78,15 +78,32 @@ public function index($slug = null, $subslug = null, $childslug = null, $superch
         'shopPageAttributes' => $shopPageAttributes,
     ]);
 }
-
 public function filterProductsByBrands(Request $request)
 {
     // Retrieve filter inputs from the request
     $brandIds = $request->input('brand_ids', []);
     $attributeValues = $request->input('attribute_values', []);
+    $currentSlug = $request->input('current_slug', '');
 
     // Initialize the query
     $products = Product::query();
+
+    // Filter by current slug (category or brand)
+    if (!empty($currentSlug)) {
+        // Check if the slug belongs to a category
+        $currentCategory = Category::where('slug', $currentSlug)->first();
+        if ($currentCategory) {
+            $products->whereHas('categories', function ($query) use ($currentCategory) {
+                $query->where('categories.id', $currentCategory->id); // Explicitly qualify 'id'
+            });
+        }
+
+        // Check if the slug belongs to a brand
+        $currentBrand = Brand::where('slug', $currentSlug)->first();
+        if ($currentBrand) {
+            $products->where('brand_id', $currentBrand->id);
+        }
+    }
 
     // Apply brand filter (AND logic)
     if (!empty($brandIds)) {

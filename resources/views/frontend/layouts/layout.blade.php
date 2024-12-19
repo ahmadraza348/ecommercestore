@@ -125,6 +125,8 @@
         function fetchFilteredProducts() {
             let selectedBrands = [];
             let selectedAttributes = [];
+           let currentSlug = $('input[name="current_slug"]').val(); // Get current category slug
+
 
             // Get all checked brand IDs
             $('.filter-brand:checked').each(function () {
@@ -143,6 +145,8 @@
                 data: {
                     brand_ids: selectedBrands,
                     attribute_values: selectedAttributes,
+                    current_slug: currentSlug, // Include the current slug
+
                     _token: "{{ csrf_token() }}"
                 },
                 beforeSend: function () {
