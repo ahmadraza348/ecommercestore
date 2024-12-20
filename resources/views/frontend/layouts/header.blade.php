@@ -241,17 +241,12 @@
                                             <ul class="megamenu dropdown">
                                                 @foreach ($brands as $item)
                                                     <li><a
-                                                            href="{{ route('shop', ['brandslug' => $item->slug]) }}">{{ $item->name }}</a>
+                                                            href="{{ route('shop', $item->slug) }}">{{ $item->name }}</a>
                                                     </li>
                                                 @endforeach
 
                                             </ul>
                                     </li>
-
-
-
-
-
                                 </ul>
                                 </li>
                                 <li><a href="contact-us.html">Contact</a></li>
