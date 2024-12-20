@@ -10,7 +10,7 @@
                     <div class="shop-sidebar-wrap mt-md-28 mt-sm-28">
                         <!-- sidebar categorie start -->
                         @if (!empty($shopPageCategories) && $shopPageCategories->isNotEmpty())
-                            <div class="sidebar-widget mb-30">
+                            <div class="sidebar-widget mb-20">
                                 <div class="sidebar-category">
                                     <ul>
                                         <li class="title"><i class="fa fa-bars"></i> Categories</li>
@@ -27,25 +27,27 @@
                             </div>
                         @endif
                         <!-- pricing filter start -->
-                        <div class="sidebar-widget mb-30">
+                        <div class="sidebar-widget mb-20">
                             <div class="sidebar-title mb-10">
-                                <h3>filter by price</h3>
+                                <h3>Filter by Price</h3>
                             </div>
                             <div class="sidebar-widget-body">
                                 <div class="price-range-wrap">
-                                    <div class="price-range" data-min="50" data-max="400"></div>
+                                    <div class="price-range" data-min="{{ $min_price }}" data-max="{{ $max_price }}"></div>
                                     <div class="range-slider">
                                         <form action="#" class="d-flex justify-content-between">
-                                            <button class="filter-btn">filter</button>
                                             <div class="price-input d-flex align-items-center">
-                                                <label for="amount">Price: </label>
-                                                <input type="text" id="amount">
+                                                <label for="amount">Price:</label>
+                                                <input type="text" id="amount" readonly>
+                                                <input type="hidden" id="min_price" value="{{ $min_price }}">
+                                                <input type="hidden" id="max_price" value="{{ $max_price }}">
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
 
                         <form method="post" id="FilterForm" action="">
                             <input type="hidden" name="current_slug"
@@ -55,7 +57,7 @@
 
                         @if ($shopPageAttributes->isNotEmpty())
                         @foreach ($shopPageAttributes as $attribute)
-                            <div class="sidebar-widget mb-30">
+                            <div class="sidebar-widget mb-20">
                                 <div class="sidebar-title mb-10">
                                     <h3>{{ $attribute->name }}</h3>
                                 </div>
@@ -68,12 +70,12 @@
                                                         value="{{ $value->id }}" id="">
                                                     {{ $value->name }}
                                                 </a>
-                                                @if(!empty($currentCategory))                                                  
+                                                {{-- @if(!empty($currentCategory))                                                  
                                                 <span>({{ $value->products_count }})</span>
                                                 @else
                                                 <span>({{ $value->products->count() }})</span> 
                                                     
-                                                @endif
+                                                @endif --}}
 
                                             </li>
                                         @endforeach
@@ -97,7 +99,7 @@
                                                     <input type="checkbox" class="filter-brand" value="{{ $brand->id }}">
                                                     {{ $brand->name }}
                                                 </label>
-                                                <span>({{ $brand->products->count() }})</span>
+                                                {{-- <span>({{ $brand->products->count() }})</span> --}}
                                             </li>
                                         @endforeach
                                     </ul>
@@ -105,29 +107,15 @@
                             </div>
                         @endif
 
-                  
-                      
-                        <!-- product tag start -->
-                        <div class="sidebar-widget mb-30">
-                            <div class="sidebar-title mb-10">
-                                <h3>tags</h3>
-                            </div>
-                            <div class="sidebar-widget-body">
-                                <div class="product-tag">
-                                    <a href="#">camera</a>
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- product tag end -->
+                 
 
                         <!-- sidebar banner start -->
-                        <div class="sidebar-widget mb-30">
+                        {{-- <div class="sidebar-widget mb-30">
                             <div class="img-container fix img-full">
                                 <a href="#"><img src="{{ asset('frontend/assets/img/banner/banner_shop.jpg') }}"
                                         alt=""></a>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- sidebar banner end -->
                     </div>
                 </div>
@@ -181,7 +169,7 @@
                                 <!-- featured category area start -->
                                 @if ($shopPageCategories->isNotEmpty())
                                     <div class="feature-category-area mt-md-70">
-                                        <div class="section-title mb-30">
+                                        <div class="section-title mb-20">
                                             <div class="title-icon">
                                                 <i class="fa fa-bookmark"></i>
                                             </div>
@@ -189,7 +177,7 @@
                                         </div>
                                         <div class="featured-carousel-active slick-padding slick-arrow-style">
                                             @foreach ($shopPageCategories as $item)
-                                                <div class="product-item fix mb-30">
+                                                <div class="product-item fix mb-20">
                                                     <div class="product-thumb">
                                                         <a
                                                             href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
@@ -211,9 +199,15 @@
                                     <img src="{{ asset('frontend/assets/loader.gif') }}"
                                         style="position:absolute; z-index:999" alt="Loading..." />
                                 </div>
-
+                                <div class="section-title mb-20">
+                                    <div class="title-icon">
+                                        <i class="fa fa-bookmark"></i>
+                                    </div>
+                                    <h3>Products</h3>
+                                </div>
                                 <div id="product-list" class="row">
                                     @forelse ($products as $item)
+
                                         <div class="col-lg-3 col-md-4 col-sm-6">
                                             @include('frontend.partials.pro_slide', ['item' => $item])
                                         </div>

@@ -536,11 +536,11 @@
 		max: maxPrice,
 		values: [minPrice, maxPrice],
 		slide: function (event, ui) {
-			amount.val("$" + ui.values[0] + " - $" + ui.values[1]);
+			amount.val("" + ui.values[0] + " - " + ui.values[1] + " PKR ");
 		}
 	});
-	amount.val(" $" + rangeSlider.slider("values", 0) +
-		" - $" + rangeSlider.slider("values", 1));
+	amount.val(" " + rangeSlider.slider("values", 0) +
+		" - " + rangeSlider.slider("values", 1) + " PKR ");
 
 	// product view mode change js
 	$('.product-view-mode').on('click', 'a', function (e) {
