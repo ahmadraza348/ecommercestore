@@ -140,6 +140,10 @@
         let minPrice = $('#min_price').val();
         let maxPrice = $('#max_price').val();
 
+        // sort By
+
+        let sortBy = $('#sortby').val();
+
         // AJAX Request to fetch filtered products
         $.ajax({
             url: "{{ route('shop.filter') }}", // Define this route in the backend
@@ -149,7 +153,8 @@
                 attribute_values: selectedAttributes,
                 current_slug: currentSlug,
                 min_price: minPrice,
-                max_price: maxPrice, // Include price range in the request
+                max_price: maxPrice, 
+                sortby: sortBy, 
                 _token: "{{ csrf_token() }}"
             },
             beforeSend: function () {
@@ -168,7 +173,7 @@
     }
 
     // Trigger fetchFilteredProducts on change
-    $('.filter-brand, .filter-attribute').on('change', fetchFilteredProducts);
+    $('.filter-brand, .filter-attribute,  #sortby').on('change', fetchFilteredProducts);
 
     // Trigger fetchFilteredProducts on range slider change
     $('.price-range').on('slidechange', function (event, ui) {

@@ -147,14 +147,11 @@
                                     <div class="top-bar-right">
                                         <div class="product-short">
                                             <p>Sort By : </p>
-                                            <select class="nice-select" name="sortby">
-                                                <option value="trending">Relevance</option>
-                                                <option value="sales">Name (A - Z)</option>
-                                                <option value="sales">Name (Z - A)</option>
-                                                <option value="rating">Price (Low &gt; High)</option>
-                                                <option value="date">Rating (Lowest)</option>
-                                                <option value="price-asc">Model (A - Z)</option>
-                                                <option value="price-asc">Model (Z - A)</option>
+                                            <select class="nice-select" name="sortby" id="sortby">
+                                                <option value="latest">Latest</option>
+                                                <option value="old_to_new">Old to new</option>
+                                                <option value="high_to_low">Price (High to low)</option>
+                                                <option value="low_to_high">Price (Low to high)</option>                                               
                                             </select>
                                         </div>
                                     </div>
@@ -220,7 +217,14 @@
                                         </div>
                                     @endforelse
                                 </div>
-
+                                
+                            </div>
+                            <div class="paginatoin-area text-center pt-28">
+                                <div class="row">
+                                    <div class="col-12">
+                                        {{ $products->links('pagination::bootstrap-4') }}
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -230,13 +234,7 @@
                     <!-- product view wrapper area end -->
 
                     <!-- start pagination area -->
-                    <div class="paginatoin-area text-center pt-28">
-                        <div class="row">
-                            <div class="col-12">
-                                {{ $products->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
-                    </div>
+                    
                     <!-- end pagination area -->
                 </div>
 

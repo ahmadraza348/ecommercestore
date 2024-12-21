@@ -69,7 +69,7 @@ class ShopPageController extends Controller
         $productsQuery->whereBetween('sale_price', [$min_price_filter, $max_price_filter]);
 
         // Fetch paginated products
-        $products = $productsQuery->latest()->paginate(12);
+        $products = $productsQuery->latest()->paginate(1);
 
         // Determine min and max prices based on the current category's products
         if ($currentCategory) {
@@ -102,6 +102,7 @@ class ShopPageController extends Controller
         $currentSlug = $request->input('current_slug', '');
         $minPrice = $request->input('min_price', 0); // Default min price
         $maxPrice = $request->input('max_price', PHP_INT_MAX); // Default max price
+        $sortBy = $request->input('sortby', 'latest'); // Default sort option
 
         // Initialize the query
         $products = Product::query();
@@ -137,9 +138,24 @@ class ShopPageController extends Controller
 
         // Apply price range filter
         $products->whereBetween('sale_price', [$minPrice, $maxPrice]);
-        
+
+        // Sort Options
+        switch ($sortBy) {
+            case 'old_to_new':
+                $products->oldest();
+                break;
+            case 'high_to_low':
+                $products->orderBy('sale_price', 'desc');
+                break;
+            case 'low_to_high':
+                $products->orderBy('sale_price', 'asc');
+                break;
+            default:
+                $products->latest();
+        }
+
         // Fetch filtered products
-        $products = $products->latest()->paginate(12);
+        $products = $products->latest()->paginate(1);
 
         // Return filtered products as JSON
         return response()->json([
