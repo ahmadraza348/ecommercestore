@@ -296,5 +296,7 @@ class ShopPageController extends Controller
             'pagination' => (string) $products->links('pagination::bootstrap-4'),
         ]);
     }
+
+
 }
 

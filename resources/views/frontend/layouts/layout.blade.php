@@ -241,7 +241,13 @@
             let page = $(this).attr('href').split('page=')[1];
             fetchFilteredProducts(page);
         });
+        $('.price-range').on('slidechange', function (event, ui) {
+        $('#min_price').val(ui.values[0]); // Update min price
+        $('#max_price').val(ui.values[1]); // Update max price
+        fetchFilteredProducts(); // Fetch products
+    });
     });
 </script>
+
 
 </html>
