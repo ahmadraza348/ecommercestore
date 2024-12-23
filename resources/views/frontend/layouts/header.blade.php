@@ -176,7 +176,7 @@
                 <div class="col-lg-12">
                     <style>
                         .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
-                            display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'profile.edit', 'verification.notice', 'password.request', 'password.reset', 'shop']) ? 'none' : 'block' }};
+                            display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'profile.edit', 'verification.notice', 'password.request', 'password.reset', 'shop', 'pro.details']) ? 'none' : 'block' }};
                         }
                     </style>
 

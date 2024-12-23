@@ -23,6 +23,15 @@
     <!-- Main Style CSS -->
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #d8373e;
+  border-color: #d8373e;
+}
+
+    </style>
 
 </head>
 
@@ -119,71 +128,6 @@
     <script defer src="https://unpkg.com/alpinejs@3.5.1"></script>
 
 </body>
-{{-- <script>
-    $(document).ready(function () {
-    function fetchFilteredProducts() {
-        let selectedBrands = [];
-        let selectedAttributes = [];
-        let currentSlug = $('input[name="current_slug"]').val(); // Get current category slug
-
-        // Get all checked brand IDs
-        $('.filter-brand:checked').each(function () {
-            selectedBrands.push($(this).val());
-        });
-
-        // Get all checked attribute values
-        $('.filter-attribute:checked').each(function () {
-            selectedAttributes.push($(this).val());
-        });
-
-        // Get price range values
-        let minPrice = $('#min_price').val();
-        let maxPrice = $('#max_price').val();
-
-        // sort By
-
-        let sortBy = $('#sortby').val();
-
-        // AJAX Request to fetch filtered products
-        $.ajax({
-            url: "{{ route('shop.filter') }}", // Define this route in the backend
-            method: "POST",
-            data: {
-                brand_ids: selectedBrands,
-                attribute_values: selectedAttributes,
-                current_slug: currentSlug,
-                min_price: minPrice,
-                max_price: maxPrice, 
-                sortby: sortBy, 
-                _token: "{{ csrf_token() }}"
-            },
-            beforeSend: function () {
-                $('#loader').show(); // Show loader
-            },
-            success: function (response) {
-                $('#product-list').html(response.html); // Update product list
-            },
-            complete: function () {
-                $('#loader').hide(); // Hide loader
-            },
-            error: function () {
-                alert("Something went wrong! Please try again.");
-            }
-        });
-    }
-
-    // Trigger fetchFilteredProducts on change
-    $('.filter-brand, .filter-attribute,  #sortby').on('change', fetchFilteredProducts);
-
-    // Trigger fetchFilteredProducts on range slider change
-    $('.price-range').on('slidechange', function (event, ui) {
-        $('#min_price').val(ui.values[0]); // Update min price
-        $('#max_price').val(ui.values[1]); // Update max price
-        fetchFilteredProducts(); // Fetch products
-    });
-});
-
-</script> --}}
 
 <script>
     $(document).ready(function () {
