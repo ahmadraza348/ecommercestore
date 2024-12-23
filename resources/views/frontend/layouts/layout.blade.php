@@ -119,7 +119,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.5.1"></script>
 
 </body>
-<script>
+{{-- <script>
     $(document).ready(function () {
     function fetchFilteredProducts() {
         let selectedBrands = [];
@@ -183,5 +183,65 @@
     });
 });
 
+</script> --}}
+
+<script>
+    $(document).ready(function () {
+        function fetchFilteredProducts(page = 1) {
+            let selectedBrands = [];
+            let selectedAttributes = [];
+            let currentSlug = $('input[name="current_slug"]').val();
+
+            $('.filter-brand:checked').each(function () {
+                selectedBrands.push($(this).val());
+            });
+
+            $('.filter-attribute:checked').each(function () {
+                selectedAttributes.push($(this).val());
+            });
+
+            let minPrice = $('#min_price').val();
+            let maxPrice = $('#max_price').val();
+            let sortBy = $('#sortby').val();
+
+            $.ajax({
+                url: "{{ route('shop.filter') }}?page=" + page,
+                method: "POST",
+                data: {
+                    brand_ids: selectedBrands,
+                    attribute_values: selectedAttributes,
+                    current_slug: currentSlug,
+                    min_price: minPrice,
+                    max_price: maxPrice,
+                    sortby: sortBy,
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function () {
+                    $('#loader').show();
+                },
+                success: function (response) {
+                    $('#product-list').html(response.html);
+                    $('.paginatoin-area').html(response.pagination);
+                },
+                complete: function () {
+                    $('#loader').hide();
+                },
+                error: function () {
+                    alert("Something went wrong! Please try again.");
+                }
+            });
+        }
+
+        $('.filter-brand, .filter-attribute, #sortby').on('change', function () {
+            fetchFilteredProducts();
+        });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            fetchFilteredProducts(page);
+        });
+    });
 </script>
+
 </html>
