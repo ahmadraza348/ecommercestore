@@ -33,7 +33,8 @@
                             </div>
                             <div class="sidebar-widget-body">
                                 <div class="price-range-wrap">
-                                    <div class="price-range" data-min="{{ $min_price }}" data-max="{{ $max_price }}"></div>
+                                    <div class="price-range" data-min="{{ $min_price }}" data-max="{{ $max_price }}">
+                                    </div>
                                     <div class="range-slider">
                                         <form action="#" class="d-flex justify-content-between">
                                             <div class="price-input d-flex align-items-center">
@@ -47,44 +48,44 @@
                                 </div>
                             </div>
                         </div>
-                        
+
 
                         <form method="post" id="FilterForm" action="">
                             <input type="hidden" name="current_slug"
                                 value="{{ $currentCategory->slug ?? ($currentBrand->slug ?? '') }}">
                         </form>
-                        
+
 
                         @if ($shopPageAttributes->isNotEmpty())
-                        @foreach ($shopPageAttributes as $attribute)
-                            <div class="sidebar-widget mb-20">
-                                <div class="sidebar-title mb-10">
-                                    <h3>{{ $attribute->name }}</h3>
-                                </div>
-                                <div class="sidebar-widget-body">
-                                    <ul>
-                                        @foreach ($attribute->attributevalue as $value)
-                                            <li>
-                                                 <a>
-                                                    <input type="checkbox" name=""class="filter-attribute"
-                                                        value="{{ $value->id }}" id="">
-                                                    {{ $value->name }}
-                                                </a>
-                                                {{-- @if(!empty($currentCategory))                                                  
+                            @foreach ($shopPageAttributes as $attribute)
+                                <div class="sidebar-widget mb-20">
+                                    <div class="sidebar-title mb-10">
+                                        <h3>{{ $attribute->name }}</h3>
+                                    </div>
+                                    <div class="sidebar-widget-body">
+                                        <ul>
+                                            @foreach ($attribute->attributevalue as $value)
+                                                <li>
+                                                    <a>
+                                                        <input type="checkbox" name=""class="filter-attribute"
+                                                            value="{{ $value->id }}" id="">
+                                                        {{ $value->name }}
+                                                    </a>
+                                                    {{-- @if (!empty($currentCategory))                                                  
                                                 <span>({{ $value->products_count }})</span>
                                                 @else
                                                 <span>({{ $value->products->count() }})</span> 
                                                     
                                                 @endif --}}
 
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    @endif
-                    
+                            @endforeach
+                        @endif
+
 
                         @if ($brands->isNotEmpty())
                             <div class="sidebar-widget mb-30">
@@ -96,7 +97,8 @@
                                         @foreach ($shopPageBrands as $brand)
                                             <li>
                                                 <label>
-                                                    <input type="checkbox" class="filter-brand" value="{{ $brand->id }}">
+                                                    <input type="checkbox" class="filter-brand"
+                                                        value="{{ $brand->id }}">
                                                     {{ $brand->name }}
                                                 </label>
                                                 {{-- <span>({{ $brand->products->count() }})</span> --}}
@@ -107,7 +109,7 @@
                             </div>
                         @endif
 
-                 
+
 
                         <!-- sidebar banner start -->
                         {{-- <div class="sidebar-widget mb-30">
@@ -151,7 +153,7 @@
                                                 <option value="latest">Latest</option>
                                                 <option value="old_to_new">Old to new</option>
                                                 <option value="high_to_low">Price (High to low)</option>
-                                                <option value="low_to_high">Price (Low to high)</option>                                               
+                                                <option value="low_to_high">Price (Low to high)</option>
                                             </select>
                                         </div>
                                     </div>
@@ -159,52 +161,52 @@
                             </div>
                         </div>
                         <!-- shop product top wrap start -->
+                        @if ($shopPageCategories->isNotEmpty())
+                            <div class="feature-category-area mt-md-70">
+                                <div class="section-title mb-20">
+                                    <div class="title-icon">
+                                        <i class="fa fa-bookmark"></i>
+                                    </div>
+                                    <h3>Shop By Category</h3>
+                                </div>
+                                <div class="featured-carousel-active slick-padding slick-arrow-style">
+                                    @foreach ($shopPageCategories as $item)
+                                        <div class="product-item fix mb-20">
+                                            <div class="product-thumb">
+                                                <a href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
+                                                    <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}"
+                                                        class="img-pri" alt="">
+                                                </a>
+                                            </div>
+                                            <div class="product-content">
+                                                <h4><a
+                                                        href="{{ route('shop', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- product item start -->
                         <div class="shop-product-wrap grid row">
                             <div class="col-lg-12">
                                 <!-- featured category area start -->
-                                @if ($shopPageCategories->isNotEmpty())
-                                    <div class="feature-category-area mt-md-70">
-                                        <div class="section-title mb-20">
-                                            <div class="title-icon">
-                                                <i class="fa fa-bookmark"></i>
-                                            </div>
-                                            <h3>Shop By Category</h3>
-                                        </div>
-                                        <div class="featured-carousel-active slick-padding slick-arrow-style">
-                                            @foreach ($shopPageCategories as $item)
-                                                <div class="product-item fix mb-20">
-                                                    <div class="product-thumb">
-                                                        <a
-                                                            href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
-                                                            <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}"
-                                                                class="img-pri" alt="">
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-content">
-                                                        <h4><a
-                                                                href="{{ route('shop', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
-                                                        </h4>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endif
-                                <div id="loader" style="display: none; text-align: center;">
-                                    <img src="{{ asset('frontend/assets/loader.gif') }}"
-                                        style="position:absolute; z-index:999" alt="Loading..." />
-                                </div>
+
+
                                 <div class="section-title mb-20">
                                     <div class="title-icon">
                                         <i class="fa fa-bookmark"></i>
                                     </div>
                                     <h3>Products</h3>
                                 </div>
+                                <div id="loader" style="display: none; text-align: center;">
+                                    <img src="{{ asset('frontend/assets/loader.gif') }}"
+                                        style="position:absolute; z-index:999" alt="Loading..." />
+                                </div>
                                 <div id="product-list" class="row">
                                     @forelse ($products as $item)
-
                                         <div class="col-lg-3 col-md-4 col-sm-6">
                                             @include('frontend.partials.pro_slide', ['item' => $item])
                                         </div>
@@ -217,7 +219,7 @@
                                         </div>
                                     @endforelse
                                 </div>
-                                
+
                             </div>
                             <div class="paginatoin-area text-center pt-28">
                                 <div class="row">
@@ -234,7 +236,7 @@
                     <!-- product view wrapper area end -->
 
                     <!-- start pagination area -->
-                    
+
                     <!-- end pagination area -->
                 </div>
 
