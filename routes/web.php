@@ -14,6 +14,7 @@ use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\Frontend\ProductPageController;
 use App\Http\Controllers\Admin\AttributevalueController;
+use App\Http\Controllers\Admin\ProductAttrController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -50,7 +51,9 @@ Route::post('/products/import', [ProductController::class, 'import'])->name('pro
     Route::resource('brand', BrandController::class)->names('brand');
     Route::resource('attribute', AttributeController::class)->names('attribute');
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
-    Route::resource('product', ProductController::class)->names('product');
+    Route::resource('product', ProductController::class)->names('product');    
+    Route::get('/add-product-attribute', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
+    Route::get('/add-product-attribute', [ProductAttrController::class, 'add_pro_attr'])->name('store.pro.attribute');
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
     Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
     Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');

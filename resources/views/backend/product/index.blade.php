@@ -49,6 +49,7 @@
                                     <th>Label</th>
                                     <th>Featured</th>
                                     <th>Status</th>
+                                    <th>Attribute</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -93,6 +94,9 @@
                                             @else
                                                 <span class="badge rounded-pill bg-danger">Inactive</span>
                                             @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{route('add.pro.attribute')}}">Add</a>
                                         </td>
                                         <td>
                                             <a href="{{ route('product.edit', $item->id) }}" class="me-3">
