@@ -96,7 +96,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{route('add.pro.attribute')}}">Add</a>
+                                            <a href="{{route('add.pro.attribute', $item->id)}}">Add</a>
                                         </td>
                                         <td>
                                             <a href="{{ route('product.edit', $item->id) }}" class="me-3">

@@ -42,135 +42,265 @@ class ProductController extends Controller
         return view('backend.product.create', $data);
     }
 
+    // public function store(Request $request)
+    // {
+    //     try {
+    //         $rules = [
+    //             'name' => 'required|string|max:255',
+    //             'slug' => 'required|string|max:255|unique:products,slug',
+    //             'sku' => 'required|string|max:255|unique:products,sku',
+    //             'sale_price' => 'required|numeric|max:99999',
+    //             'barcode' => 'required|string|max:255',
+    //             'stock' => 'required|integer|max:99999',
+    //             'featured_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:200',
+    //             'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
+    //             'gallery_images' => 'required|array',
+    //             'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
+    //              'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
+    //         ];
+
+    //         $validator = Validator::make($request->all(), $rules);
+
+    //         if ($validator->fails()) {
+    //             foreach ($validator->errors()->all() as $error) {
+    //                 toastr()->error($error);
+    //             }
+    //             return redirect()->back()
+    //                 ->withErrors($validator)
+    //                 ->withInput();
+    //         }
+
+    //         // Store Product Basic Data
+    //         $data = $request->only([
+    //             'name',
+    //             'slug',
+    //             'sku',
+    //             'sale_price',
+    //             'previous_price',
+    //             'purchase_price',
+    //             'barcode',
+    //             'stock',
+    //             'tags',
+    //             'label',
+    //             'is_featured',
+    //             'short_description',
+    //             'long_description',
+    //             'featured_image',
+    //             'back_image',
+    //             'brand_id',
+    //         ]);
+
+    //         if ($request->hasFile('featured_image')) {
+    //             $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
+    //             $data['featured_image']= $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
+    //         }
+
+    //         if ($request->hasFile('back_image')) {
+    //             $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
+    //             $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
+    //         }
+
+    //         if ($request->hasFile('video')) {
+    //             $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
+    //             $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');                
+    //         }
+            
+
+    //         // Create Product
+    //         $product = Product::create($data);
+
+    //         if ($request->hasFile('gallery_images')) {
+    //             $colors = $request->input('colors'); // Get color IDs from the request
+            
+    //             foreach ($request->file('gallery_images') as $index => $galleryImage) {
+    //                 $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
+    //                 $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
+            
+    //                 ProImages::create([
+    //                     'product_id' => $product->id,
+    //                     'image' => $publicGalleryPath,
+    //                     'color_id' => $colors[$index] ?? null // Map the color ID if available
+    //                 ]);
+    //             }
+    //         }
+            
+
+    //         $categories = $request->input('category', []);
+    //         $subcategories = $request->input('subcategory', []);
+    //         $childcategories = $request->input('childcategory', []);
+    //         $superchildcategory = $request->input('superchild', []);
+    //         $allCategories = array_merge($categories, $subcategories, $childcategories, $superchildcategory);
+    //         // Store data in RelationalCategory table
+    //         foreach ($allCategories as $categoryId) {
+    //             RelationalCategory::create([
+    //                 'product_id' => $product->id,
+    //                 'category_id' => $categoryId,
+    //                 'metaable_id' => $product->id,
+    //                 'metaable_type' => Product::class,
+    //             ]);
+    //         }
+    
+
+    //         // Save Product Attributes
+    //         $attributes = $request->input('attribute', []);
+    //         $attributeValues = $request->input('attribute_value', []);
+    //         $attributeStocks = $request->input('attribute_stock', []);
+    //         $attributePrices = $request->input('attribute_price', []);
+    //         $itemCodes = $request->input('itemcode', []);
+
+    //         foreach ($attributes as $index => $attributeId) {
+    //             $product->attributes()->attach($attributeId, [
+    //                 'attribute_value_id' => $attributeValues[$index],
+    //                 'stock' => $attributeStocks[$index],
+    //                 'price' => $attributePrices[$index],
+    //                 'itemcode' => $itemCodes[$index]
+    //             ]);
+    //         }
+
+    //         // Save Product Meta Tags
+    //         $metaTag = new MetaTag();
+    //         $metaTag->meta_title = $request->meta_title;
+    //         $metaTag->meta_keywords = $request->meta_keywords;
+    //         $metaTag->meta_description = $request->meta_description;
+    //         $product->metaTag()->save($metaTag);
+
+    //         toastr()->success('Product saved successfully!');
+    //         return redirect()->back();
+    //     } catch (\Exception $e) {
+    //         toastr()->error($e->getMessage());
+    //         return redirect()->back()->withInput();
+    //     }
+    // }
     public function store(Request $request)
-    {
-        try {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:products,slug',
-                'sku' => 'required|string|max:255|unique:products,sku',
-                'sale_price' => 'required|numeric|max:99999',
-                'barcode' => 'required|string|max:255',
-                'stock' => 'required|integer|max:99999',
-                'featured_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'gallery_images' => 'required|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
-                 'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
-            ];
+{
+    try {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:products,slug',
+            'sku' => 'required|string|max:255|unique:products,sku',
+            'sale_price' => 'required|numeric|max:99999',
+            'barcode' => 'required|string|max:255',
+            'stock' => 'required|integer|max:99999',
+            'featured_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:200',
+            'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
+            'gallery_images' => 'required|array',
+            'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
+            'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
+        ];
 
-            $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules);
 
-            if ($validator->fails()) {
-                foreach ($validator->errors()->all() as $error) {
-                    toastr()->error($error);
-                }
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
+        if ($validator->fails()) {
+            foreach ($validator->errors()->all() as $error) {
+                toastr()->error($error);
             }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-            // Store Product Basic Data
-            $data = $request->only([
-                'name',
-                'slug',
-                'sku',
-                'sale_price',
-                'previous_price',
-                'purchase_price',
-                'barcode',
-                'stock',
-                'tags',
-                'label',
-                'is_featured',
-                'short_description',
-                'long_description',
-                'featured_image',
-                'back_image',
-                'brand_id',
+        // Store Product Basic Data
+        $data = $request->only([
+            'name',
+            'slug',
+            'sku',
+            'sale_price',
+            'previous_price',
+            'purchase_price',
+            'barcode',
+            'stock',
+            'tags',
+            'label',
+            'is_featured',
+            'short_description',
+            'long_description',
+            'brand_id',
+        ]);
+
+        if ($request->hasFile('featured_image')) {
+            $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
+            $data['featured_image'] = $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
+        }
+
+        if ($request->hasFile('back_image')) {
+            $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
+            $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
+        }
+
+        if ($request->hasFile('video')) {
+            $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
+            $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');
+        }
+
+        // Create Product
+        $product = Product::create($data);
+
+        // Store Gallery Images
+        if ($request->hasFile('gallery_images')) {
+            $colors = $request->input('colors', []);
+
+            foreach ($request->file('gallery_images') as $index => $galleryImage) {
+                $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
+                $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
+
+                ProImages::create([
+                    'product_id' => $product->id,
+                    'image' => $publicGalleryPath,
+                    'color_id' => $colors[$index] ?? null
+                ]);
+            }
+        }
+
+        // Store Product Categories
+        $categories = $request->input('category', []);
+        $subcategories = $request->input('subcategory', []);
+        $childcategories = $request->input('childcategory', []);
+        $superchildcategory = $request->input('superchild', []);
+        $allCategories = array_merge($categories, $subcategories, $childcategories, $superchildcategory);
+
+        foreach ($allCategories as $categoryId) {
+            RelationalCategory::create([
+                'product_id' => $product->id,
+                'category_id' => $categoryId,
+                'metaable_id' => $product->id,
+                'metaable_type' => Product::class,
             ]);
+        }
 
-            if ($request->hasFile('featured_image')) {
-                $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
-                $data['featured_image']= $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
-            }
+        // Save Product Attributes and Attribute Values
+        $itemCodes = $request->input('itemcode', []);
+        $attributeValues = $request->input('attribute_value', []);
+        $attributeStocks = $request->input('attribute_stock', []);
+        $attributePrices = $request->input('attribute_price', []);
 
-            if ($request->hasFile('back_image')) {
-                $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
-                $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
-            }
-
-            if ($request->hasFile('video')) {
-                $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
-                $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');                
-            }
-            
-
-            // Create Product
-            $product = Product::create($data);
-
-            if ($request->hasFile('gallery_images')) {
-                $colors = $request->input('colors'); // Get color IDs from the request
-            
-                foreach ($request->file('gallery_images') as $index => $galleryImage) {
-                    $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
-                    $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
-            
-                    ProImages::create([
-                        'product_id' => $product->id,
-                        'image' => $publicGalleryPath,
-                        'color_id' => $colors[$index] ?? null // Map the color ID if available
+        foreach ($itemCodes as $index => $itemCode) {
+            foreach ($attributeValues as $attributeId => $values) {
+                if (!empty($values[$index])) {
+                    $product->attributes()->attach($attributeId, [
+                        'attribute_value_id' => $values[$index],
+                        'stock' => $attributeStocks[$index],
+                        'price' => $attributePrices[$index],
+                        'itemcode' => $itemCode
                     ]);
                 }
             }
-            
-
-            $categories = $request->input('category', []);
-            $subcategories = $request->input('subcategory', []);
-            $childcategories = $request->input('childcategory', []);
-            $superchildcategory = $request->input('superchild', []);
-            $allCategories = array_merge($categories, $subcategories, $childcategories, $superchildcategory);
-            // Store data in RelationalCategory table
-            foreach ($allCategories as $categoryId) {
-                RelationalCategory::create([
-                    'product_id' => $product->id,
-                    'category_id' => $categoryId,
-                    'metaable_id' => $product->id,
-                    'metaable_type' => Product::class,
-                ]);
-            }
-    
-
-            // Save Product Attributes
-            $attributes = $request->input('attribute', []);
-            $attributeValues = $request->input('attribute_value', []);
-            $attributeStocks = $request->input('attribute_stock', []);
-            $attributePrices = $request->input('attribute_price', []);
-            $itemCodes = $request->input('itemcode', []);
-
-            foreach ($attributes as $index => $attributeId) {
-                $product->attributes()->attach($attributeId, [
-                    'attribute_value_id' => $attributeValues[$index],
-                    'stock' => $attributeStocks[$index],
-                    'price' => $attributePrices[$index],
-                    'itemcode' => $itemCodes[$index]
-                ]);
-            }
-
-            // Save Product Meta Tags
-            $metaTag = new MetaTag();
-            $metaTag->meta_title = $request->meta_title;
-            $metaTag->meta_keywords = $request->meta_keywords;
-            $metaTag->meta_description = $request->meta_description;
-            $product->metaTag()->save($metaTag);
-
-            toastr()->success('Product saved successfully!');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            toastr()->error($e->getMessage());
-            return redirect()->back()->withInput();
         }
+
+        // Save Product Meta Tags
+        $metaTag = new MetaTag();
+        $metaTag->meta_title = $request->meta_title;
+        $metaTag->meta_keywords = $request->meta_keywords;
+        $metaTag->meta_description = $request->meta_description;
+        $product->metaTag()->save($metaTag);
+
+        toastr()->success('Product saved successfully!');
+        return redirect()->back();
+    } catch (\Exception $e) {
+        toastr()->error($e->getMessage());
+        return redirect()->back()->withInput();
     }
+}
+
 
     public function show(string $id)
     {

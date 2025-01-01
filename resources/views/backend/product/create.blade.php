@@ -364,7 +364,7 @@
                         </div>
 
                         {{-- Attribute Tabs --}}
-                        <div class="tab-pane" id="attributes-tab">
+                        {{-- <div class="tab-pane" id="attributes-tab">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="field_wrapper">
@@ -462,7 +462,91 @@
                                     </div>
                                 </div>
                             </div>
+                        </div> --}}
+                        <div class="tab-pane" id="attributes-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item Code</th>
+                                                    @foreach ($attributes as $attribute)
+                                                        <th>{{ $attribute->name }}</th>
+                                                    @endforeach
+                                                    <th>Stock</th>
+                                                    <th>Price</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="field_wrapper">
+                                                @foreach (old('itemcode', ['']) as $index => $oldItemCode)
+                                                    <tr>
+                                                        <td>
+                                                            <input type="number" name="itemcode[]"
+                                                                value="{{ old('itemcode.' . $index) }}" required
+                                                                class="form-control" />
+                                                            <div class="text-danger">
+                                                                @error('itemcode.' . $index)
+                                                                    {{ $message }}
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        @foreach ($attributes as $attribute)
+                                                            <td>
+                                                                <select name="attribute_value[{{ $attribute->id }}][]"
+                                                                    required class="form-select dynamic-attribute-value"
+                                                                    data-attribute="{{ $attribute->id }}"
+                                                                    data-old="{{ old('attribute_value.' . $attribute->id . '.' . $index) }}">
+                                                                    <option value="">Select</option>
+                                                                    @foreach ($attribute->attributevalue as $value)
+                                                                        <option value="{{ $value->id }}"
+                                                                            {{ old("attribute_value.{$attribute->id}.{$index}") == $value->id ? 'selected' : '' }}>
+                                                                            {{ $value->name }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                                <div class="text-danger">
+                                                                    @error("attribute_value.{$attribute->id}.{$index}")
+                                                                        {{ $message }}
+                                                                    @enderror
+                                                                </div>
+                                                            </td>
+                                                        @endforeach
+                                                        <td>
+                                                            <input type="number" name="attribute_stock[]"
+                                                                value="{{ old('attribute_stock.' . $index) }}" required
+                                                                class="form-control" />
+                                                            <div class="text-danger">
+                                                                @error('attribute_stock.' . $index)
+                                                                    {{ $message }}
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="number" name="attribute_price[]"
+                                                                value="{{ old('attribute_price.' . $index) }}" required
+                                                                class="form-control" />
+                                                            <div class="text-danger">
+                                                                @error('attribute_price.' . $index)
+                                                                    {{ $message }}
+                                                                @enderror
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <a href="javascript:void(0);"
+                                                                class="remove_button text-danger"><i
+                                                                    class="fas fa-trash-alt"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                        <button type="button" class="btn btn-primary add_button mt-2">Add Row</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
 
                         {{-- Meta Tabs --}}
                         <div class="tab-pane" id="meta-tab">
@@ -487,107 +571,156 @@
     </div>
 
     <script>
+        // $(document).ready(function() {
+        //     var maxField = 100;
+        //     var addButton = $('.add_button');
+        //     var wrapper = $('.field_wrapper');
+        //     var fieldCounter = $('.field_wrapper .d-flex').length;
+
+        //     function fetchAttributeValues(attributeId, targetSelect) {
+        //         $.ajax({
+        //             url: '/admin/get-attribute-values/' + attributeId,
+        //             type: 'GET',
+        //             success: function(response) {
+        //                 targetSelect.empty().append('<option value="">Select</option>');
+        //                 $.each(response, function(index, value) {
+        //                     var selected = targetSelect.data('old') == value.id ? 'selected' :
+        //                         '';
+        //                     targetSelect.append('<option value="' + value.id + '" ' + selected +
+        //                         '>' + value.name + '</option>');
+        //                 });
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 console.error("AJAX Error:", error);
+        //             }
+        //         });
+        //     }
+
+        //     $(wrapper).on('change', '.select-attribute', function() {
+        //         var attributeId = $(this).val();
+        //         var targetSelect = $(this).closest('.d-flex').find('.dynamic-attribute-value');
+        //         targetSelect.data('old', '');
+        //         if (attributeId) {
+        //             fetchAttributeValues(attributeId, targetSelect);
+        //         } else {
+        //             targetSelect.empty().append('<option value="">Select</option>');
+        //         }
+        //     });
+
+        //     function generateFieldHTML(oldItemCode = '', oldAttribute = '', oldAttributeValue = '', oldStock = '',
+        //         oldPrice = '') {
+        //         return `
+    //     <div class="d-flex" style="justify-content:space-between; margin-top: 10px;">
+    //         <div class="form-group m-2">
+    //             <input type="number" name="itemcode[]" value="${oldItemCode}" class="form-control" />
+    //             <div class="text-danger">@error('itemcode[]'){{ $message }}@enderror</div>
+    //         </div>
+    //         <div class="form-group m-2">
+    //             <select name="attribute[]" class="form-select select-attribute" data-old="${oldAttribute}" style="width:200px">
+    //                 <option value="">Select</option>
+    //                 @foreach ($attributes as $item)
+    //                     <option value="{{ $item->id }}" ${oldAttribute == '{{ $item->id }}' ? 'selected' : ''}>{{ $item->name }}</option>
+    //                 @endforeach
+    //             </select>
+    //             <div class="text-danger">@error('attribute[]'){{ $message }}@enderror</div>
+    //         </div>
+    //         <div class="form-group m-2">
+    //             <select name="attribute_value[]" class="form-select dynamic-attribute-value" data-old="${oldAttributeValue}" style="width:200px">
+    //                 <option value="">Select</option>
+    //             </select>
+    //             <div class="text-danger">@error('attribute_value[]'){{ $message }}@enderror</div>
+    //         </div>
+    //         <div class="form-group m-2">
+    //             <input type="number" name="attribute_stock[]" value="${oldStock}" class="form-control" />
+    //             <div class="text-danger">@error('attribute_stock[]'){{ $message }}@enderror</div>
+    //         </div>
+    //         <div class="form-group m-2">
+    //             <input type="number" name="attribute_price[]" value="${oldPrice}" class="form-control" />
+    //             <div class="text-danger">@error('attribute_price[]'){{ $message }}@enderror</div>
+    //         </div>
+    //         <div class="form-group m-2">
+    //             <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
+    //         </div>
+    //     </div>`;
+        //     }
+
+        //     $(addButton).click(function() {
+        //         if (fieldCounter < maxField) {
+        //             fieldCounter++;
+        //             $(wrapper).append(generateFieldHTML());
+        //         } else {
+        //             alert('A maximum of ' + maxField + ' fields are allowed.');
+        //         }
+        //     });
+
+        //     $(wrapper).on('click', '.remove_button', function(e) {
+        //         e.preventDefault();
+        //         $(this).closest('.d-flex').remove();
+        //         fieldCounter--;
+        //     });
+
+        //     $('.select-attribute').each(function() {
+        //         var attributeId = $(this).data('old');
+        //         if (attributeId) {
+        //             var targetSelect = $(this).closest('.d-flex').find('.dynamic-attribute-value');
+        //             fetchAttributeValues(attributeId, targetSelect);
+        //         }
+        //     });
+        // });
         $(document).ready(function() {
-            var maxField = 100;
-            var addButton = $('.add_button');
-            var wrapper = $('.field_wrapper');
-            var fieldCounter = $('.field_wrapper .d-flex').length;
+            var maxField = 100; // Maximum number of fields allowed
+            var addButton = $('.add_button'); // Add button selector
+            var wrapper = $('.field_wrapper'); // Table body selector for dynamic rows
+            var fieldCounter = $('.field_wrapper tr').length; // Initial count of rows
 
-            function fetchAttributeValues(attributeId, targetSelect) {
-                $.ajax({
-                    url: '/admin/get-attribute-values/' + attributeId,
-                    type: 'GET',
-                    success: function(response) {
-                        targetSelect.empty().append('<option value="">Select</option>');
-                        $.each(response, function(index, value) {
-                            var selected = targetSelect.data('old') == value.id ? 'selected' :
-                                '';
-                            targetSelect.append('<option value="' + value.id + '" ' + selected +
-                                '>' + value.name + '</option>');
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error:", error);
-                    }
-                });
-            }
 
-            $(wrapper).on('change', '.select-attribute', function() {
-                var attributeId = $(this).val();
-                var targetSelect = $(this).closest('.d-flex').find('.dynamic-attribute-value');
-                targetSelect.data('old', '');
-                if (attributeId) {
-                    fetchAttributeValues(attributeId, targetSelect);
-                } else {
-                    targetSelect.empty().append('<option value="">Select</option>');
-                }
-            });
-
-            function generateFieldHTML(oldItemCode = '', oldAttribute = '', oldAttributeValue = '', oldStock = '',
-                oldPrice = '') {
-                return `
-            <div class="d-flex" style="justify-content:space-between; margin-top: 10px;">
-                <div class="form-group m-2">
-                    <input type="number" name="itemcode[]" value="${oldItemCode}" class="form-control" />
-                    <div class="text-danger">@error('itemcode[]'){{ $message }}@enderror</div>
-                </div>
-                <div class="form-group m-2">
-                    <select name="attribute[]" class="form-select select-attribute" data-old="${oldAttribute}" style="width:200px">
-                        <option value="">Select</option>
-                        @foreach ($attributes as $item)
-                            <option value="{{ $item->id }}" ${oldAttribute == '{{ $item->id }}' ? 'selected' : ''}>{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                    <div class="text-danger">@error('attribute[]'){{ $message }}@enderror</div>
-                </div>
-                <div class="form-group m-2">
-                    <select name="attribute_value[]" class="form-select dynamic-attribute-value" data-old="${oldAttributeValue}" style="width:200px">
-                        <option value="">Select</option>
-                    </select>
-                    <div class="text-danger">@error('attribute_value[]'){{ $message }}@enderror</div>
-                </div>
-                <div class="form-group m-2">
-                    <input type="number" name="attribute_stock[]" value="${oldStock}" class="form-control" />
-                    <div class="text-danger">@error('attribute_stock[]'){{ $message }}@enderror</div>
-                </div>
-                <div class="form-group m-2">
-                    <input type="number" name="attribute_price[]" value="${oldPrice}" class="form-control" />
-                    <div class="text-danger">@error('attribute_price[]'){{ $message }}@enderror</div>
-                </div>
-                <div class="form-group m-2">
-                    <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
-                </div>
-            </div>`;
-            }
-
+            // Add a new row
             $(addButton).click(function() {
                 if (fieldCounter < maxField) {
                     fieldCounter++;
-                    $(wrapper).append(generateFieldHTML());
+                    var rowHTML = `<tr>
+                <td>
+                    <input type="number" name="itemcode[]" value="" required class="form-control" />
+                </td>`;
+                    @foreach ($attributes as $attribute)
+                        rowHTML += `<td>
+                    <select name="attribute_value[{{ $attribute->id }}][]" required class="form-select dynamic-attribute-value" data-attribute="{{ $attribute->id }}">
+                        <option value="">Select</option>
+                        @foreach ($attribute->attributevalue as $value)
+                                                <option value="{{ $value->id }}" {{ old("attribute_value.{$attribute->id}.{$index}") == $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                            @endforeach
+                    </select>
+                </td>`;
+                    @endforeach
+                    rowHTML += `
+                <td>
+                    <input type="number" name="attribute_stock[]" value="" required class="form-control" />
+                </td>
+                <td>
+                    <input type="number" name="attribute_price[]" value="" required class="form-control" />
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>`;
+                    $(wrapper).append(rowHTML);
                 } else {
-                    alert('A maximum of ' + maxField + ' fields are allowed.');
+                    alert('A maximum of ' + maxField + ' rows are allowed.');
                 }
             });
 
-            $(wrapper).on('click', '.remove_button', function(e) {
-                e.preventDefault();
-                $(this).closest('.d-flex').remove();
+            // Remove a row
+            $(wrapper).on('click', '.remove_button', function() {
+                $(this).closest('tr').remove();
                 fieldCounter--;
             });
 
-            $('.select-attribute').each(function() {
-                var attributeId = $(this).data('old');
-                if (attributeId) {
-                    var targetSelect = $(this).closest('.d-flex').find('.dynamic-attribute-value');
-                    fetchAttributeValues(attributeId, targetSelect);
-                }
-            });
         });
 
 
         function validateAndPreviewGalleryImages(event) {
             const files = Array.from(event.target.files);
-            const validImageTypes = ['image/jpeg', 'image/png','image/webp',];
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/webp', ];
             const galleryImagePreviewContainer = document.getElementById('galleryImagePreviewContainer');
             galleryImagePreviewContainer.innerHTML = '';
 
@@ -595,37 +728,37 @@
                 if (validImageTypes.includes(file.type)) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-    const imgContainer = document.createElement('div');
-    imgContainer.style.display = 'flex';
-    imgContainer.style.flexDirection = 'column';
-    imgContainer.style.alignItems = 'center';
-    imgContainer.style.margin = '10px';
+                        const imgContainer = document.createElement('div');
+                        imgContainer.style.display = 'flex';
+                        imgContainer.style.flexDirection = 'column';
+                        imgContainer.style.alignItems = 'center';
+                        imgContainer.style.margin = '10px';
 
-    const img = document.createElement('img');
-    img.src = e.target.result;
-    img.style.width = '100px';
-    img.style.height = '100px';
-    img.style.borderRadius = '5px';
-    img.style.border = '1px solid #ddd';
-    img.style.objectFit = 'cover';
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.width = '100px';
+                        img.style.height = '100px';
+                        img.style.borderRadius = '5px';
+                        img.style.border = '1px solid #ddd';
+                        img.style.objectFit = 'cover';
 
-    const colorSelect = document.createElement('select');
-    colorSelect.name = `colors[${index}]`; // Ensure name is dynamic
-    colorSelect.style.marginTop = '5px';
+                        const colorSelect = document.createElement('select');
+                        colorSelect.name = `colors[${index}]`; // Ensure name is dynamic
+                        colorSelect.style.marginTop = '5px';
 
-    const colors = @json($attribute_colors);
-    colorSelect.innerHTML = '<option value="">Select Color</option>';
-    colors.forEach(color => {
-        const option = document.createElement('option');
-        option.value = color.id;
-        option.text = color.name;
-        colorSelect.appendChild(option);
-    });
+                        const colors = @json($attribute_colors);
+                        colorSelect.innerHTML = '<option value="">Select Color</option>';
+                        colors.forEach(color => {
+                            const option = document.createElement('option');
+                            option.value = color.id;
+                            option.text = color.name;
+                            colorSelect.appendChild(option);
+                        });
 
-    imgContainer.appendChild(img);
-    imgContainer.appendChild(colorSelect);
-    galleryImagePreviewContainer.appendChild(imgContainer);
-};
+                        imgContainer.appendChild(img);
+                        imgContainer.appendChild(colorSelect);
+                        galleryImagePreviewContainer.appendChild(imgContainer);
+                    };
 
                     reader.readAsDataURL(file);
                 } else {
