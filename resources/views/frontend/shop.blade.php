@@ -135,10 +135,10 @@
                             <div class="row">
                                 <div class="col-lg-7 col-md-6">
                                     <div class="top-bar-left">
-                                        <div class="product-view-mode mr-70 mr-sm-0">
+                                        {{-- <div class="product-view-mode mr-70 mr-sm-0">
                                             <a class="active" href="#" data-target="grid"><i class="fa fa-th"></i></a>
                                             <a href="#" data-target="list"><i class="fa fa-list"></i></a>
-                                        </div>
+                                        </div> --}}
                                         <div class="product-amount">
                                             <p>Showing {{ $products->firstItem() }}–{{ $products->lastItem() }} of
                                                 {{ $products->total() }} results</p>

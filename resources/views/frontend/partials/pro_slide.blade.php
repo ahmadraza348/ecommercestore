@@ -50,7 +50,7 @@
     </div>
 </div>
 
-
+{{-- 
 
 <div class="product-list-item mb-30 fix" >
     <div class="product-thumb">
@@ -95,4 +95,4 @@
                     class="fa fa-refresh"></i></a>
         </div>
     </div>
-</div>
+</div> --}}

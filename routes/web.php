@@ -25,6 +25,14 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 
+// AJAX route to fetch dependent attribute values based on selection
+// Route::post('/product/get-attribute-values', [ProductPageController::class, 'getAttributeValues'])->name('product.getAttributeValues');
+Route::post('/get-attributes', [ProductPageController::class, 'getAttributes']);
+
+// Route for adding product to cart
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+
+
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
