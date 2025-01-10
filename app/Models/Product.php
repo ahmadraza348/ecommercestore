@@ -19,10 +19,7 @@ class Product extends Model
         'is_featured', 'short_description', 'long_description', 'featured_image',
         'back_image', 'video', 'brand_id'
     ];
-    // public function procategories()
-    // {
-    //     return $this->belongsToMany(Category::class, 'pro_categories');
-    // }
+
  public function gallery_images()
 {
     return $this->hasMany(ProImages::class, 'product_id');

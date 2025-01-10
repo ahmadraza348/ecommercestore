@@ -10,10 +10,10 @@ class ProductPageController extends Controller
 {
   public function index($slug)
 {
-    $product = Product::where('slug', $slug)->first();
-    $attributes = $product->attributes;
+    $pro_detail = Product::where('slug', $slug)->first();
+    $attributes = $pro_detail->attributes;
     return view('frontend.product-detail', [
-        'pro_detail' => $product,
+        'pro_detail' => $pro_detail,
         'attributes' => $attributes, 
     ]);
 }

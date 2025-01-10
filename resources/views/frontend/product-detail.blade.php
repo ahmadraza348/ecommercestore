@@ -52,85 +52,149 @@
                                     <p>{{ $pro_detail->short_description }}</p>
 
 
-                                    <!-- Color Display -->
-                                    <div class="color-option mt-10">
-                                        <h5>Color:</h5>
-                                        <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
-                                            @foreach ($pro_detail->attributes->where('slug', 'color')->unique('pivot.attribute_value_id') as $key => $attribute)
-                                                @php
-                                                    $colorValue =
-                                                        \App\Models\AttributeValue::find(
-                                                            $attribute->pivot->attribute_value_id,
-                                                        )->name ?? 'Unknown';
-                                                    $itemCode = $attribute->pivot->itemcode ?? '';
-                                                @endphp
-                                                <li>
-                                                    <div class="color-box {{ $key === 0 ? 'active' : '' }}"
-                                                        data-item-code="{{ $itemCode }}" title="{{ $colorValue }}"
-                                                        style="width: 30px; height: 30px; border: 1px solid #000; background-color: {{ strtolower($colorValue) }}; {{ $key === 0 ? 'border: 3px solid #000;' : '' }}">
-                                                    </div>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
+                               
+<!-- Color Display -->
+<div class="color-option mt-10">
+    <h5>Color: <span id="selected-color">None</span></h5>
+    <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
+        @foreach ($pro_detail->attributes->where('slug', 'color')->unique('pivot.attribute_value_id') as $key => $attribute)
+            @php
+                $colorValue = \App\Models\AttributeValue::find($attribute->pivot->attribute_value_id)->slug ?? 'Unknown';
+                $itemCode = $attribute->pivot->itemcode ?? '';
+            @endphp
+            <li>
+                <div class="color-box {{ $key === 0 ? 'active' : '' }}" 
+                    data-item-code="{{ $itemCode }}"
+                    data-color-id="{{ $attribute->pivot->attribute_value_id }}"
+                    title="{{ $colorValue }}"
+                    style="width: 30px; height: 30px; border: 1px solid #000; background-color: {{ strtolower($colorValue) }};">
+                </div>
+            </li>
+        @endforeach
+    </ul>
+</div>
 
-                                    <!-- Other Attributes Display -->
-                                    <div class="attributes mt-10">
-                                        @foreach ($pro_detail->attributes->where('slug', '!=', 'color')->unique('pivot.attribute_value_id')->groupBy('slug') as $slug => $attributesGroup)
-                                            <div class="attribute-group">
-                                                <h6>{{ ucfirst($slug) }}:</h6>
-                                                <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
-                                                    @foreach ($attributesGroup as $attribute)
-                                                        @php
-                                                            $attributeValue =
-                                                                \App\Models\AttributeValue::find(
-                                                                    $attribute->pivot->attribute_value_id,
-                                                                )->name ?? 'Unknown';
-                                                        @endphp
-                                                        <li>
-                                                            <div class="attribute-box" title="{{ $attributeValue }}"
-                                                                style="border: 1px solid #000; padding: 10px; text-align: center;">
-                                                                {{ $attributeValue }}
-                                                            </div>
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <div class="pricebox">
-                                        <span class="regular-price">{{ $pro_detail->sale_price }} PKR</span>
-                                    </div>
+<!-- Other Attributes Display -->
+<div class="attributes mt-10">
+    @foreach ($pro_detail->attributes->where('slug', '!=', 'color')->unique('pivot.attribute_value_id')->groupBy('slug') as $slug => $attributesGroup)
+        <div class="attribute-group" data-attribute-name="{{ $slug }}">
+            <h6>{{ ucfirst($slug) }}: <span id="selected-{{ $slug }}">None</span></h6>
+            <ul style="display: flex; gap: 10px; list-style: none; padding: 0;">
+                @foreach ($attributesGroup as $key => $attribute)
+                    @php
+                        $attributeValue = \App\Models\AttributeValue::find($attribute->pivot->attribute_value_id)->name ?? 'Unknown';
+                        $price = $attribute->pivot->price ?? $pro_detail->sale_price;
+                    @endphp
+                    <li>
+                        <div class="attribute-box {{ $key === 0 ? 'active' : '' }}" 
+                            data-attribute-value="{{ $attributeValue }}"
+                            data-price="{{ $price }}"
+                            title="{{ $attributeValue }}">
+                            {{ $attributeValue }}
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endforeach
+</div>
 
-                                    <!-- Style -->
-                                    <style>
-                                        .color-box.active {
-                                            border: 3px solid #000;
-                                        }
+<div class="pricebox">
+    <span class="regular-price" id="current-price">{{ $pro_detail->sale_price }} PKR</span>
+</div>
 
-                                        .attribute-box {
-                                            width: 50px;
-                                            height: 50px;
-                                            display: flex;
-                                            justify-content: center;
-                                            align-items: center;
-                                            font-size: 10px;
-                                            font-weight: bold;
-                                        }
-                                    </style>
+<!-- Style -->
+<style>
+    .color-box.active, .attribute-box.active {
+        border: 3px solid #000;
+    }
 
-                                    <!-- Script -->
-                                    <script>
-                                        // Handle color selection
-                                        $(document).on('click', '.color-box', function() {
-                                            $('.color-box').removeClass('active');
-                                            $(this).addClass('active');
+    .attribute-box {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
 
-                                            let itemCode = $(this).data('item-code');
-                                            console.log('Selected item code:', itemCode); // For debugging
-                                            // Trigger dynamic updates if needed
-                                        });
-                                    </script>
+<!-- Script -->
+<script>
+    $(document).ready(function () {
+        // Select default values
+        selectDefaultValues();
+
+        // Handle color selection
+        $(document).on('click', '.color-box', function () {
+            $('.color-box').removeClass('active');
+            $(this).addClass('active');
+
+            let selectedColor = $(this).data('item-code');
+            $('#selected-color').text(selectedColor);
+
+            // Update attributes relevant to selected color
+            updateAttributes($(this).data('color-id'));
+        });
+
+        // Handle attribute selection
+        $(document).on('click', '.attribute-box', function () {
+            const group = $(this).closest('.attribute-group').find('.attribute-box');
+            group.removeClass('active');
+            $(this).addClass('active');
+
+            let selectedAttribute = $(this).data('attribute-value');
+            let attributeName = $(this).closest('.attribute-group').data('attribute-name');
+            $('#selected-' + attributeName).text(selectedAttribute);
+
+            // Update price
+            updatePrice();
+        });
+    });
+
+    function selectDefaultValues() {
+        // Select default color
+        $('.color-box').first().addClass('active');
+        let defaultColor = $('.color-box.active').data('item-code');
+        $('#selected-color').text(defaultColor);
+
+        // Select default attributes
+        $('.attribute-group').each(function () {
+            $(this).find('.attribute-box').first().addClass('active');
+            let attributeName = $(this).data('attribute-name');
+            let defaultAttribute = $(this).find('.attribute-box.active').data('attribute-value');
+            $('#selected-' + attributeName).text(defaultAttribute);
+        });
+
+        // Update price
+        updatePrice();
+    }
+
+    function updateAttributes(colorId) {
+        // Logic to filter and show relevant attributes for the selected color
+        console.log('Color ID:', colorId); // Debugging
+
+        // Refresh price
+        updatePrice();
+    }
+
+    function updatePrice() {
+        let totalPrice = 0;
+
+        // Add base price
+        totalPrice += parseFloat($('#current-price').data('base-price') || 0);
+
+        // Add selected attribute prices
+        $('.attribute-box.active').each(function () {
+            totalPrice += parseFloat($(this).data('price') || 0);
+        });
+
+        $('#current-price').text(totalPrice.toFixed(2) + ' PKR');
+    }
+</script>
+
 
 
                                     <div class="quantity-cart-box d-flex align-items-center">
