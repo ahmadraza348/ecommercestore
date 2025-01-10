@@ -1,0 +1,9 @@
+# Laravel / PHP
+.env
+vendor/
+node_modules/
+public/storage
+
+# OS Files
+.DS_Store
+Thumbs.db
