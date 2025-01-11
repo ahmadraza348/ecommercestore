@@ -306,32 +306,32 @@ class ProductController extends Controller
     {
         //
     }
+public function edit(string $id)
+{
+    $data['pro_data'] = Product::with([
+        'gallery_images',
+        'attributes' => function ($query) {
+            $query->orderBy('itemcode', 'asc');
+        }
+    ])->findOrFail($id);
 
-    public function edit(string $id)
-    {
-        // Fetch product with its categories
-        $data['pro_data'] = Product::with([
-            'gallery_images',
-            'attributes' => function ($query) {
-                $query->orderBy('itemcode', 'asc');
-            }
-        ])->findOrFail($id);
+    $data['all_category_data'] = Category::where('status', '1')
+        ->whereNull('parent_id')
+        ->with('subcategories.subcategories')
+        ->get();
+    $data['selected_categories'] = $data['pro_data']->categories->pluck('id')->toArray();
+
+    $data['attributes'] = Attribute::where('status', 1)->with('attributevalue')->get();
+    $data['attribute_colors'] = AttributeValue::whereHas('attribute', function ($query) {
+        $query->where('slug', 'color');
+    })->get();
+    $data['selected_attribute'] = $data['pro_data']->attributes->pluck('id')->toArray();
+    $data['brands'] = Brand::where('status', 1)->get();
+
+    return view('backend.product.edit', $data);
+}
 
 
-        $data['all_category_data'] = Category::where('status', '1')
-            ->whereNull('parent_id')
-            ->with('subcategories.subcategories')
-            ->get();
-        $data['selected_categories'] = $data['pro_data']->categories->pluck('id')->toArray();
-
-        $data['attributes'] = Attribute::where('status', 1)->with('attributevalue')->get();
-        $data['attribute_colors'] = AttributeValue::whereHas('attribute', function ($query) {
-            $query->where('slug', 'color');
-        })->get();
-        $data['selected_attribute'] = $data['pro_data']->attributes->pluck('id')->toArray();
-        $data['brands'] = Brand::where('status', 1)->get();
-        return view('backend.product.edit', $data);
-    }
 
     public function getAttributeValues($id)
     {
@@ -343,153 +343,157 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        try {
-            // Validation Rules
-            $rules = [
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:products,slug,' . $id,
-                'sku' => 'required|string|max:255|unique:products,sku,' . $id,
-                'sale_price' => 'required|numeric|max:99999',
-                'barcode' => 'required|string|max:255',
-                'stock' => 'required|integer|max:99999',
-                'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'gallery_images' => 'nullable|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
-                'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
-            ];
+ public function update(Request $request, string $id)
+{
+    // dd($request->all()); // Keep this temporarily to check the incoming request
 
-            $validator = Validator::make($request->all(), $rules);
+    try {
+        // Validation Rules
+        $rules = [
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:products,slug,' . $id,
+            'sku' => 'required|string|max:255|unique:products,sku,' . $id,
+            'sale_price' => 'required|numeric|max:99999',
+            'barcode' => 'required|string|max:255',
+            'stock' => 'required|integer|max:99999',
+            'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
+            'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
+            'gallery_images' => 'nullable|array',
+            'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
+            'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
+        ];
 
-            if ($validator->fails()) {
-                foreach ($validator->errors()->all() as $error) {
-                    toastr()->error($error);
-                }
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            foreach ($validator->errors()->all() as $error) {
+                toastr()->error($error);
             }
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-            // Fetch Product Data
-            $product = Product::findOrFail($id);
-            $data = $request->only([
-                'name',
-                'slug',
-                'sku',
-                'sale_price',
-                'previous_price',
-                'purchase_price',
-                'barcode',
-                'stock',
-                'tags',
-                'label',
-                'is_featured',
-                'short_description',
-                'long_description',
-                'brand_id',
+        // Fetch Product Data
+        $product = Product::findOrFail($id);
+        $data = $request->only([
+            'name',
+            'slug',
+            'sku',
+            'sale_price',
+            'previous_price',
+            'purchase_price',
+            'barcode',
+            'stock',
+            'tags',
+            'label',
+            'is_featured',
+            'short_description',
+            'long_description',
+            'brand_id',
+        ]);
 
-            ]);
+        // Handle Featured Image
+        if ($request->hasFile('featured_image')) {
+            $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
+            $data['featured_image'] = $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
+        }
 
-            // Handle Featured Image
-            if ($request->hasFile('featured_image')) {
-                $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
-                $data['featured_image'] = $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
-            }
+        // Handle Back Image
+        if ($request->hasFile('back_image')) {
+            $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
+            $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
+        }
 
-            // Handle Back Image
-            if ($request->hasFile('back_image')) {
-                $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
-                $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
-            }
+        // Handle Video
+        if ($request->hasFile('video')) {
+            $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
+            $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');
+        }
 
-            // Handle Video
-            if ($request->hasFile('video')) {
-                $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
-                $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');
-            }
+        // Update Product
+        $product->update($data);
 
-            // Update Product
-            $product->update($data);
+        // Update Product Gallery Images
+        if ($request->hasFile('gallery_images')) {
+            // Delete existing gallery images for the product
+            ProImages::where('product_id', $id)->delete();
 
-            // Update Product Gallery Images
-            if ($request->hasFile('gallery_images')) {
-                // Delete existing gallery images for the product
-                ProImages::where('product_id', $id)->delete();
+            // Process each uploaded gallery image
+            foreach ($request->file('gallery_images') as $index => $galleryImage) {
+                $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
+                $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
 
-                // Process each uploaded gallery image
-                foreach ($request->file('gallery_images') as $index => $galleryImage) {
-                    $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
-                    $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
-
-                    ProImages::create([
-                        'product_id' => $product->id,
-                        'image' => $publicGalleryPath,
-                        'color_id' => $request->input('color_ids')[$index] ?? null, // Capture color_id for each image
-                    ]);
-                }
-            }
-
-            // Update color_id for existing gallery images
-            if ($request->has('existing_colors')) {
-                foreach ($request->existing_colors as $imageId => $colorId) {
-                    $galleryImage = ProImages::find($imageId);
-                    if ($galleryImage) {
-                        $galleryImage->update(['color_id' => $colorId]);
-                    }
-                }
-            }
-
-
-            if ($request->has('category')) {
-                // First, detach old categories from the brand
-                RelationalCategory::where('metaable_id', $product->id)
-                    ->where('metaable_type', Product::class)
-                    ->delete();
-
-                $categories = $request->input('category', []);
-                foreach ($categories as $categoryId) {
-                    RelationalCategory::create([
-                        'product_id' => $product->id,
-                        'category_id' => $categoryId,
-                        'metaable_id' => $product->id,
-                        'metaable_type' => Product::class,
-                    ]);
-                }
-            }
-
-            // Update Product Attributes
-            $attributes = $request->input('attribute', []);
-            $attributeValues = $request->input('attribute_value', []);
-            $attributeStocks = $request->input('attribute_stock', []);
-            $attributePrices = $request->input('attribute_price', []);
-            $itemCodes = $request->input('itemcode', []);
-
-            $product->attributes()->detach(); // Clear existing attributes
-            foreach ($attributes as $index => $attributeId) {
-                $product->attributes()->attach($attributeId, [
-                    'attribute_value_id' => $attributeValues[$index],
-                    'stock' => $attributeStocks[$index],
-                    'price' => $attributePrices[$index],
-                    'itemcode' => $itemCodes[$index]
+                ProImages::create([
+                    'product_id' => $product->id,
+                    'image' => $publicGalleryPath,
+                    'color_id' => $request->input('color_ids')[$index] ?? null, // Capture color_id for each image
                 ]);
             }
-
-            // Update Product Meta Tags
-            $metaTag = $product->metaTag ?: new MetaTag();
-            $metaTag->meta_title = $request->meta_title;
-            $metaTag->meta_keywords = $request->meta_keywords;
-            $metaTag->meta_description = $request->meta_description;
-            $product->metaTag()->save($metaTag);
-
-            toastr()->success('Product updated successfully!');
-            return redirect()->back();
-        } catch (\Exception $e) {
-            toastr()->error($e->getMessage());
-            return redirect()->back()->withInput();
         }
+
+        // Update color_id for existing gallery images
+        if ($request->has('existing_colors')) {
+            foreach ($request->existing_colors as $imageId => $colorId) {
+                $galleryImage = ProImages::find($imageId);
+                if ($galleryImage) {
+                    $galleryImage->update(['color_id' => $colorId]);
+                }
+            }
+        }
+
+        // Update Product Categories
+        if ($request->has('category')) {
+            // Detach old categories from the product
+            RelationalCategory::where('metaable_id', $product->id)
+                ->where('metaable_type', Product::class)
+                ->delete();
+
+            $categories = $request->input('category', []);
+            foreach ($categories as $categoryId) {
+                RelationalCategory::create([
+                    'product_id' => $product->id,
+                    'category_id' => $categoryId,
+                    'metaable_id' => $product->id,
+                    'metaable_type' => Product::class,
+                ]);
+            }
+        }
+
+        // Update Product Attributes (Remove All Existing Attributes and Re-Add Them)
+        $attributes = $request->input('attribute', []);
+        $attributeValues = $request->input('attribute_value', []);
+        $attributeStocks = $request->input('attribute_stock', []);
+        $attributePrices = $request->input('attribute_price', []);
+        $itemCodes = $request->input('itemcode', []);
+
+        // Detach all existing attributes from the product first
+        $product->attributes()->detach();
+
+        // Re-add the updated attributes
+        foreach ($attributes as $index => $attributeId) {
+            $product->attributes()->attach($attributeId, [
+                'attribute_value_id' => $attributeValues[$index] ?? null,
+                'stock' => $attributeStocks[$index] ?? 0,
+                'price' => $attributePrices[$index] ?? 0,
+                'itemcode' => $itemCodes[$index] ?? null
+            ]);
+        }
+
+        // Update Product Meta Tags
+        $metaTag = $product->metaTag ?: new MetaTag();
+        $metaTag->meta_title = $request->meta_title;
+        $metaTag->meta_keywords = $request->meta_keywords;
+        $metaTag->meta_description = $request->meta_description;
+        $product->metaTag()->save($metaTag);
+
+        toastr()->success('Product updated successfully!');
+        return redirect()->back();
+    } catch (\Exception $e) {
+        toastr()->error($e->getMessage());
+        return redirect()->back()->withInput();
     }
+}
 
 
     public function deleteGalleryImage(Request $request)

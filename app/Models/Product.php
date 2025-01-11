@@ -56,18 +56,4 @@ class Product extends Model
     }
 
 
-    public function getPriceForAttributes($selectedAttributes)
-{
-    // Example logic: Fetch price based on attributes
-    $priceQuery = $this->prices();
-
-    foreach ($selectedAttributes as $attribute => $value) {
-        $priceQuery->whereHas('attributesValues', function ($query) use ($attribute, $value) {
-            $query->where('attribute_name', $attribute)->where('id', $value);
-        });
-    }
-
-    return $priceQuery->value('price');
-}
-
 }
