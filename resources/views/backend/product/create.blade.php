@@ -446,7 +446,7 @@
     </div>
 
     <script>
-  $(document).ready(function () {
+       $(document).ready(function () {
     var maxField = 100; // Maximum number of rows allowed
     var addButton = $(".add_button"); // Add button selector
     var wrapper = $(".field_wrapper"); // Table body selector
@@ -461,19 +461,20 @@
             fieldCounter++;
             var rowHTML = `<tr>
                 <td>
-                    <select name="color[]" required class="form-select">
+                    <select name="attr_color[]" required class="form-select">
                         <option value="">Select Color</option>`;
+            // Dynamically generate color options
             @foreach ($colorAttribute->attributevalue as $color)
-                rowHTML += `<option value="{{ $color->id }}">{{ $color->name }}</option>`;
+            rowHTML += `<option value="{{ $color->id }}">{{ $color->name }}</option>`;
             @endforeach
             rowHTML += `</select>
                 </td>`;
-            
+
             // Add dynamic attribute column if an attribute is selected
             if (selectedAttribute) {
                 rowHTML += `<td class="dynamic-attribute-cell">
-                    <select name="dynamic_value[]" class="form-select" required>
-                        <option value="">Select ${selectedAttribute.name}</option>`;
+                    <select name="attr_${selectedAttribute.name}[]" class="form-select" required>
+                        <option value="">Select </option>`;
                 selectedAttribute.values.forEach(value => {
                     rowHTML += `<option value="${value.id}">${value.name}</option>`;
                 });
@@ -485,10 +486,10 @@
 
             rowHTML += `
                 <td>
-                    <input type="number" name="price[]" required class="form-control" />
+                    <input type="number" name="attr_price[]" required class="form-control" />
                 </td>
                 <td>
-                    <input type="number" name="stock[]" required class="form-control" />
+                    <input type="number" name="attr_stock[]" required class="form-control" />
                 </td>
                 <td>
                     <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
@@ -522,8 +523,8 @@
             // Update all rows with the dynamic attribute column
             $(".field_wrapper tr").each(function () {
                 var dynamicCell = $(this).find(".dynamic-attribute-cell");
-                var optionsHTML = `<select name="dynamic_value[]" class="form-select" required>`;
-                optionsHTML += `<option value="">Select ${selectedAttribute.name}</option>`;
+                var optionsHTML = `<select name="attr_${selectedAttribute.name}[]" class="form-select" required>`;
+                optionsHTML += `<option value="">Select </option>`;
                 selectedAttribute.values.forEach(value => {
                     optionsHTML += `<option value="${value.id}">${value.name}</option>`;
                 });
@@ -538,6 +539,7 @@
         }
     });
 });
+
 
 
 
