@@ -38,6 +38,9 @@ class ProductController extends Controller
         $data['attribute_colors'] = AttributeValue::whereHas('attribute', function ($query) {
             $query->where('slug', 'color');
         })->get();
+         $data['colorAttribute'] = Attribute::where('slug', 'color')
+        ->with('attributevalue')
+        ->first();
         $data['brands'] = Brand::where('status', 1)->get();
         return view('backend.product.create', $data);
     }
@@ -173,6 +176,7 @@ class ProductController extends Controller
     // }
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $rules = [
                 'name' => 'required|string|max:255',
