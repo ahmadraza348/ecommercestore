@@ -385,7 +385,7 @@
                                                 @foreach (old('color', ['']) as $index => $oldColor)
                                                     <tr>
                                                         <td>
-                                                            <select name="attr_color[]" required class="form-select">
+                                                            <select name="attribute_id[]" required class="form-select">
                                                                 <option value="">Select </option>
                                                                 @foreach ($colorAttribute->attributevalue as $color)
                                                                     <option value="{{ $color->id }}"
@@ -446,7 +446,7 @@
     </div>
 
     <script>
-       $(document).ready(function () {
+    $(document).ready(function () {
     var maxField = 100; // Maximum number of rows allowed
     var addButton = $(".add_button"); // Add button selector
     var wrapper = $(".field_wrapper"); // Table body selector
@@ -461,9 +461,9 @@
             fieldCounter++;
             var rowHTML = `<tr>
                 <td>
-                    <select name="attr_color[]" required class="form-select">
-                        <option value="">Select Color</option>`;
-            // Dynamically generate color options
+                    <select name="attribute_id[]" required class="form-select">
+                        <option value="">Select Attribute</option>`;
+            // Dynamically generate attribute options for color
             @foreach ($colorAttribute->attributevalue as $color)
             rowHTML += `<option value="{{ $color->id }}">{{ $color->name }}</option>`;
             @endforeach
@@ -473,8 +473,8 @@
             // Add dynamic attribute column if an attribute is selected
             if (selectedAttribute) {
                 rowHTML += `<td class="dynamic-attribute-cell">
-                    <select name="attr_${selectedAttribute.name}[]" class="form-select" required>
-                        <option value="">Select </option>`;
+                    <select name="attribute_value_id[]" class="form-select" required>
+                        <option value="">Select Value</option>`;
                 selectedAttribute.values.forEach(value => {
                     rowHTML += `<option value="${value.id}">${value.name}</option>`;
                 });
@@ -523,8 +523,8 @@
             // Update all rows with the dynamic attribute column
             $(".field_wrapper tr").each(function () {
                 var dynamicCell = $(this).find(".dynamic-attribute-cell");
-                var optionsHTML = `<select name="attr_${selectedAttribute.name}[]" class="form-select" required>`;
-                optionsHTML += `<option value="">Select </option>`;
+                var optionsHTML = `<select name="attribute_value_id[]" class="form-select" required>`;
+                optionsHTML += `<option value="">Select Value</option>`;
                 selectedAttribute.values.forEach(value => {
                     optionsHTML += `<option value="${value.id}">${value.name}</option>`;
                 });
@@ -539,6 +539,7 @@
         }
     });
 });
+
 
 
 
