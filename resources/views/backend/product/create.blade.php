@@ -348,77 +348,80 @@
                         </div>
 
                         <div class="tab-pane" id="attributes-tab">
-                            <div class="card">
-                                <div class="card-body">
-                                    <!-- Select Attribute Section -->
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="mb-3">
-                                                <label for="dynamic-attribute-select" class="form-label"> Attribute:
-                                                </label>
-                                                <select id="dynamic-attribute-select" class="form-select">
-                                                    <option value="">Select </option>
-                                                    @foreach ($attributes as $attribute)
-                                                        @if ($attribute->slug !== 'color')
-                                                            <option value="{{ $attribute->id }}">{{ $attribute->name }}
-                                                            </option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                         <div class="card-body">
+        <!-- Select Attribute Section -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label for="dynamic-attribute-select" class="form-label"> Attribute: </label>
+                    <select id="dynamic-attribute-select" class="form-select">
+                        <option value="">Select</option>
+                        @foreach ($attributes as $attribute)
+                            @if ($attribute->slug !== 'color')
+                                <option value="{{ $attribute->id }}" {{ old('selected_attribute') == $attribute->id ? 'selected' : '' }}>
+                                    {{ $attribute->name }}
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
 
-                                    <!-- Attributes Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Color</th>
-                                                    <th id="dynamic-attribute-header"></th>
-                                                    <th>Price</th>
-                                                    <th>Stock</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="field_wrapper">
-                                                @foreach (old('color', ['']) as $index => $oldColor)
-                                                    <tr>
-                                                        <td>
-                                                            <select name="attribute_id[]" required class="form-select">
-                                                                <option value="">Select </option>
-                                                                @foreach ($colorAttribute->attributevalue as $color)
-                                                                    <option value="{{ $color->id }}"
-                                                                        {{ old('attr_color.' . $index) == $color->id ? 'selected' : '' }}>
-                                                                        {{ $color->name }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </td>
-                                                        <td class="dynamic-attribute-cell"></td>
-                                                        <td>
-                                                            <input type="number" name="attr_price[]"
-                                                                value="{{ old('attr_price.' . $index) }}" required
-                                                                class="form-control">
-                                                        </td>
-                                                        <td>
-                                                            <input type="number" name="attr_stock[]"
-                                                                value="{{ old('attr_stock.' . $index) }}" required
-                                                                class="form-control">
-                                                        </td>
-                                                        <td>
-                                                            <a href="javascript:void(0);"
-                                                                class="remove_button text-danger"><i
-                                                                    class="fas fa-trash-alt"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                        <button type="button" class="btn btn-primary add_button mt-2">Add Row</button>
-                                    </div>
-                                </div>
-                            </div>
+        <!-- Attributes Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th id="dynamic-attribute-header">{{ old('selected_attribute_name') }}</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="field_wrapper">
+                    <!-- Existing rows -->
+                    @foreach (old('attribute_id', ['']) as $index => $attributeId)
+                        <tr>
+                            <td>
+                                <select name="attribute_id[]" class="form-select">
+                                    <option value="">Select Attribute</option>
+                                    @foreach ($colorAttribute->attributevalue as $color)
+                                        <option value="{{ $color->id }}" {{ old('attribute_id.' . $index) == $color->id ? 'selected' : '' }}>
+                                            {{ $color->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td class="dynamic-attribute-cell">
+                                @if (old('attribute_value_id.' . $index))
+                                    <select name="attribute_value_id[]" class="form-select">
+                                        <option value="">Select Value</option>
+                                        @foreach ($attributes->where('id', old('selected_attribute'))->first()->attributevalue as $value)
+                                            <option value="{{ $value->id }}" {{ old('attribute_value_id.' . $index) == $value->id ? 'selected' : '' }}>
+                                                {{ $value->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @endif
+                            </td>
+                            <td>
+                                <input type="number" name="attr_price[]" value="{{ old('attr_price.' . $index) }}" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" name="attr_stock[]" value="{{ old('attr_stock.' . $index) }}" class="form-control">
+                            </td>
+                            <td>
+                                <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-primary add_button mt-2">Add Row</button>
+        </div>
+    </div>
 
                         </div>
 
@@ -446,102 +449,105 @@
     </div>
 
     <script>
-    $(document).ready(function () {
-    var maxField = 100; // Maximum number of rows allowed
-    var addButton = $(".add_button"); // Add button selector
-    var wrapper = $(".field_wrapper"); // Table body selector
-    var dynamicAttributeHeader = $("#dynamic-attribute-header"); // Dynamic attribute header
-    var dynamicAttributeSelect = $("#dynamic-attribute-select"); // Attribute selector
-    var fieldCounter = $(".field_wrapper tr").length; // Initial row count
-    var selectedAttribute = null; // Store the currently selected attribute
+   
 
-    // Add a new row
-    $(addButton).click(function () {
-        if (fieldCounter < maxField) {
-            fieldCounter++;
-            var rowHTML = `<tr>
-                <td>
-                    <select name="attribute_id[]" required class="form-select">
-                        <option value="">Select Attribute</option>`;
-            // Dynamically generate attribute options for color
-            @foreach ($colorAttribute->attributevalue as $color)
-            rowHTML += `<option value="{{ $color->id }}">{{ $color->name }}</option>`;
-            @endforeach
-            rowHTML += `</select>
-                </td>`;
 
-            // Add dynamic attribute column if an attribute is selected
-            if (selectedAttribute) {
-                rowHTML += `<td class="dynamic-attribute-cell">
-                    <select name="attribute_value_id[]" class="form-select" required>
-                        <option value="">Select Value</option>`;
-                selectedAttribute.values.forEach(value => {
-                    rowHTML += `<option value="${value.id}">${value.name}</option>`;
-                });
-                rowHTML += `</select>
-                </td>`;
-            } else {
-                rowHTML += `<td class="dynamic-attribute-cell"></td>`;
-            }
 
-            rowHTML += `
-                <td>
-                    <input type="number" name="attr_price[]" required class="form-control" />
-                </td>
-                <td>
-                    <input type="number" name="attr_stock[]" required class="form-control" />
-                </td>
-                <td>
-                    <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
-                </td>
-            </tr>`;
-            $(wrapper).append(rowHTML);
-        } else {
-            alert("A maximum of " + maxField + " rows are allowed.");
-        }
-    });
+    $(document).ready(function() {
+            var maxField = 100; // Maximum number of rows allowed
+            var addButton = $(".add_button"); // Add button selector
+            var wrapper = $(".field_wrapper"); // Table body selector
+            var dynamicAttributeHeader = $("#dynamic-attribute-header"); // Dynamic attribute header
+            var dynamicAttributeSelect = $("#dynamic-attribute-select"); // Attribute selector
+            var fieldCounter = $(".field_wrapper tr").length; // Initial row count
+            var selectedAttribute = null; // Store the currently selected attribute
 
-    // Remove a row
-    $(wrapper).on("click", ".remove_button", function () {
-        $(this).closest("tr").remove();
-        fieldCounter--;
-    });
+            // Add a new row
+            $(addButton).click(function() {
+                if (fieldCounter < maxField) {
+                    fieldCounter++;
+                    var rowHTML = `<tr>
+                    <td>
+                        <select name="attribute_id[]" class="form-select">
+                            <option value="">Select Attribute</option>`;
+                    // Dynamically generate attribute options for color
+                    @foreach ($colorAttribute->attributevalue as $color)
+                        rowHTML += `<option value="{{ $color->id }}">{{ $color->name }}</option>`;
+                    @endforeach
+                    rowHTML += `</select>
+                    </td>`;
 
-    // Handle dynamic attribute selection
-    $(dynamicAttributeSelect).change(function () {
-        var selectedId = $(this).val();
-        if (selectedId) {
-            // Update the header and store the selected attribute details
-            var attribute = @json($attributes).find(attr => attr.id == selectedId);
-            selectedAttribute = {
-                id: attribute.id,
-                name: attribute.name,
-                values: attribute.attributevalue
-            };
-            dynamicAttributeHeader.text(selectedAttribute.name);
+                    // Add dynamic attribute column if an attribute is selected
+                    if (selectedAttribute) {
+                        rowHTML += `<td class="dynamic-attribute-cell">
+                        <select name="attribute_value_id[]" class="form-select">
+                            <option value="">Select Value</option>`;
+                        selectedAttribute.values.forEach(value => {
+                            rowHTML += `<option value="${value.id}">${value.name}</option>`;
+                        });
+                        rowHTML += `</select>
+                    </td>`;
+                    } else {
+                        rowHTML += `<td class="dynamic-attribute-cell"></td>`;
+                    }
 
-            // Update all rows with the dynamic attribute column
-            $(".field_wrapper tr").each(function () {
-                var dynamicCell = $(this).find(".dynamic-attribute-cell");
-                var optionsHTML = `<select name="attribute_value_id[]" class="form-select" required>`;
-                optionsHTML += `<option value="">Select Value</option>`;
-                selectedAttribute.values.forEach(value => {
-                    optionsHTML += `<option value="${value.id}">${value.name}</option>`;
-                });
-                optionsHTML += `</select>`;
-                dynamicCell.html(optionsHTML);
+                    rowHTML += `
+                    <td>
+                        <input type="number" name="attr_price[]" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="number" name="attr_stock[]" class="form-control" />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>`;
+                    $(wrapper).append(rowHTML);
+                } else {
+                    alert("A maximum of " + maxField + " rows are allowed.");
+                }
             });
-        } else {
-            // If no attribute is selected, reset the header and cells
-            selectedAttribute = null;
-            dynamicAttributeHeader.text("");
-            $(".dynamic-attribute-cell").html("");
-        }
-    });
-});
 
+            // Remove a row
+            $(wrapper).on("click", ".remove_button", function() {
+                $(this).closest("tr").remove();
+                fieldCounter--;
+            });
 
+            // Handle dynamic attribute selection
+            $(dynamicAttributeSelect).change(function() {
+                var selectedId = $(this).val();
+                if (selectedId) {
+                    // Update the header and store the selected attribute details
+                    var attribute = @json($attributes).find(attr => attr.id == selectedId);
+                    selectedAttribute = {
+                        id: attribute.id,
+                        name: attribute.name,
+                        values: attribute.attributevalue
+                    };
+                    dynamicAttributeHeader.text(selectedAttribute.name);
 
+                    // Update all rows with the dynamic attribute column
+                    $(".field_wrapper tr").each(function() {
+                        var dynamicCell = $(this).find(".dynamic-attribute-cell");
+                        var optionsHTML =
+                        `<select name="attribute_value_id[]" class="form-select">`;
+                        optionsHTML += `<option value="">Select Value</option>`;
+                        selectedAttribute.values.forEach(value => {
+                            optionsHTML +=
+                                `<option value="${value.id}">${value.name}</option>`;
+                        });
+                        optionsHTML += `</select>`;
+                        dynamicCell.html(optionsHTML);
+                    });
+                } else {
+                    // If no attribute is selected, reset the header and cells
+                    selectedAttribute = null;
+                    dynamicAttributeHeader.text("");
+                    $(".dynamic-attribute-cell").html("");
+                }
+            });
+        });
 
 
 
