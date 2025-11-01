@@ -89,6 +89,7 @@ class ProductController extends Controller
                 'label',
                 'is_featured',
                 'short_description',
+               ' attribute_id',
                 'long_description',
                 'brand_id',
             ]);
@@ -263,6 +264,7 @@ class ProductController extends Controller
                 'short_description',
                 'long_description',
                 'brand_id',
+                'attribute_id',
             ]);
     
             // Handle Images and Video Uploads

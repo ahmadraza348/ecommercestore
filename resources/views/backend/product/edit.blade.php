@@ -234,6 +234,26 @@
                                                     </select>
                                                 </div>
 
+
+                                                   <div class="col-lg-6 col-sm-12">
+                                                <label class="form-label mt-2" for="label">Select Attribute
+                                                </label>
+                                                <select name="attribute_id" class="form-control">
+                                                    <option value="">Select</option>
+                                                    @php
+                                                    $filteredAttributes = $attributes->where('slug', '!=', 'color');
+                                                    @endphp
+
+                                                    @foreach ($filteredAttributes as $item)
+                                                    <option value="{{ $item->id }}" {{$pro_data->attribute_id == $item->id ? 'selected' : '' }}>
+                                                        {{ $item->name }}
+                                                    </option>
+                                                    @endforeach
+
+                                                </select>
+                                            </div>
+
+
                                                 {{-- <div class="col-lg-6 col-sm-12">
                                                     <label class="form-label mt-2" for="related_pro">Related
                                                         Products</label>
