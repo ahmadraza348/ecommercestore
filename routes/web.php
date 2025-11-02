@@ -54,7 +54,7 @@ Route::post('/products/import', [ProductController::class, 'import'])->name('pro
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
     Route::resource('product', ProductController::class)->names('product');    
     Route::get('/add-product-attribute/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
-    Route::get('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
+    Route::post('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
     Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
     Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');

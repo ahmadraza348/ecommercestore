@@ -48,7 +48,6 @@ class ProductController extends Controller
    
     public function store(Request $request)
     {
-        dd($request->all());
         try {
             $rules = [
                 'name' => 'required|string|max:255',

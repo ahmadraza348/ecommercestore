@@ -17,7 +17,7 @@ class Product extends Model
         'name', 'slug', 'sku', 'status', 'sale_price', 'previous_price',
         'purchase_price', 'barcode', 'stock', 'tags', 'label',
         'is_featured', 'short_description', 'long_description', 'featured_image',
-        'back_image', 'video', 'brand_id'
+        'back_image', 'video', 'brand_id', 'attribute_id'
     ];
 
  public function gallery_images()

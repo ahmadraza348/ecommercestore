@@ -8,152 +8,127 @@
                 <h4>Add Product Attribute</h4>
             </div>
         </div>
-        {{-- Attribute Tabs --}}
-        <form method="post" class="" action="{{ route('store.pro.attribute') }}" enctype="">
+
+        <form method="POST" action="{{ route('store.pro.attribute') }}">
             @csrf
-            <div class="tab-pane" id="attributes-tab">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="field_wrapper">
-                            {{-- Loop through attributes dynamically --}}
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Item Code*</th>
-                                            <th>Color*</th>
-                                            @if (!empty($attribute_data))
-                                            <th>{{ $attribute_data->name }}*</th>
-                                            @endif
-                                            <th>Stock*</th>
-                                            <th>Price*</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (old('itemcode', ['']) as $rowIndex => $itemCode)
-                                        <tr class="dynamic-field-row">
-                                            <!-- Item Code -->
-                                            <td>
-                                                <input type="number" name="itemcode[]"
-                                                    value="{{ old('itemcode.' . $rowIndex) }}" required
-                                                    class="form-control" />
-                                                <div class="text-danger">
-                                                    @error('itemcode.' . $rowIndex)
-                                                    {{ $message }}
-                                                    @enderror
-                                                </div>
-                                            </td>
+<input type="hidden" name="product_id"value="{{ $product->id }}">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dynamicTable">
+                            <thead>
+                                <tr>
+                                    <th>Item Code*</th>
+                                    <th>Color*</th>
+                                    @if (!empty($attribute_data))
+                                    <th>{{ $attribute_data->name }}*</th>
+                                    @endif
+                                    <th>Stock*</th>
+                                    <th>Price*</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
 
-                                            <!-- Attribute selection -->
-                                            @if (!empty($colors))
-                                            <td>
-                                                <select name="color" required class="form-select" style="width: 150px">
-                                                    <option value="">Select Color</option>
-                                                    @foreach ($colors->attributevalue as $color )
-                                                    <option value="{{ $color->id }}"
-                                                        {{ old('color') == $color->id ? 'selected' : '' }}>
-                                                        {{ $color->name }}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            @endif
-                                            <!-- Attribute selection -->
-                                            @if (!empty($attribute_data))
-                                            <td>
-                                                <select name="attribute_id" required class="form-select" style="width: 150px">
-                                                    <option value="">Select</option>
-                                                    @foreach ($attribute_data->attributevalue as $attr )
-                                                    <option value="{{ $attr->id }}"
-                                                        {{ old('attr') == $attr->id ? 'selected' : '' }}>
-                                                        {{ $attr->name }}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            @endif
-                                            <!-- Stock -->
-                                            <td>
-                                                <input type="number" name="attribute_stock[]"
-                                                    value="{{ old('attribute_stock.' . $rowIndex) }}" required
-                                                    class="form-control" />
-                                                <div class="text-danger">
-                                                    @error('attribute_stock.' . $rowIndex)
-                                                    {{ $message }}
-                                                    @enderror
-                                                </div>
-                                            </td>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="number" name="attributes[0][itemcode]" class="form-control" required placeholder="Item Code">
+                                    </td>
 
-                                            <!-- Price -->
-                                            <td>
-                                                <input type="number" name="attribute_price[]"
-                                                    value="{{ old('attribute_price.' . $rowIndex) }}" required
-                                                    class="form-control" />
-                                                <div class="text-danger">
-                                                    @error('attribute_price.' . $rowIndex)
-                                                    {{ $message }}
-                                                    @enderror
-                                                </div>
-                                            </td>
+                                    @if (!empty($colors))
+                                    <td>
+                                        <select name="attributes[0][color]" required class="form-select" style="width:150px">
+                                            <option value="">Select Color</option>
+                                            @foreach ($colors->attributevalue as $color)
+                                            <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    @endif
 
-                                            <!-- Remove button -->
-                                            <td>
-                                                <a href="javascript:void(0);" class="remove_button text-danger">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @if (!empty($attribute_data))
+                                    <td>
+                                        <select name="attributes[0][attribute_id]" required class="form-select" style="width:150px">
+                                            <option value="">Select {{ $attribute_data->name }}</option>
+                                            @foreach ($attribute_data->attributevalue as $attr)
+                                            <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    @endif
 
-                            <!-- Add button -->
-                            <div class="form-group mt-3">
-                                <button type="button" class="btn btn-sm btn-primary add_button">Add Row</button>
-                            </div>
-                        </div>
+                                    <td>
+                                        <input type="number" name="attributes[0][stock]" class="form-control" required placeholder="Stock">
+                                    </td>
+
+                                    <td>
+                                        <input type="number" name="attributes[0][price]" class="form-control" required placeholder="Price">
+                                    </td>
+
+                                    <td>
+                                        <button type="button" name="add" id="add" class="btn btn-success">Add More</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
+
+                    <div class="form-group m-2">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+
                 </div>
             </div>
-
-            <div class="form-group m-2">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
         </form>
-
     </div>
 </div>
-@endsection
 
-{{-- Include JavaScript for dynamic field addition/removal --}}
+{{-- jQuery Script --}}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script type="text/javascript">
+    let i = 0;
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const fieldWrapper = document.querySelector('.field_wrapper tbody');
-        const addButton = document.querySelector('.add_button');
+    $("#add").click(function() {
+        ++i;
 
-        // Clone template for new rows
-        addButton.addEventListener('click', function() {
-            const newRow = fieldWrapper.querySelector('tr').cloneNode(true);
+        let newRow = `
+            <tr>
+                <td>
+                    <input type="number" name="attributes[${i}][itemcode]" class="form-control" required placeholder="Item Code">
+                </td>
 
-            // Reset inputs for the new row
-            newRow.querySelectorAll('input, select').forEach(function(input) {
-                input.value = '';
-            });
+                @if (!empty($colors))
+                <td>
+                    <select name="attributes[${i}][color]" required class="form-select" style="width:150px">
+                        <option value="">Select Color</option>
+                        @foreach ($colors->attributevalue as $color)
+                        <option value="{{ $color->id }}">{{ $color->name }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                @endif
 
-            fieldWrapper.appendChild(newRow);
-        });
+                @if (!empty($attribute_data))
+                <td>
+                    <select name="attributes[${i}][attribute_id]" required class="form-select" style="width:150px">
+                        <option value="">Select {{ $attribute_data->name }}</option>
+                        @foreach ($attribute_data->attributevalue as $attr)
+                        <option value="{{ $attr->id }}">{{ $attr->name }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                @endif
 
-        // Remove button functionality
-        fieldWrapper.addEventListener('click', function(e) {
-            if (e.target.closest('.remove_button')) {
-                const row = e.target.closest('tr');
-                if (fieldWrapper.querySelectorAll('tr').length > 1) {
-                    row.remove();
-                }
-            }
-        });
+                <td><input type="number" name="attributes[${i}][stock]" class="form-control" required placeholder="Stock"></td>
+                <td><input type="number" name="attributes[${i}][price]" class="form-control" required placeholder="Price"></td>
+                <td><button type="button" class="btn btn-danger remove-tr">Remove</button></td>
+            </tr>`;
+
+        $("#dynamicTable").append(newRow);
+    });
+
+    $(document).on('click', '.remove-tr', function() {
+        $(this).closest('tr').remove();
     });
 </script>
+@endsection
