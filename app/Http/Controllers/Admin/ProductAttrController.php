@@ -20,12 +20,13 @@ class ProductAttrController extends Controller
 
    public function store_pro_attr(Request $request)
    {
+      // dd($request->all());
       // Validate all dynamic fields
       $validated = $request->validate([
          'attributes' => 'required|array|min:1',
          'attributes.*.itemcode' => 'required|string|max:255',
-         'attributes.*.color' => 'nullable|exists:attribute_values,id',
-         'attributes.*.attribute_id' => 'nullable|exists:attribute_values,id',
+         'attributes.*.color_id' => 'nullable|exists:attribute_values,id',
+         'attributes.*.varient_id' => 'nullable|exists:attribute_values,id',
          'attributes.*.stock' => 'required|numeric|min:0',
          'attributes.*.price' => 'required|numeric|min:0',
       ]);
@@ -35,9 +36,10 @@ class ProductAttrController extends Controller
          foreach ($validated['attributes'] as $attr) {
             ProAttributeValue::create([
                'product_id'        => $request->product_id ?? null, // if you’re passing product_id hidden input
+               'attribute_id'        => $request->attribute_id ?? null, // if you’re passing product_id hidden input
                'itemcode'          => $attr['itemcode'],
-               'color_id'          => $attr['color'] ?? null,
-               'attribute_value_id' => $attr['attribute_id'] ?? null,
+               'color_id'          => $attr['color_id'] ?? null,
+               'attribute_value_id' => $attr['varient_id'] ?? null,
                'stock'             => $attr['stock'],
                'price'             => $attr['price'],
             ]);

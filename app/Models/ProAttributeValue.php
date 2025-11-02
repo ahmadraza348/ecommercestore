@@ -9,6 +9,6 @@ class ProAttributeValue extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'product_id','attribute_id','attribute_value_id','itemcode','stock','price',
+        'product_id','attribute_id','attribute_value_id','itemcode','stock','price','color_id'
     ];
 }

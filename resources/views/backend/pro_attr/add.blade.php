@@ -11,7 +11,10 @@
 
         <form method="POST" action="{{ route('store.pro.attribute') }}">
             @csrf
-<input type="hidden" name="product_id"value="{{ $product->id }}">
+            <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+            <input type="hidden" value="{{$attribute_data->id}}" name="attribute_id" class="form-control" placeholder="Attribute Id">
+
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
@@ -22,6 +25,7 @@
                                     <th>Color*</th>
                                     @if (!empty($attribute_data))
                                     <th>{{ $attribute_data->name }}*</th>
+
                                     @endif
                                     <th>Stock*</th>
                                     <th>Price*</th>
@@ -35,9 +39,10 @@
                                         <input type="number" name="attributes[0][itemcode]" class="form-control" required placeholder="Item Code">
                                     </td>
 
+
                                     @if (!empty($colors))
                                     <td>
-                                        <select name="attributes[0][color]" required class="form-select" style="width:150px">
+                                        <select name="attributes[0][color_id]" required class="form-select" style="width:150px">
                                             <option value="">Select Color</option>
                                             @foreach ($colors->attributevalue as $color)
                                             <option value="{{ $color->id }}">{{ $color->name }}</option>
@@ -48,7 +53,7 @@
 
                                     @if (!empty($attribute_data))
                                     <td>
-                                        <select name="attributes[0][attribute_id]" required class="form-select" style="width:150px">
+                                        <select name="attributes[0][varient_id]" required class="form-select" style="width:150px">
                                             <option value="">Select {{ $attribute_data->name }}</option>
                                             @foreach ($attribute_data->attributevalue as $attr)
                                             <option value="{{ $attr->id }}">{{ $attr->name }}</option>
@@ -92,6 +97,7 @@
         ++i;
 
         let newRow = `
+           <tbody>
             <tr>
                 <td>
                     <input type="number" name="attributes[${i}][itemcode]" class="form-control" required placeholder="Item Code">
@@ -99,7 +105,7 @@
 
                 @if (!empty($colors))
                 <td>
-                    <select name="attributes[${i}][color]" required class="form-select" style="width:150px">
+                    <select name="attributes[${i}][color_id]" required class="form-select" style="width:150px">
                         <option value="">Select Color</option>
                         @foreach ($colors->attributevalue as $color)
                         <option value="{{ $color->id }}">{{ $color->name }}</option>
@@ -110,7 +116,7 @@
 
                 @if (!empty($attribute_data))
                 <td>
-                    <select name="attributes[${i}][attribute_id]" required class="form-select" style="width:150px">
+                    <select name="attributes[${i}][varient_id]" required class="form-select" style="width:150px">
                         <option value="">Select {{ $attribute_data->name }}</option>
                         @foreach ($attribute_data->attributevalue as $attr)
                         <option value="{{ $attr->id }}">{{ $attr->name }}</option>
@@ -122,7 +128,8 @@
                 <td><input type="number" name="attributes[${i}][stock]" class="form-control" required placeholder="Stock"></td>
                 <td><input type="number" name="attributes[${i}][price]" class="form-control" required placeholder="Price"></td>
                 <td><button type="button" class="btn btn-danger remove-tr">Remove</button></td>
-            </tr>`;
+            </tr>
+           </tbody>`;
 
         $("#dynamicTable").append(newRow);
     });
