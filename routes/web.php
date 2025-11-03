@@ -62,7 +62,16 @@ Route::post('/products/import', [ProductController::class, 'import'])->name('pro
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
     Route::post('/admin/products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
-        ->name('admin.product.storeAttributes');
+        ->name('admin.product.store-attributes');
+        Route::get('/admin/products/{id}/attributes', [ProductAttrController::class, 'fetch_pro_attr'])
+    ->name('admin.product.fetchAttributes');
+    Route::post('/admin/products/update-attribute', [ProductAttrController::class, 'update_pro_attr'])
+    ->name('admin.product.updateAttribute');
+Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 'delete_pro_attr'])
+    ->name('admin.product.delete-attribute');
+
+
+
 
 
 

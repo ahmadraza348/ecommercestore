@@ -10,70 +10,54 @@ use App\Models\Product;
 class ProductAttrController extends Controller
 {
    public function add_pro_attr($product_id){
-      $product = Product::with('attributes')->findOrFail($product_id);
-      $attribute_data = Attribute::with('attributevalue')->first(); // or however you get it
       $colors = Attribute::where('name', 'Color')->with('attributevalue')->first();
+      $product = Product::findOrFail($product_id);
+      $attribute_data = Attribute::where('id',  $product->attribute_id)->with('attributevalue')->first(); // or however you get it
 
-      // Get all product variants for this product
-      $variants = \App\Models\ProAttributeValue::with([
-         'colorValue',
-         'attributeValue'
-      ])->where('product_id', $product_id)->get();
 
       return view('backend.pro_attr.add', compact(
-         'product',
          'attribute_data',
          'colors',
-         'variants'
+         'product'
       ));
    }
 
-   public function createAttribute($product_id)
-   {
-      $product = Product::with('attributes')->findOrFail($product_id);
-      $attribute_data = Attribute::with('attributevalue')->first(); // or however you get it
-      $colors = Attribute::where('name', 'Color')->with('attributevalue')->first();
+   public function fetch_pro_attr($product_id)
+{
+    try {
+        $data = ProAttributeValue::with(['color', 'attribute_value'])
+            ->where('product_id', $product_id)
+            ->get();
 
-      // Get all product variants for this product
-      $variants = \App\Models\ProAttributeValue::with([
-         'colorValue',
-         'attributeValue'
-      ])->where('product_id', $product_id)->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ]);
+    }
+}
 
-      return view('backend.pro_attr.add', compact(
-         'product',
-         'attribute_data',
-         'colors',
-         'variants'
-      ));
-   }
+  
 
 
    public function store_pro_attr(Request $request)
    {
       try {
-         $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'attribute_id' => 'nullable|exists:attributes,id',
-            'attributes' => 'required|array|min:1',
-            'attributes.*.itemcode' => 'required|string',
-            'attributes.*.color_id' => 'nullable|exists:attribute_values,id',
-            'attributes.*.varient_id' => 'nullable|exists:attribute_values,id',
-            'attributes.*.stock' => 'required|numeric|min:0',
-            'attributes.*.price' => 'required|numeric|min:0',
-         ]);
 
-         foreach ($validated['attributes'] as $attr) {
             ProAttributeValue::create([
-               'product_id' => $validated['product_id'],
-               'attribute_id' => $validated['attribute_id'],
-               'color_id' => $attr['color_id'] ?? null,
-               'attribute_value_id' => $attr['varient_id'] ?? null,
-               'itemcode' => $attr['itemcode'],
-               'stock' => $attr['stock'],
-               'price' => $attr['price'],
+               'product_id' => $request->product_id,
+               'attribute_id' => $request->attribute_id,
+               'color_id' => $request->color_id ,
+               'attribute_value_id' =>  $request->varient_id,
+               'itemcode' => $request->itemcode,
+               'stock' => $request->stock,
+               'price' => $request->price,
             ]);
-         }
+         
 
          return response()->json([
             'status' => 'success',
@@ -86,4 +70,48 @@ class ProductAttrController extends Controller
          ], 500);
       }
    }
+
+
+   public function update_pro_attr(Request $request)
+{
+    try {
+        $attr = ProAttributeValue::findOrFail($request->id);
+
+        $attr->update([
+            'color_id' => $request->color_id,
+            'attribute_value_id' => $request->varient_id,
+            'itemcode' => $request->itemcode,
+            'stock' => $request->stock,
+            'price' => $request->price,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product attribute updated successfully!'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+public function delete_pro_attr($id)
+{
+    try {
+        $attr = ProAttributeValue::findOrFail($id);
+        $attr->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product attribute deleted successfully!'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
