@@ -61,6 +61,9 @@ Route::post('/products/import', [ProductController::class, 'import'])->name('pro
     Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
+    Route::post('/admin/products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
+        ->name('admin.product.storeAttributes');
+
 
 
     // Separate routes for profile functionality
