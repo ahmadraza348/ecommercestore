@@ -28,7 +28,7 @@ class Product extends Model
      public function attributes()
     {
         return $this->belongsToMany(Attribute::class, 'pro_attribute_values')
-                    ->withPivot(['attribute_value_id', 'itemcode', 'stock', 'price'])
+                    ->withPivot(['attribute_value_id','color_id', 'itemcode', 'stock', 'price'])
                     ->withTimestamps();
     }
      public function metaTag()

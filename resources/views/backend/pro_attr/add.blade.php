@@ -221,46 +221,6 @@
             });
 
 
-
-
-
-
-            // ✅ Handle form submit
-            // $('#attributeForm').on('submit', function(e) {
-            //     e.preventDefault();
-            //     let formData = new FormData(this);
-            //     let form = this;
-
-            //     $.ajax({
-            //         url: "{{ route('admin.product.store-attributes') }}",
-            //         method: "POST",
-            //         data: formData,
-            //         processData: false,
-            //         contentType: false,
-            //         beforeSend: function() {
-            //             $('button[type="submit"]').prop('disabled', true).text('Saving...');
-            //         },
-            //         success: function(response) {
-            //             $('button[type="submit"]').prop('disabled', false).text('Submit');
-            //             if (response.status === 'success') {
-            //                 alert(response.message);
-            //                 $(form).find('input[type="number"], select').val('');
-            //                 $(form).find('select').prop('selectedIndex', 0);
-            //                 fetchAttributes(); // ✅ Refresh table
-            //             } else {
-            //                 alert('Something went wrong!');
-            //             }
-            //         },
-            //         error: function(xhr) {
-            //             $('button[type="submit"]').prop('disabled', false).text('Submit');
-            //             console.log(xhr.responseText);
-            //             alert('Error saving attributes!');
-            //         }
-            //     });
-            // });
-
-
-
             $('#attributeForm').on('submit', function(e) {
                 e.preventDefault();
                 let formData = new FormData(this);
