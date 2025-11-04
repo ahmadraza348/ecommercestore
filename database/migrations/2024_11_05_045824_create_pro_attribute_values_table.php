@@ -13,9 +13,15 @@ return new class extends Migration
     {
         Schema::create('pro_attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade')->nullable();
-            $table->foreignId('attribute_id')->constrained('attributes')->onDelete('cascade')->nullable();
-            $table->foreignId('attribute_value_id')->constrained('attribute_values')->onDelete('cascade')->nullable();
+            $table->unsignedBigInteger('product_id')->nullable();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+
+            $table->unsignedBigInteger('attribute_id')->nullable();
+            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
+
+            $table->unsignedBigInteger('attribute_value_id')->nullable();
+            $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onDelete('cascade');
+
             // or
             // $table->foreignId('attribute_value_id')->references('id')->on('attribute_values')->onDelete('cascade');
             $table->integer('itemcode')->nullable();

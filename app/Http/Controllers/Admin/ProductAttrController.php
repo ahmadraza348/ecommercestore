@@ -50,9 +50,9 @@ class ProductAttrController extends Controller
 
             ProAttributeValue::create([
                'product_id' => $request->product_id,
-               'attribute_id' => $request->attribute_id,
+               'attribute_id' => $request->attribute_id ?? null,
                'color_id' => $request->color_id ,
-               'attribute_value_id' =>  $request->varient_id,
+               'attribute_value_id' =>  $request->varient_id ?? null,
                'itemcode' => $request->itemcode,
                'stock' => $request->stock,
                'price' => $request->price,
@@ -79,7 +79,8 @@ class ProductAttrController extends Controller
 
         $attr->update([
             'color_id' => $request->color_id,
-            'attribute_value_id' => $request->varient_id,
+            'attribute_value_id' => $request->varient_id ?? null,
+            'attribute_id' => $request->attribute_id ?? null,
             'itemcode' => $request->itemcode,
             'stock' => $request->stock,
             'price' => $request->price,
