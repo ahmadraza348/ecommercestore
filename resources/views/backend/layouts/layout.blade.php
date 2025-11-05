@@ -61,7 +61,6 @@
     <script src="{{ asset('backend/assets/plugins/sweetalert/sweetalerts.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/script.js') }}"></script>
     <script src="{{ asset('backend/customscript.js') }}"></script>
-    <script src="{{ asset('backend/customajax.js') }}"></script>
     <script src="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.js')}}"></script>
     <script src="{{asset('backend/assets/plugins/fileupload/fileupload.min.js')}}"></script>
   

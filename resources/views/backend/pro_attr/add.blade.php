@@ -141,13 +141,14 @@ $(document).ready(function () {
             url: "{{ route('admin.product.fetchAttributes', ':id') }}".replace(':id', product_id),
             method: "GET",
             success: function (response) {
+                // console.log(response)
                 if (response.status === 'success') {
                     let rows = '';
 
                     if (response.data.length === 0) {
                         rows = `<tr><td colspan="7" class="text-center">No attributes found.</td></tr>`;
                     } else {
-                        $.each(response.data, function (item) {
+                        $.each(response.data, function (index, item) {
                             rows += `
                                 <tr>
                                     <td>${item.itemcode ?? '-'}</td>
