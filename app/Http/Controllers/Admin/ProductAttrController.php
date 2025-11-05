@@ -10,9 +10,9 @@ use App\Models\Product;
 class ProductAttrController extends Controller
 {
    public function add_pro_attr($product_id){
-      $colors = Attribute::where('name', 'Color')->with('attributevalue')->first();
+      $colors = Attribute::where('slug', 'color')->with('attributevalue')->first();
       $product = Product::findOrFail($product_id);
-      $attribute_data = Attribute::where('id',  $product->attribute_id)->with('attributevalue')->first(); // or however you get it
+      $attribute_data = Attribute::where('id',  $product->attribute_id)->with('attributevalue')->first(); 
 
 
       return view('backend.pro_attr.add', compact(
@@ -39,9 +39,7 @@ class ProductAttrController extends Controller
             'message' => $e->getMessage()
         ]);
     }
-}
-
-  
+}  
 
 
    public function store_pro_attr(Request $request)
