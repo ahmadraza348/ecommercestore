@@ -73,7 +73,9 @@ Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 
 
 
 
-
+// AJAX endpoints
+Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
+Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
 
     // Separate routes for profile functionality
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
