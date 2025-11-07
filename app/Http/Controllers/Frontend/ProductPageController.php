@@ -9,11 +9,10 @@ use Illuminate\Http\Request;
 
 class ProductPageController extends Controller
 {
-    // Show product detail page. Blade will initially receive product + prepared color list.
     public function index($slug)
     {
         $product = Product::where('slug', $slug)
-            ->with(['gallery_images', 'attributes']) // eager load useful relations
+            ->with(['gallery_images', 'attributes']) 
             ->firstOrFail();
 
         // Prepare colors list from pro_attribute_values

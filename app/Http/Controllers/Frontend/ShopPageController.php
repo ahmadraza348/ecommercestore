@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
@@ -61,7 +60,7 @@ class ShopPageController extends Controller
 
         $productsQuery->whereBetween('sale_price', [$min_price_filter, $max_price_filter]);
 
-        $products = $productsQuery->latest()->paginate(1);
+        $products = $productsQuery->latest()->paginate(12);
 
         $min_price = $currentCategory ? $currentCategory->products()->min('sale_price') ?? 0 : Product::min('sale_price') ?? 0;
         $max_price = $currentCategory ? $currentCategory->products()->max('sale_price') ?? PHP_INT_MAX : Product::max('sale_price') ?? PHP_INT_MAX;
@@ -138,7 +137,7 @@ class ShopPageController extends Controller
                 $products->latest();
         }
 
-        $products = $products->latest()->paginate(1);
+        $products = $products->latest()->paginate(12);
 
         return response()->json([
             'html' => view('frontend.partials.pro_slide_list', ['products' => $products])->render(),
