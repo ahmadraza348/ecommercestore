@@ -21,6 +21,7 @@ class ProductPageController extends Controller
             ->whereNotNull('color_id')
             ->with(['color', 'attribute_value'])
             ->get();
+            // dd($colorRows);
 
         // group rows by color_id
         $colorsGrouped = $colorRows->groupBy('color_id')->map(function ($rows, $colorId) use ($product) {

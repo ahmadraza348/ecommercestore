@@ -24,6 +24,9 @@ Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageC
 Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts'])->name('shop.filter');
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
+// AJAX endpoints
+Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
+Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
 
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
@@ -71,11 +74,6 @@ Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 
     ->name('admin.product.delete-attribute');
 
 
-
-
-// AJAX endpoints
-Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
-Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
 
     // Separate routes for profile functionality
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
