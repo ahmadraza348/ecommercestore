@@ -14,5 +14,14 @@ class ProImages extends Model
         'color_id',
         
     ];
+        public function color()
+    {
+        return $this->belongsTo(AttributeValue::class, 'color_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 
 }

@@ -147,4 +147,30 @@ class ProductPageController extends Controller
             ],
         ]);
     }
+
+    // AJAX: return color-specific gallery images
+public function colorImages(Request $request, Product $product)
+{
+    $colorId = $request->query('color_id');
+
+    if (!$colorId) {
+        return response()->json(['status' => 'error', 'message' => 'color_id required'], 400);
+    }
+
+    // Get images for this color
+    $images = $product->gallery_images()
+        ->where('color_id', $colorId)
+        ->get(['id', 'image', 'color_id']);
+
+    // Fallback: if no color-specific images, show default (no color)
+    if ($images->isEmpty()) {
+        $images = $product->gallery_images()->whereNull('color_id')->get(['id', 'image', 'color_id']);
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $images
+    ]);
+}
+
 }

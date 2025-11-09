@@ -6,7 +6,7 @@
             <div class="col-lg-9">
                 <div class="product-details-inner">
                     <div class="row">
-                        <div class="col-lg-6">
+                        <!-- <div class="col-lg-6">
                             @if ($product->gallery_images->isNotEmpty())
                             <div class="product-large-slider mb-20 slick-arrow-style_2">
                                 @foreach ($product->gallery_images as $item)
@@ -24,34 +24,56 @@
                                 @endforeach
                             </div>
                             @endif
-                        </div>
+                        </div> -->
+
+                        <!-- product images section -->
+<div class="col-lg-6">
+    <div id="product-gallery">
+        <div id="main-slider" class="product-large-slider mb-20 slick-arrow-style_2">
+            @foreach ($product->gallery_images->where('color_id', $defaultColor['color_id']) as $item)
+                <div class="pro-large-img img-zoom">
+                    <img src="{{ asset('storage/' . $item->image) }}" alt="Gallery Image" />
+                </div>
+            @endforeach
+        </div>
+
+        <div id="thumb-slider" class="pro-nav slick-padding2 slick-arrow-style_2 mt-2">
+            @foreach ($product->gallery_images->where('color_id', $defaultColor['color_id']) as $item)
+                <div class="pro-nav-thumb">
+                    <img src="{{ asset('storage/' . $item->image) }}" alt="Thumbnail Image" />
+                </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
                         <div class="col-lg-6">
                             <div class="product-details-des mt-md-34 mt-sm-34">
                                 <h3>{{ $product->name }}</h3>
-                          <div class="d-flex justify-content-between"style="align-item:center; ">
-                                  <div class="ratings">
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span><i class="fa fa-star"></i></span>
-                                    <div class="pro-review">
-                                        <span>1 review(s)</span>
+                                <div class="d-flex justify-content-between" style="align-item:center; ">
+                                    <div class="ratings">
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span><i class="fa fa-star"></i></span>
+                                        <div class="pro-review">
+                                            <span>1 review(s)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="availability ">
+                                        <span id="global-stock">{{ $product->stock }} in stock</span>
                                     </div>
                                 </div>
-            
-                                <div class="availability ">
-                                    <span id="global-stock">{{ $product->stock }} in stock</span>
-                                </div>
-                          </div>
 
 
                                 {{-- Color selector --}}
                                 <div class="mt-3">
-                                      <div id="selectedColorName" class="mt-1 fw-bold">
-                                        Select Color: {{ $defaultColor['color']->name ?? '—' }}
+                                    <div id="selectedColorName" class="mt-1 fw-bold">
+                                        Color:
                                     </div>
-                                    
+
                                     <div id="color-list" class="d-flex gap-2 flex-wrap">
                                         @foreach ($colors as $c)
                                         @php
@@ -71,23 +93,23 @@
                                         </label>
                                         @endforeach
                                     </div>
-                                  
+
                                 </div>
 
                                 {{-- Variants area (populated by AJAX) --}}
                                 <div id="variants-area" class="mt-2">
                                     <!-- <h5 id="variants-title" style="display:none;">Variants</h5> -->
-                                       <div id="selectedSizeName" class="fw-bold">
-                                        Select 
+                                    <div id="selectedSizeName" class="fw-bold">
+                                        {{ $product->attributes->first()->name }}:
                                     </div>
-                                    <div id="variants-list"class="mt-2" style="display:flex; gap:10px; flex-wrap:wrap; "></div>
+                                    <div id="variants-list" class="mt-2" style="display:flex; gap:10px; flex-wrap:wrap; "></div>
                                 </div>
 
-                                
+
 
                                 {{-- Price display --}}
                                 <div class="pricebox my-3">
-                                    <span class="regular-price"style="font-size:20px" id="display-price">Rs. {{ number_format($product->sale_price, 2) }}</span>
+                                    <span class="regular-price" style="font-size:20px" id="display-price">Rs. {{ number_format($product->sale_price, 2) }}</span>
                                 </div>
 
                                 {{-- Add to cart / quantity --}}
@@ -321,15 +343,19 @@
         loadVariants(currentColorId);
 
         // color click handler
-        $(document).on('click', '.color-option', function(e) {
-            e.preventDefault();
-            $('.color-option').removeClass('selected');
-            $(this).addClass('selected');
-            $(this).find('.color-radio').prop('checked', true);
-            currentColorId = $(this).data('color-id');
-            $('#selectedColorName').text('Selected: ' + $(this).attr('title'));
-            loadVariants(currentColorId);
-        });
+   $(document).on('click', '.color-option', function(e){
+    e.preventDefault();
+    $('.color-option').removeClass('selected');
+    $(this).addClass('selected');
+    $(this).find('.color-radio').prop('checked', true);
+    currentColorId = $(this).data('color-id');
+    $('#selectedColorName').text('Selected: ' + $(this).attr('title'));
+
+    // Load relevant variants & images
+    loadVariants(currentColorId);
+    loadColorImages(currentColorId);
+});
+
 
         // variant click handler (delegated)
         $(document).on('click', '.variant-box', function() {
@@ -415,6 +441,60 @@
                 }
             });
         }
+
+        // Load images for selected color
+function loadColorImages(colorId) {
+    const colorImagesUrl = "{{ route('product.colorImages', $product) }}";
+    $('#main-slider, #thumb-slider').html('<p></p>');
+
+    $.ajax({
+        url: colorImagesUrl,
+        method: 'GET',
+        data: { color_id: colorId },
+        success: function(res) {
+            if (res.status === 'success' && res.data.length > 0) {
+                let mainHtml = '';
+                let thumbHtml = '';
+                res.data.forEach(img => {
+                    const src = "{{ asset('storage') }}/" + img.image;
+                    mainHtml += `<div class="pro-large-img img-zoom"><img src="${src}" alt="Gallery Image" /></div>`;
+                    thumbHtml += `<div class="pro-nav-thumb"><img src="${src}" alt="Thumbnail Image" /></div>`;
+                });
+
+                $('#main-slider').html(mainHtml);
+                $('#thumb-slider').html(thumbHtml);
+
+                // If using Slick slider, reinitialize
+                if ($.fn.slick) {
+                    $('#main-slider').slick('unslick');
+                    $('#thumb-slider').slick('unslick');
+
+                    $('#main-slider').slick({
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        arrows: true,
+                        fade: true,
+                        asNavFor: '#thumb-slider'
+                    });
+                    $('#thumb-slider').slick({
+                        slidesToShow: 4,
+                        slidesToScroll: 1,
+                        asNavFor: '#main-slider',
+                        focusOnSelect: true,
+                        arrows: true
+                    });
+                }
+            } else {
+                $('#main-slider').html('<p>No images for this color.</p>');
+                $('#thumb-slider').html('');
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+
     });
 </script>
 @endsection

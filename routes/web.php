@@ -27,6 +27,9 @@ Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pr
 // AJAX endpoints
 Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
 Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
+Route::get('/product/{product}/color-images', [ProductPageController::class, 'colorImages'])
+    ->name('product.colorImages');
+
 
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
