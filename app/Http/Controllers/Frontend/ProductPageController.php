@@ -12,7 +12,7 @@ class ProductPageController extends Controller
     public function index($slug)
     {
         $product = Product::where('slug', $slug)
-            ->with(['gallery_images', 'attributes']) 
+            ->with(['gallery_images', 'attributes'])
             ->firstOrFail();
 
         // Prepare colors list from pro_attribute_values
@@ -21,7 +21,7 @@ class ProductPageController extends Controller
             ->whereNotNull('color_id')
             ->with(['color', 'attribute_value'])
             ->get();
-            // dd($colorRows);
+        // dd($colorRows);
 
         // group rows by color_id
         $colorsGrouped = $colorRows->groupBy('color_id')->map(function ($rows, $colorId) use ($product) {
@@ -43,7 +43,7 @@ class ProductPageController extends Controller
 
         // Choose default color: first in the list (you can change choice rule here)
         $defaultColor = $colorsGrouped->first();
-
+        // dd($colorsGrouped);
         return view('frontend.product-detail', [
             'product' => $product,
             'colors' => $colorsGrouped,
