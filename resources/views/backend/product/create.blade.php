@@ -231,7 +231,18 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+
                                             <div class="col-lg-6 col-sm-12">
+                                                <label class="form-label mt-2" for="label">Product Variation Type*
+                                                </label>
+                                                <select name="product_variation_type" id="product_variation_type" class="form-control">
+                                                    <option value="simple"{{ old('product_variation_type') == 'simple' ? 'selected' : '' }}>Simple</option>
+                                                    <option value="color_varient"{{ old('product_variation_type') == 'color_varient' ? 'selected' : '' }}>Color varient</option>
+                                                    <option value="color_attribute_varient"{{ old('product_variation_type') == 'color_attribute_varient' ? 'selected' : '' }}>Color & attribute varient</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-lg-6 col-sm-12 attribute_input d-none">
                                                 <label class="form-label mt-2" for="label">Select Attribute
                                                 </label>
                                                 <select name="attribute_id" class="form-control">
@@ -248,6 +259,26 @@
 
                                                 </select>
                                             </div>
+
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    const variationTypeSelect = document.querySelector('select[name="product_variation_type"]');
+                                                    const attributeSelectDiv = document.querySelector('.attribute_input'); // FIXED
+
+                                                    function toggleAttributeSelect() {
+                                                        if (variationTypeSelect.value === 'color_attribute_varient') {
+                                                            attributeSelectDiv.classList.remove('d-none');
+                                                        } else {
+                                                            attributeSelectDiv.classList.add('d-none');
+                                                        }
+                                                    }
+
+                                                    variationTypeSelect.addEventListener('change', toggleAttributeSelect);
+
+                                                    // run once on load
+                                                    toggleAttributeSelect();
+                                                });
+                                            </script>
 
 
 
@@ -467,10 +498,6 @@
 </div>
 
 <script>
- 
-
-
-
     function validateAndPreviewGalleryImages(event) {
         const files = Array.from(event.target.files);
         const validImageTypes = ['image/jpeg', 'image/png', 'image/webp', ];

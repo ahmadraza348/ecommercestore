@@ -18,6 +18,7 @@ class Product extends Model
         'name',
         'slug',
         'sku',
+        'product_variation_type',
         'status',
         'sale_price',
         'previous_price',

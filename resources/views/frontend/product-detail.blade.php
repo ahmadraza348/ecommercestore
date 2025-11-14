@@ -100,7 +100,9 @@
                                 <div id="variants-area" class="mt-2">
                                     <!-- <h5 id="variants-title" style="display:none;">Variants</h5> -->
                                     <div id="selectedSizeName" class="fw-bold">
+                                        @if($product->attributes->isNotEmpty())
                                         {{ $product->attributes->first()->name }}:
+                                        @endif
                                     </div>
                                     <div id="variants-list" class="mt-2" style="display:flex; gap:10px; flex-wrap:wrap; "></div>
                                 </div>
