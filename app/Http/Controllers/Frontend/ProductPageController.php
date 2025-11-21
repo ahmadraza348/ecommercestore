@@ -12,24 +12,42 @@ use Illuminate\Http\JsonResponse;
 
 class ProductPageController extends Controller
 {
-    public function __construct(
-        private ProductVariationService $variationService,
-        private ProductColorService $colorService,
-        private ProductGalleryService $galleryService
-    ) {}
+    // public function __construct(
+    //     private ProductVariationService $variationService,
+    //     private ProductColorService $colorService,
+    //     private ProductGalleryService $galleryService
+    // ) {}
+
+
+
 
     public function index($slug)
     {
-        $product = Product::where('slug', $slug)
-            ->with(['gallery_images', 'attributes'])
+
+        $product = Product::where(['slug'=> $slug])
+            ->with(['gallery_images', 'colors'])
             ->firstOrFail();
-
-        $variationData = $this->variationService->getVariationData($product);
-
-        return view('frontend.product-detail', array_merge([
+        return view('frontend.pro-detail', [
             'product' => $product,
-        ], $variationData));
+        ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function colorsData(Product $product): JsonResponse
     {
