@@ -104,54 +104,6 @@
                                 </div>
                                 @endif
 
-                                <script>
-                                    // Save clean HTML before Slick modifies it
-                                    let originalMainSlides = $('#main-slider').html();
-                                    let originalThumbSlides = $('#thumb-slider').html();
-
-                                    function loadColorImages(colorId) {
-
-                                        // Convert clean HTML into jQuery objects
-                                        let main = $(originalMainSlides).filter('[data-color="' + colorId + '"]');
-                                        let thumb = $(originalThumbSlides).filter('[data-color="' + colorId + '"]');
-
-                                        // Destroy existing slick
-                                        if ($('#main-slider').hasClass('slick-initialized')) {
-                                            $('#main-slider').slick('unslick');
-                                        }
-                                        if ($('#thumb-slider').hasClass('slick-initialized')) {
-                                            $('#thumb-slider').slick('unslick');
-                                        }
-
-                                        // Insert filtered clean HTML
-                                        $('#main-slider').html(main);
-                                        $('#thumb-slider').html(thumb);
-
-                                        // Reinitialize slick
-                                        $('#main-slider').slick({
-                                            slidesToShow: 1,
-                                            slidesToScroll: 1,
-                                            fade: true,
-                                            arrows: true,
-                                            asNavFor: '#thumb-slider'
-                                        });
-
-                                        $('#thumb-slider').slick({
-                                            slidesToShow: 4,
-                                            slidesToScroll: 1,
-                                            focusOnSelect: true,
-                                            asNavFor: '#main-slider'
-                                        });
-                                    }
-
-                                    // On color change
-                                    $('input[name="color"]').on('change', function() {
-                                        loadColorImages($(this).val());
-                                    });
-
-                                    // Load first color on page load
-                                    loadColorImages($('input[name="color"]:checked').val());
-                                </script>
 
 
                                 <div class="quantity-cart-box d-flex align-items-center">
@@ -468,4 +420,53 @@
         transform: scale(1.1);
     }
 </style>
+<script>
+    // Save clean HTML before Slick modifies it
+    let originalMainSlides = $('#main-slider').html();
+    let originalThumbSlides = $('#thumb-slider').html();
+
+    function loadColorImages(colorId) {
+
+        // Convert clean HTML into jQuery objects
+        let main = $(originalMainSlides).filter('[data-color="' + colorId + '"]');
+        let thumb = $(originalThumbSlides).filter('[data-color="' + colorId + '"]');
+
+        // Destroy existing slick
+        if ($('#main-slider').hasClass('slick-initialized')) {
+            $('#main-slider').slick('unslick');
+        }
+        if ($('#thumb-slider').hasClass('slick-initialized')) {
+            $('#thumb-slider').slick('unslick');
+        }
+
+        // Insert filtered clean HTML
+        $('#main-slider').html(main);
+        $('#thumb-slider').html(thumb);
+
+        // Reinitialize slick
+        $('#main-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            fade: true,
+            arrows: true,
+            asNavFor: '#thumb-slider'
+        });
+
+        $('#thumb-slider').slick({
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            focusOnSelect: true,
+            asNavFor: '#main-slider'
+        });
+    }
+
+    // On color change
+    $('input[name="color"]').on('change', function() {
+        loadColorImages($(this).val());
+    });
+
+    // Load first color on page load
+    loadColorImages($('input[name="color"]:checked').val());
+</script>
+
 @endsection
