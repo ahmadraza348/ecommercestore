@@ -76,33 +76,38 @@
                                     <h5>Availability:</h5>
                                     <span>{{$product->stock}} in stock</span>
                                 </div>
-                                <div class="pricebox">
+                                <!-- <div class="pricebox">
                                     <span class="regular-price">Rs. {{$product->sale_price}}</span>
+                                </div> -->
+                                <div class="pricebox">
+                                    <span id="price">Rs. {{ $product->sale_price }}</span>
                                 </div>
 
                                 @if($product->colors->isNotEmpty())
                                 <div class="color-options">
-                                    @foreach($product->colors as $item)
+
+                                    @foreach($product->colors->unique('color_id') as $item)
                                     @php
-                                    $color = $item->color->colorcode ?? '#000'; // hex code like #ff0000
+                                    $color = $item->color->colorcode ?? '#000';
+                                    $colorId = $item->color->id;
+                                    $variantSet = $variants[$colorId] ?? [];
                                     @endphp
 
                                     <input
                                         type="radio"
                                         name="color"
-                                        id="color_{{ $item->color->id }}"
-                                        value="{{ $item->color->id }}"
+                                        id="color_{{ $colorId }}"
+                                        value="{{ $colorId }}"
+                                        data-variants='@json($variantSet)'
                                         {{ $loop->first ? 'checked' : '' }}>
 
-
-                                    <label
-                                        for="color_{{ $item->color->id }}"
-                                        class="color-box"
-                                        style="background: {{ $color }};">
-                                    </label>
+                                    <label for="color_{{ $colorId }}" class="color-box" style="background: {{ $color }};"></label>
                                     @endforeach
+
                                 </div>
                                 @endif
+
+                                <div id="variant-attribute"></div>
 
 
 
@@ -419,6 +424,25 @@
         border: 3px solid #000;
         transform: scale(1.1);
     }
+
+    .variant-options input[type="radio"] {
+        display: none;
+    }
+
+    .variant-options label {
+        border: 1px solid #ccc;
+        padding: 6px 12px;
+        margin-right: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-block;
+        transition: 0.2s;
+    }
+
+    .variant-options input[type="radio"]:checked+label {
+        border: 2px solid #000;
+        background: #f0f0f0;
+    }
 </style>
 <script>
     // Save clean HTML before Slick modifies it
@@ -427,11 +451,9 @@
 
     function loadColorImages(colorId) {
 
-        // Convert clean HTML into jQuery objects
         let main = $(originalMainSlides).filter('[data-color="' + colorId + '"]');
         let thumb = $(originalThumbSlides).filter('[data-color="' + colorId + '"]');
 
-        // Destroy existing slick
         if ($('#main-slider').hasClass('slick-initialized')) {
             $('#main-slider').slick('unslick');
         }
@@ -439,11 +461,9 @@
             $('#thumb-slider').slick('unslick');
         }
 
-        // Insert filtered clean HTML
         $('#main-slider').html(main);
         $('#thumb-slider').html(thumb);
 
-        // Reinitialize slick
         $('#main-slider').slick({
             slidesToShow: 1,
             slidesToScroll: 1,
@@ -460,13 +480,57 @@
         });
     }
 
-    // On color change
+    function loadSizeOptions(variants) {
+        if (!variants || variants.length === 0) {
+            $('#variant-attribute').html('');
+            return;
+        }
+
+        let html = '<label><strong>Select Size:</strong></label><div class="variant-options">';
+
+        variants.forEach((v, index) => {
+            html += `
+            <input type="radio" 
+                   name="variant" 
+                   id="variant_${v.id}" 
+                   value="${v.id}" 
+                   data-price="${v.price}"
+                   ${index === 0 ? 'checked' : ''}>
+            <label for="variant_${v.id}">${v.attribute_value.name}</label>
+        `;
+        });
+
+        html += '</div>';
+
+        $('#variant-attribute').html(html);
+
+        // Set first variant price
+        $('#price').text('Rs. ' + variants[0].price);
+
+        // When variant changes, update price
+        $('input[name="variant"]').on('change', function() {
+            let p = $(this).data('price');
+            $('#price').text('Rs. ' + p);
+        });
+    }
+
+
+    // When color is changed
     $('input[name="color"]').on('change', function() {
-        loadColorImages($(this).val());
+        let colorId = $(this).val();
+        let variants = $(this).data('variants');
+
+        loadColorImages(colorId);
+        loadSizeOptions(variants);
     });
 
-    // Load first color on page load
-    loadColorImages($('input[name="color"]:checked').val());
+    // Page load: trigger first color
+    let firstColor = $('input[name="color"]:checked');
+    loadColorImages(firstColor.val());
+    loadSizeOptions(firstColor.data('variants'));
 </script>
+
+
+
 
 @endsection

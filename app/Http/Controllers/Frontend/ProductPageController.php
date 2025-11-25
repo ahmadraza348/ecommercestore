@@ -9,6 +9,7 @@ use App\Services\ProductColorService;
 use App\Services\ProductGalleryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Models\ProAttributeValue;
 
 class ProductPageController extends Controller
 {
@@ -23,16 +24,25 @@ class ProductPageController extends Controller
 
     public function index($slug)
     {
-
-        $product = Product::where(['slug'=> $slug])
-            ->with(['gallery_images', 'colors'])
+        $product = Product::where('slug', $slug)
+            ->with([
+                'gallery_images',
+                'colors',
+                'attributes.attributevalue'
+            ])
             ->firstOrFail();
+
+        // Load all variant combinations (color + size)
+        $variants = ProAttributeValue::where('product_id', $product->id)
+            ->with(['attribute_value']) // loads size object
+            ->get()
+            ->groupBy('color_id');
+
         return view('frontend.pro-detail', [
-            'product' => $product,
+            'product'  => $product,
+            'variants' => $variants
         ]);
     }
-
-
 
 
 
@@ -65,7 +75,7 @@ class ProductPageController extends Controller
 
         if (!$colorId) {
             return response()->json([
-                'status' => 'error', 
+                'status' => 'error',
                 'message' => 'color_id required'
             ], 400);
         }
@@ -84,7 +94,7 @@ class ProductPageController extends Controller
 
         if (!$colorId) {
             return response()->json([
-                'status' => 'error', 
+                'status' => 'error',
                 'message' => 'color_id required'
             ], 400);
         }
