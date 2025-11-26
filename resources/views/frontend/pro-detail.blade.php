@@ -449,8 +449,12 @@
     let originalMainSlides = $('#main-slider').html();
     let originalThumbSlides = $('#thumb-slider').html();
 
-    function loadColorImages(colorId) {
+    // --- New Constants for Storage Keys ---
+    const COLOR_STORAGE_KEY = 'selectedColorId';
+    const VARIANT_STORAGE_KEY = 'selectedVariantId';
 
+    function loadColorImages(colorId) {
+        // ... (Your existing function remains the same) ...
         let main = $(originalMainSlides).filter('[data-color="' + colorId + '"]');
         let thumb = $(originalThumbSlides).filter('[data-color="' + colorId + '"]');
 
@@ -480,22 +484,36 @@
         });
     }
 
-    function loadSizeOptions(variants) {
+    function loadVarientValues(variants, selectedVariantId = null) {
         if (!variants || variants.length === 0) {
             $('#variant-attribute').html('');
+            // Also clear variant storage if no variants
+            localStorage.removeItem(VARIANT_STORAGE_KEY);
             return;
         }
 
         let html = '<label><strong>Select Size:</strong></label><div class="variant-options">';
+        let defaultPrice = variants[0].price;
 
-        variants.forEach((v, index) => {
+        // Determine which variant should be checked and its price
+        let variantToCheck = selectedVariantId ? variants.find(v => v.id == selectedVariantId) : variants[0];
+        if (!variantToCheck) { // Fallback if stored ID is invalid/not found
+            variantToCheck = variants[0];
+            localStorage.removeItem(VARIANT_STORAGE_KEY);
+        }
+        
+        defaultPrice = variantToCheck.price;
+
+
+        variants.forEach((v) => {
+            const isChecked = (v.id == variantToCheck.id);
             html += `
             <input type="radio" 
                    name="variant" 
                    id="variant_${v.id}" 
                    value="${v.id}" 
                    data-price="${v.price}"
-                   ${index === 0 ? 'checked' : ''}>
+                   ${isChecked ? 'checked' : ''}>
             <label for="variant_${v.id}">${v.attribute_value.name}</label>
         `;
         });
@@ -504,30 +522,67 @@
 
         $('#variant-attribute').html(html);
 
-        // Set first variant price
-        $('#price').text('Rs. ' + variants[0].price);
-
-        // When variant changes, update price
-        $('input[name="variant"]').on('change', function() {
+        // Set the determined price
+        $('#price').text('Rs. ' + defaultPrice);
+        
+        // --- Variant Change Listener ---
+        $('input[name="variant"]').off('change').on('change', function() {
             let p = $(this).data('price');
+            let vId = $(this).val();
             $('#price').text('Rs. ' + p);
+            // --- Store selected variant ID ---
+            localStorage.setItem(VARIANT_STORAGE_KEY, vId);
         });
     }
 
-
-    // When color is changed
-    $('input[name="color"]').on('change', function() {
+    // --- Color Change Listener Function ---
+    function handleColorChange() {
         let colorId = $(this).val();
         let variants = $(this).data('variants');
+        
+        // 1. Store the selected color ID
+        localStorage.setItem(COLOR_STORAGE_KEY, colorId);
+        
+        // 2. Clear stored variant ID when color changes (as variants will change)
+        localStorage.removeItem(VARIANT_STORAGE_KEY);
 
+        // 3. Load UI elements
         loadColorImages(colorId);
-        loadSizeOptions(variants);
+        loadVarientValues(variants);
+    }
+    
+    // Attach listener to all color radios
+    $('input[name="color"]').on('change', handleColorChange);
+
+    // --- Page Load Logic for Persistence ---
+    $(document).ready(function() {
+        const storedColorId = localStorage.getItem(COLOR_STORAGE_KEY);
+        let colorElementToSelect;
+
+        if (storedColorId) {
+            // Check if the stored color exists on the current product
+            colorElementToSelect = $(`input[name="color"][value="${storedColorId}"]`);
+        }
+        
+        // If stored color is not found or not set, fall back to the first color
+        if (!colorElementToSelect || colorElementToSelect.length === 0) {
+            colorElementToSelect = $('input[name="color"]').first();
+        }
+
+        // Select the determined color radio button
+        colorElementToSelect.prop('checked', true);
+
+        // Load the images and variants for the selected color, retrieving the stored variant if available
+        const selectedColorId = colorElementToSelect.val();
+        const selectedVariants = colorElementToSelect.data('variants');
+        const storedVariantId = localStorage.getItem(VARIANT_STORAGE_KEY);
+
+
+        loadColorImages(selectedColorId);
+        // Pass the stored variant ID to select it
+        loadVarientValues(selectedVariants, storedVariantId);
     });
 
-    // Page load: trigger first color
-    let firstColor = $('input[name="color"]:checked');
-    loadColorImages(firstColor.val());
-    loadSizeOptions(firstColor.data('variants'));
 </script>
 
 
