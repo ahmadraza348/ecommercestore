@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\ProImages; 
-use App\Models\Attribute; 
+use App\Models\ProImages;
+use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,11 +37,10 @@ class Product extends Model
         'attribute_id'
     ];
 
-    public function colors()
+    // for detail page to show colors and sizes
+    public function proAttributeValuesRecords()
     {
-        return $this->hasMany(ProAttributeValue::class, 'product_id')
-            ->whereNotNull('color_id')
-            ->distinct('color_id');
+        return $this->hasMany(ProAttributeValue::class, 'product_id');
     }
 
     public function gallery_images()
@@ -49,21 +48,25 @@ class Product extends Model
         return $this->hasMany(ProImages::class, 'product_id');
     }
 
+    // for admin panel to show attributes linked to product
     public function attributes()
     {
         return $this->belongsToMany(Attribute::class, 'pro_attribute_values')
             ->withPivot(['attribute_value_id', 'color_id', 'itemcode', 'stock', 'price'])
             ->withTimestamps();
     }
-    public function metaTag()
-    {
-        return $this->morphOne(MetaTag::class, 'metaable');
-    }
-    public function categories()
+      public function categories()
     {
         return $this->belongsToMany(Category::class, 'relational_categories', 'product_id', 'category_id')
             ->withTimestamps();
     }
+
+
+    public function metaTag()
+    {
+        return $this->morphOne(MetaTag::class, 'metaable');
+    }
+  
     // if we delete product then all its meta tags will also be deleted
     public static function boot()
     {
@@ -79,17 +82,17 @@ class Product extends Model
     }
 
 
-    public function getPriceForAttributes($selectedAttributes)
-    {
-        // Example logic: Fetch price based on attributes
-        $priceQuery = $this->prices();
+    // public function getPriceForAttributes($selectedAttributes)
+    // {
+    //     // Example logic: Fetch price based on attributes
+    //     $priceQuery = $this->prices();
 
-        foreach ($selectedAttributes as $attribute => $value) {
-            $priceQuery->whereHas('attributesValues', function ($query) use ($attribute, $value) {
-                $query->where('attribute_name', $attribute)->where('id', $value);
-            });
-        }
+    //     foreach ($selectedAttributes as $attribute => $value) {
+    //         $priceQuery->whereHas('attributesValues', function ($query) use ($attribute, $value) {
+    //             $query->where('attribute_name', $attribute)->where('id', $value);
+    //         });
+    //     }
 
-        return $priceQuery->value('price');
-    }
+    //     return $priceQuery->value('price');
+    // }
 }

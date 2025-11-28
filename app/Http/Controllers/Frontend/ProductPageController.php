@@ -4,37 +4,27 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Services\ProductVariationService;
-use App\Services\ProductColorService;
-use App\Services\ProductGalleryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\ProAttributeValue;
 
 class ProductPageController extends Controller
 {
-    // public function __construct(
-    //     private ProductVariationService $variationService,
-    //     private ProductColorService $colorService,
-    //     private ProductGalleryService $galleryService
-    // ) {}
-
-
-
 
     public function index($slug)
     {
+
+        //showing gallery images and colors in product detail page
         $product = Product::where('slug', $slug)
             ->with([
                 'gallery_images',
-                'colors',
-                'attributes.attributevalue'
+                'proAttributeValuesRecords',
             ])
             ->firstOrFail();
 
-        // Load all variant combinations (color + size)
+        // Load color based varients with values like sizes with values ,fabrics with values etc
         $variants = ProAttributeValue::where('product_id', $product->id)
-            ->with(['attribute_value']) // loads size object
+            ->with(['attribute_value'])
             ->get()
             ->groupBy('color_id');
 

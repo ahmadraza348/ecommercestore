@@ -14,7 +14,7 @@
                         <div class="col-lg-6">
                             <div class="product-large-slider mb-20 slick-arrow-style_2">
                                 @foreach($product->gallery_images as $item)
-                                <div class="pro-large-img img-zoom" id="img1">
+                                <div class="pro-large-img img-zoom" >
                                     <img src="{{ asset('storage/'. $item->image)}} " alt="" />
                                 </div>
                                 @endforeach
@@ -83,10 +83,10 @@
                                     <span id="price">Rs. {{ $product->sale_price }}</span>
                                 </div>
 
-                                @if($product->colors->isNotEmpty())
+                                @if($product->proAttributeValuesRecords->isNotEmpty())
                                 <div class="color-options">
 
-                                    @foreach($product->colors->unique('color_id') as $item)
+                                    @foreach($product->proAttributeValuesRecords->unique('color_id') as $item)
                                     @php
                                     $color = $item->color->colorcode ?? '#000';
                                     $colorId = $item->color->id;
