@@ -85,16 +85,18 @@
                                 <br>
 
                                 @if($product->proAttributeValuesRecords->isNotEmpty())
-                                <label ><b>Select Color:</b></label>
+                                <label><b>Select Color:</b></label>
                                 <div class="color-options">
 
                                     @foreach($product->proAttributeValuesRecords->unique('color_id') as $item)
                                     @php
                                     $color = $item->color->colorcode ?? '#000';
                                     $colorId = $item->color->id;
-                                     $colorPrice = $item->price ?: $product->sale_price;
+                                    $colorPrice = $item->price ?: $product->sale_price;
                                     $variantSet = $variants[$colorId] ?? [];
                                     @endphp
+
+                                    <!-- @dump($variantSet) -->
 
 
                                     <input
@@ -150,7 +152,7 @@
                                     <li>
                                         <a class="active" data-toggle="tab" href="#tab_one">description</a>
                                     </li>
-                                    
+
                                     <li>
                                         <a data-toggle="tab" href="#tab_three">reviews</a>
                                     </li>
@@ -158,16 +160,16 @@
                                 <div class="tab-content reviews-tab">
                                     <div class="tab-pane fade show active" id="tab_one">
                                         <div class="tab-one">
-                                           {!! $product->long_description !!}
+                                            {!! $product->long_description !!}
                                         </div>
                                     </div>
-                                   
+
                                     <div class="tab-pane fade" id="tab_three">
                                         <form action="#" class="review-form">
                                             <h5>1 review for Simple product 12</h5>
                                             <div class="total-reviews">
                                                 <div class="rev-avatar">
-                                                    <img src="frontend/assets/img/about/avatar.jpg')}}" alt="">
+                                                    <img src="frontend/assets/img/about/avatar.jpg" alt="">
                                                 </div>
                                                 <div class="review-box">
                                                     <div class="ratings">
@@ -403,7 +405,7 @@
 
     .variant-options label {
         border: 1px solid #ccc;
-        padding: 6px 12px;
+        padding: 4px 8px;
         margin-right: 8px;
         border-radius: 4px;
         cursor: pointer;
@@ -417,98 +419,102 @@
     }
 </style>
 <script>
-const COLOR_STORAGE_KEY = 'selectedColorId';
-const VARIANT_STORAGE_KEY = 'selectedVariantId';
+    const COLOR_STORAGE_KEY = 'selectedColorId';
+    const VARIANT_STORAGE_KEY = 'selectedVariantId';
 
-$(document).ready(function() {
-    let storedColorId = localStorage.getItem(COLOR_STORAGE_KEY);
-    let colorRadio = storedColorId ? $(`input[name="color"][value="${storedColorId}"]`) : $('input[name="color"]').first();
+    $(document).ready(function() {
+        let storedColorId = localStorage.getItem(COLOR_STORAGE_KEY);
+        let colorRadio = storedColorId ? $(`input[name="color"][value="${storedColorId}"]`) : $('input[name="color"]').first();
 
-    if (colorRadio.length === 0) colorRadio = $('input[name="color"]').first();
-    colorRadio.prop('checked', true);
+        if (colorRadio.length === 0) colorRadio = $('input[name="color"]').first();
+        colorRadio.prop('checked', true);
 
-    updateUI(colorRadio);
-});
-
-$('input[name="color"]').on('change', function() {
-    updateUI($(this));
-});
-
-function updateUI(colorRadio) {
-    const colorId = colorRadio.val();
-    const colorPrice = colorRadio.data('price');
-
-      if (!colorPrice || colorPrice <= 0) {
-        colorPrice = {{ $product->sale_price }};
-    }
-
-
-    const variants = colorRadio.data('variants');
-
-    // Store color selection
-    localStorage.setItem(COLOR_STORAGE_KEY, colorId);
-
-    // Reset variant storage
-    localStorage.removeItem(VARIANT_STORAGE_KEY);
-
-    // Update price to color price
-    $('#price').text('Rs. ' + colorPrice);
-
-    // Load images and variant options
-    loadColorImages(colorId);
-    loadVariantValues(variants);
-}
-
-let originalMainSlides = $('#main-slider').html();
-let originalThumbSlides = $('#thumb-slider').html();
-
-function loadColorImages(colorId) {
-    let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
-    let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
-
-    if ($('#main-slider').hasClass('slick-initialized')) $('#main-slider').slick('unslick');
-    if ($('#thumb-slider').hasClass('slick-initialized')) $('#thumb-slider').slick('unslick');
-
-    $('#main-slider').html(main);
-    $('#thumb-slider').html(thumb);
-
-    $('#main-slider').slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        fade: true,
-        arrows: true,
-        asNavFor: '#thumb-slider'
+        updateUI(colorRadio);
     });
 
-    $('#thumb-slider').slick({
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        focusOnSelect: true,
-        asNavFor: '#main-slider'
+    $('input[name="color"]').on('change', function() {
+        updateUI($(this));
     });
-}
 
-function loadVariantValues(variants) {
-    if (!variants || variants.length === 0) {
-        $('#variant-attribute').html('');
-        return;
+    function updateUI(colorRadio) {
+        const colorId = colorRadio.val();
+        const colorPrice = colorRadio.data('price');
+
+        if (!colorPrice || colorPrice <= 0) {
+            colorPrice = {
+                {
+                    $product->sale_price
+                }
+            };
+        }
+
+
+        const variants = colorRadio.data('variants');
+
+        // Store color selection
+        localStorage.setItem(COLOR_STORAGE_KEY, colorId);
+
+        // Reset variant storage
+        localStorage.removeItem(VARIANT_STORAGE_KEY);
+
+        // Update price to color price
+        $('#price').text('Rs. ' + colorPrice);
+
+        // Load images and variant options
+        loadColorImages(colorId);
+        loadVariantValues(variants);
     }
 
-    const storedVariantId = localStorage.getItem(VARIANT_STORAGE_KEY);
-    let selectedVariant = storedVariantId ? variants.find(v => v.id == storedVariantId) : variants[0];
-    if (!selectedVariant) selectedVariant = variants[0];
+    let originalMainSlides = $('#main-slider').html();
+    let originalThumbSlides = $('#thumb-slider').html();
 
-    // Determine price to show
-    let price = selectedVariant.price || $('#price').text().replace('Rs. ', '');
-    $('#price').text('Rs. ' + price);
+    function loadColorImages(colorId) {
+        let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
+        let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
 
-    // Use attribute name dynamically for the label
-    const attributeName = selectedVariant.attribute_value?.attribute?.name || 'Select';
+        if ($('#main-slider').hasClass('slick-initialized')) $('#main-slider').slick('unslick');
+        if ($('#thumb-slider').hasClass('slick-initialized')) $('#thumb-slider').slick('unslick');
 
-    let html = `<label><strong>Select ${attributeName}:</strong></label><div class="variant-options">`;
+        $('#main-slider').html(main);
+        $('#thumb-slider').html(thumb);
 
-    variants.forEach(v => {
-        html += `
+        $('#main-slider').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            fade: true,
+            arrows: true,
+            asNavFor: '#thumb-slider'
+        });
+
+        $('#thumb-slider').slick({
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            focusOnSelect: true,
+            asNavFor: '#main-slider'
+        });
+    }
+
+    function loadVariantValues(variants) {
+        if (!variants || variants.length === 0) {
+            $('#variant-attribute').html('');
+            return;
+        }
+
+        const storedVariantId = localStorage.getItem(VARIANT_STORAGE_KEY);
+        let selectedVariant = storedVariantId ? variants.find(v => v.id == storedVariantId) : variants[0];
+        if (!selectedVariant) selectedVariant = variants[0];
+
+        // Determine price to show
+        let price = selectedVariant.price || $('#price').text().replace('Rs. ', '');
+        $('#price').text('Rs. ' + price);
+
+        // Use attribute name dynamically for the label
+        const attributeName = selectedVariant.attribute_value?.attribute?.name || 'Select';
+
+        let html = `<label><strong>Select ${attributeName}:</strong></label><div class="variant-options">`;
+
+        variants.forEach(v => {
+            html += `
         <input type="radio" 
                name="variant" 
                id="variant_${v.id}" 
@@ -516,17 +522,17 @@ function loadVariantValues(variants) {
                data-price="${v.price}" 
                ${v.id == selectedVariant.id ? 'checked' : ''}>
         <label for="variant_${v.id}">${v.attribute_value.name}</label>`;
-    });
+        });
 
-    html += '</div>';
-    $('#variant-attribute').html(html);
+        html += '</div>';
+        $('#variant-attribute').html(html);
 
-    $('input[name="variant"]').off('change').on('change', function() {
-        const vPrice = $(this).data('price') || price; // fallback
-        $('#price').text('Rs. ' + vPrice);
-        localStorage.setItem(VARIANT_STORAGE_KEY, $(this).val());
-    });
-}
+        $('input[name="variant"]').off('change').on('change', function() {
+            const vPrice = $(this).data('price') || price; // fallback
+            $('#price').text('Rs. ' + vPrice);
+            localStorage.setItem(VARIANT_STORAGE_KEY, $(this).val());
+        });
+    }
 </script>
 
 

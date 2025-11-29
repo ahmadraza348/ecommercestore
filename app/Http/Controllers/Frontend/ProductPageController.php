@@ -23,10 +23,10 @@ class ProductPageController extends Controller
 
         // Load color based varients with values like sizes with values ,fabrics with values etc
         $variants = ProAttributeValue::where('product_id', $product->id)
-            ->with(['attribute_value.attribute'])
+            ->with(['attribute_value.attribute'])  //attribute values gives values like small , cotton   and attribute gives attribute like size , fabric respectively
             ->get()
             ->groupBy('color_id');
-
+// dd($variants);
         return view('frontend.pro-detail', [
             'product'  => $product,
             'variants' => $variants
