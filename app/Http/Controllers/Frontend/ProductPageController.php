@@ -26,11 +26,15 @@ class ProductPageController extends Controller
             ->with(['attribute_value.attribute'])  //attribute values gives values like small , cotton   and attribute gives attribute like size , fabric respectively
             ->get()
             ->groupBy('color_id');
-// dd($variants);
+        // dd($variants);
         return view('frontend.pro-detail', [
             'product'  => $product,
             'variants' => $variants
         ]);
     }
 
+    public function addToCart(request $request)
+    {
+        dd($request->all());
+    }
 }

@@ -24,11 +24,12 @@ Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageC
 Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts'])->name('shop.filter');
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
+Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
 // AJAX endpoints
-Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
-Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
-Route::get('/product/{product}/color-images', [ProductPageController::class, 'colorImages'])
-    ->name('product.colorImages');
+// Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
+// Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
+// Route::get('/product/{product}/color-images', [ProductPageController::class, 'colorImages'])
+//     ->name('product.colorImages');
 
 
 

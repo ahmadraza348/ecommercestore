@@ -55,94 +55,107 @@
 
 
 
+                        <form action="{{route('addToCart')}}" method="post">
+                            @csrf
 
-                        <div class="col-lg-6">
-                            <div class="product-details-des mt-md-34 mt-sm-34">
-                                <h3><a href="product-details.html">{{ $product->name }}</a></h3>
-                                <div class="ratings">
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span class="good"><i class="fa fa-star"></i></span>
-                                    <span><i class="fa fa-star"></i></span>
-                                    <div class="pro-review">
-                                        <span>1 review(s)</span>
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="sale_price" value="{{ $product->sale_price }}">
+                            <input type="hidden" name="sale_price" value="{{ $product->sale_price }}">
+
+
+                            <div class="col-lg-6">
+                                <div class="product-details-des mt-md-34 mt-sm-34">
+                                    <h3><a href="product-details.html">{{ $product->name }}</a></h3>
+                                    <div class="ratings">
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span class="good"><i class="fa fa-star"></i></span>
+                                        <span><i class="fa fa-star"></i></span>
+                                        <div class="pro-review">
+                                            <span>1 review(s)</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="customer-rev">
-                                    <a href="#">(1 customer review)</a>
-                                </div>
-                                <div class="availability mt-10">
-                                    <h5>Availability:</h5>
-                                    <span>{{ $product->stock }} in stock</span>
-                                </div>
-                                <!-- <div class="pricebox">
+                                    <div class="customer-rev">
+                                        <a href="#">(1 customer review)</a>
+                                    </div>
+                                    <div class="availability mt-10">
+                                        <h5>Availability:</h5>
+                                        <span>{{ $product->stock }} in stock</span>
+                                    </div>
+                                    <!-- <div class="pricebox">
                                                         <span class="regular-price">Rs. {{ $product->sale_price }}</span>
                                                     </div> -->
-                                <div class="pricebox">
-                                    <h5 id="price">Rs. {{ $product->sale_price }}</h5>
-                                </div>
-                                <br>
-
-                                @if ($product->proAttributeValuesRecords->isNotEmpty())
-                                <label><b>Select Color: <span id="selected-color-name"></span>
-                                    </b></label>
-                                <div class="color-options">
-
-                                    @foreach ($product->proAttributeValuesRecords->unique('color_id') as $item)
-                                    @php
-                                    $color = $item->color->colorcode ?? '#000';
-                                    $colorId = $item->color->id;
-                                    $colorName = $item->color->name;
-                                    $colorPrice = $item->price ?: $product->sale_price;
-                                    $variantSet = $variants[$colorId] ?? [];
-                                    @endphp
-
-                                    <!-- @dump($variantSet) -->
-
-
-                                    <input type="radio" name="color" id="color_{{ $colorId }}"
-                                        value="{{ $colorId }}"
-                                        data-variants='@json($variantSet)'
-                                        data-price="{{ $colorPrice }}" {{ $loop->first ? 'checked' : '' }}
-                                        data-name="{{ $colorName }}">
-
-
-                                    <label for="color_{{ $colorId }}" class="color-box"
-                                        style="background: {{ $color }};"></label>
-                                    @endforeach
-
-                                </div>
-                                @endif
-
-                                <div id="variant-attribute"></div>
-                                <br>
-
-
-
-                                <div class="quantity-cart-box d-flex align-items-center">
-                                    <div class="quantity">
-                                        <div class="pro-qty"><input type="text" value="1"></div>
+                                    <div class="pricebox">
+                                        <h5 id="price">Rs. {{ $product->sale_price }}</h5>
                                     </div>
-                                    <div class="action_link">
-                                        <a class="buy-btn" href="#">add to cart<i
-                                                class="fa fa-shopping-cart"></i></a>
+                                    <br>
+
+                                    @if ($product->proAttributeValuesRecords->isNotEmpty())
+                                    <label><b>Select Color: <span id="selected-color-name"></span>
+                                        </b></label>
+                                    <div class="color-options">
+
+                                        @foreach ($product->proAttributeValuesRecords->unique('color_id') as $item)
+                                        @php
+                                        $color = $item->color->colorcode ?? '#000';
+                                        $colorId = $item->color->id;
+                                        $colorName = $item->color->name;
+                                        $colorPrice = $item->price ?: $product->sale_price;
+                                        $variantSet = $variants[$colorId] ?? [];
+                                        @endphp
+
+                                        <!-- @dump($variantSet) -->
+
+
+                                        <input type="radio" name="color" id="color_{{ $colorId }}"
+                                            value="{{ $colorId }}"
+                                            data-variants='@json($variantSet)'
+                                            data-price="{{ $colorPrice }}" {{ $loop->first ? 'checked' : '' }}
+                                            data-name="{{ $colorName }}">
+
+
+                                        <label for="color_{{ $colorId }}" class="color-box"
+                                            style="background: {{ $color }};"></label>
+                                        @endforeach
+
                                     </div>
-                                </div>
-                                <div class="useful-links mt-20">
-                                    <a href="#" data-toggle="tooltip" data-placement="top" title="Compare"><i
-                                            class="fa fa-refresh"></i>compare</a>
-                                    <a href="#" data-toggle="tooltip" data-placement="top" title="Wishlist"><i
-                                            class="fa fa-heart-o"></i>wishlist</a>
-                                </div>
-                                <div class="share-icon mt-20">
-                                    <a class="facebook" href="#"><i class="fa fa-facebook"></i>like</a>
-                                    <a class="twitter" href="#"><i class="fa fa-twitter"></i>tweet</a>
-                                    <a class="pinterest" href="#"><i class="fa fa-pinterest"></i>save</a>
-                                    <a class="google" href="#"><i class="fa fa-google-plus"></i>share</a>
+                                    @endif
+
+                                    <div id="variant-attribute"></div>
+                                    <br>
+
+
+
+                                    <div class="quantity-cart-box d-flex align-items-center">
+                                        <div class="quantity">
+                                            <div class="pro-qty"><input type="text"name="pro_qty" value="1"></div>
+                                        </div>
+                                        <div class="action_link">
+                                            <button type="submit" style="border:none;background:none;padding:0;">
+                                                <a class="buy-btn" type="submit" style="cursor:pointer">add to cart<i
+                                                        class="fa fa-shopping-cart"></i></a>
+                                            </button>
+
+
+
+                                        </div>
+                                    </div>
+                                    <div class="useful-links mt-20">
+                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Compare"><i
+                                                class="fa fa-refresh"></i>compare</a>
+                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Wishlist"><i
+                                                class="fa fa-heart-o"></i>wishlist</a>
+                                    </div>
+                                    <div class="share-icon mt-20">
+                                        <a class="facebook" href="#"><i class="fa fa-facebook"></i>like</a>
+                                        <a class="twitter" href="#"><i class="fa fa-twitter"></i>tweet</a>
+                                        <a class="pinterest" href="#"><i class="fa fa-pinterest"></i>save</a>
+                                        <a class="google" href="#"><i class="fa fa-google-plus"></i>share</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <!-- product details inner end -->
@@ -469,8 +482,7 @@
         const variants = colorRadio.data('variants');
 
         let colorPrice = colorRadio.data('price') > 0 ?
-            colorRadio.data('price') :
-            {{ $product->sale_price }};
+            colorRadio.data('price') : {{$product->sale_price}} ;
 
         $('#price').text('Rs. ' + colorPrice);
 
