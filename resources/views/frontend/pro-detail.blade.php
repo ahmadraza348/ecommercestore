@@ -59,8 +59,8 @@
                             @csrf
 
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <input type="hidden" name="sale_price" value="{{ $product->sale_price }}">
-                            <input type="hidden" name="sale_price" value="{{ $product->sale_price }}">
+                            <input type="hidden" name="final_price" id="final_price" value="">
+
 
 
                             <div class="col-lg-6">
@@ -83,9 +83,6 @@
                                         <h5>Availability:</h5>
                                         <span>{{ $product->stock }} in stock</span>
                                     </div>
-                                    <!-- <div class="pricebox">
-                                                        <span class="regular-price">Rs. {{ $product->sale_price }}</span>
-                                                    </div> -->
                                     <div class="pricebox">
                                         <h5 id="price">Rs. {{ $product->sale_price }}</h5>
                                     </div>
@@ -102,13 +99,11 @@
                                         $colorId = $item->color->id;
                                         $colorName = $item->color->name;
                                         $colorPrice = $item->price ?: $product->sale_price;
+                                        $stock = $item->stock ?: $product->stock;
                                         $variantSet = $variants[$colorId] ?? [];
                                         @endphp
-
-                                        <!-- @dump($variantSet) -->
-
-
-                                        <input type="radio" name="color" id="color_{{ $colorId }}"
+                                       
+                                        <input type="radio" required name="color" id="color_{{ $colorId }}"
                                             value="{{ $colorId }}"
                                             data-variants='@json($variantSet)'
                                             data-price="{{ $colorPrice }}" {{ $loop->first ? 'checked' : '' }}
@@ -124,8 +119,6 @@
 
                                     <div id="variant-attribute"></div>
                                     <br>
-
-
 
                                     <div class="quantity-cart-box d-flex align-items-center">
                                         <div class="quantity">
@@ -485,6 +478,8 @@
             colorRadio.data('price') : {{$product->sale_price}} ;
 
         $('#price').text('Rs. ' + colorPrice);
+        $('#final_price').val(colorPrice);
+
 
         loadColorImages(colorId);
         loadVariantValues(variants);
@@ -532,6 +527,7 @@
 
         let price = selectedVariant.price || $('#price').text().replace('Rs. ', '');
         $('#price').text('Rs. ' + price);
+         $('#final_price').val(price);
 
         const attributeName = selectedVariant.attribute_value?.attribute?.name || 'Select';
         const attributeValue = selectedVariant.attribute_value?.name || '';
@@ -546,7 +542,7 @@
                 <input type="radio"
                        name="variant"
                        id="variant_${v.id}"
-                       value="${v.id}"
+                       value="${v.attribute_value_id}"
                        data-price="${v.price}"
                        ${v.id == selectedVariant.id ? 'checked' : ''}>
                 <label for="variant_${v.id}">${v.attribute_value.name}</label>
@@ -562,6 +558,8 @@
             const vName = $(this).next('label').text();
 
             $('#price').text('Rs. ' + vPrice);
+                     $('#final_price').val(vPrice);
+
             $('#variant-attribute label strong').text(`Select ${attributeName}: ${vName}`);
         });
     }
