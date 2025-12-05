@@ -42,7 +42,6 @@ class AttributevalueController extends Controller
         $value = new AttributeValue();
         $value->name = $request->name;
         $value->slug = $request->slug;
-        $value->colorcode = $request->colorcode;
         $value->attribute_id = $request->attribute_id; 
         $value->save();
     
@@ -85,7 +84,6 @@ class AttributevalueController extends Controller
  
         $value->name = $request->name;
         $value->slug = $request->slug;
-        $value->colorcode = $request->colorcode;
         $value->attribute_id = $request->attribute_id; 
         $value->save();
     

@@ -15,6 +15,8 @@ use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\Frontend\ProductPageController;
 use App\Http\Controllers\Admin\AttributevalueController;
 use App\Http\Controllers\Admin\ProductAttrController;
+use App\Http\Controllers\Admin\ProductColorsController;
+use App\Http\Controllers\Admin\ProImagesController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -25,13 +27,6 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
-// AJAX endpoints
-// Route::get('/product/{product}/colors-data', [ProductPageController::class, 'colorsData'])->name('product.colorsData');
-// Route::get('/product/{product}/color-variants', [ProductPageController::class, 'colorVariants'])->name('product.colorVariants');
-// Route::get('/product/{product}/color-images', [ProductPageController::class, 'colorImages'])
-//     ->name('product.colorImages');
-
-
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
@@ -48,8 +43,8 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
     });
-Route::post('/categories/import', [CategoryController::class, 'import'])->name('categories.import');
-Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::post('/categories/import', [CategoryController::class, 'import'])->name('categories.import');
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
 
     Route::resource('category', CategoryController::class)->names('category');
     Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
@@ -59,23 +54,49 @@ Route::post('/products/import', [ProductController::class, 'import'])->name('pro
     Route::resource('brand', BrandController::class)->names('brand');
     Route::resource('attribute', AttributeController::class)->names('attribute');
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
-    Route::resource('product', ProductController::class)->names('product');    
-    Route::get('/add-product-attribute/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
-    Route::post('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
+    Route::resource('product', ProductController::class)->names('product');
+
+    Route::prefix('colors')->name('colors.')->group(function () {
+        Route::get('/', [ProductColorsController::class, 'index'])->name('index');
+        Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
+        Route::post('/store', [ProductColorsController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [ProductColorsController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [ProductColorsController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [ProductColorsController::class, 'destroy'])->name('destroy');
+    });
+
+
+
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
     Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
     Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');
     Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
-    Route::post('/admin/products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
+
+    //    Product Attribute Routes
+    // Route::post('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
+    Route::get('/add-product-attribute/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
+    Route::post('products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
         ->name('admin.product.store-attributes');
-        Route::get('/admin/products/{id}/attributes', [ProductAttrController::class, 'fetch_pro_attr'])
-    ->name('admin.product.fetchAttributes');
-    Route::post('/admin/products/update-attribute', [ProductAttrController::class, 'update_pro_attr'])
-    ->name('admin.product.updateAttribute');
-Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 'delete_pro_attr'])
-    ->name('admin.product.delete-attribute');
+    Route::get('products/{id}/attributes', [ProductAttrController::class, 'fetch_pro_attr'])
+        ->name('admin.product.fetchAttributes');
+    Route::post('products/update-attribute', [ProductAttrController::class, 'update_pro_attr'])
+        ->name('admin.product.updateAttribute');
+    Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 'delete_pro_attr'])
+        ->name('admin.product.delete-attribute');
+    //    Product Attribute Routes
+
+
+       //    Product images Routes
+Route::prefix('products')->group(function () {
+    Route::get('/{id}/images', [ProImagesController::class, 'index'])->name('product.images');
+    Route::post('/{id}/images/store', [ProImagesController::class, 'store'])->name('product.images.store');
+    Route::post('/images/update/{image}', [ProImagesController::class, 'update'])->name('product.images.update');
+    Route::delete('/images/delete/{image}', [ProImagesController::class, 'destroy'])->name('product.images.delete');
+});
+
+    //    Product images Routes
 
 
 

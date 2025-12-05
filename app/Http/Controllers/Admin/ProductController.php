@@ -144,25 +144,6 @@ class ProductController extends Controller
                 ]);
             }
 
-            // Save Product Attributes and Attribute Values
-            // $itemCodes = $request->input('itemcode', []);
-            // $attributeValues = $request->input('attribute_value', []);
-            // $attributeStocks = $request->input('attribute_stock', []);
-            // $attributePrices = $request->input('attribute_price', []);
-
-            // foreach ($itemCodes as $index => $itemCode) {
-            //     foreach ($attributeValues as $attributeId => $values) {
-            //         if (!empty($values[$index])) {
-            //             $product->attributes()->attach($attributeId, [
-            //                 'attribute_value_id' => $values[$index],
-            //                 'stock' => $attributeStocks[$index],
-            //                 'price' => $attributePrices[$index],
-            //                 'itemcode' => $itemCode
-            //             ]);
-            //         }
-            //     }
-            // }
-
             // Save Product Meta Tags
             $metaTag = new MetaTag();
             $metaTag->meta_title = $request->meta_title;
@@ -292,24 +273,7 @@ class ProductController extends Controller
             $attributes = $request->input('attribute_value', []);
             $stocks = $request->input('attribute_stock', []);
             $prices = $request->input('attribute_price', []);
-    
-            // Detach existing attributes
-            // $product->attributes()->detach();
-    
-            // Reattach attributes with updated values
-            // foreach ($attributes as $attributeId => $attributeValues) {
-            //     foreach ($attributeValues as $itemCode => $valueId) {
-            //         if (isset($stocks[$itemCode]) && isset($prices[$itemCode])) {
-            //             $product->attributes()->attach($attributeId, [
-            //                 'itemcode' => $itemCode,
-            //                 'attribute_value_id' => $valueId,
-            //                 'stock' => $stocks[$itemCode],
-            //                 'price' => $prices[$itemCode],
-            //             ]);
-            //         }
-            //     }
-            // }
-    
+      
             // Update Meta Tags
             $metaTag = $product->metaTag ?: new MetaTag();
             $metaTag->meta_title = $request->meta_title;

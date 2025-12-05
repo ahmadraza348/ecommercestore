@@ -19,7 +19,6 @@
                     <li class="nav-item"><a class="nav-link " href="#description-tab"
                             data-bs-toggle="tab">Description</a></li>
                     <li class="nav-item"><a class="nav-link" href="#images-tab" data-bs-toggle="tab">Media</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#attributes-tab" data-bs-toggle="tab">Attributes</a>
                     <li class="nav-item"><a class="nav-link" href="#meta-tab" data-bs-toggle="tab">Meta Info</a>
                     </li>
                 </ul>
@@ -416,60 +415,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Attributes Table -->
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Color</th>
-                                            <th id="dynamic-attribute-header">{{ old('selected_attribute_name') }}</th>
-                                            <th>Price</th>
-                                            <th>Stock</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="field_wrapper">
-                                        <!-- Existing rows -->
-                                        @foreach (old('attribute_id', ['']) as $index => $attributeId)
-                                        <tr>
-                                            <td>
-                                                <select name="attribute_id[]" class="form-select">
-                                                    <option value="">Select Attribute</option>
-                                                    @foreach ($colorAttribute->attributevalue as $color)
-                                                    <option value="{{ $color->id }}" {{ old('attribute_id.' . $index) == $color->id ? 'selected' : '' }}>
-                                                        {{ $color->name }}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td class="dynamic-attribute-cell">
-                                                @if (old('attribute_value_id.' . $index))
-                                                <select name="attribute_value_id[]" class="form-select">
-                                                    <option value="">Select Value</option>
-                                                    @foreach ($attributes->where('id', old('selected_attribute'))->first()->attributevalue as $value)
-                                                    <option value="{{ $value->id }}" {{ old('attribute_value_id.' . $index) == $value->id ? 'selected' : '' }}>
-                                                        {{ $value->name }}
-                                                    </option>
-                                                    @endforeach
-                                                </select>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <input type="number" name="attr_price[]" value="{{ old('attr_price.' . $index) }}" class="form-control">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="attr_stock[]" value="{{ old('attr_stock.' . $index) }}" class="form-control">
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="remove_button text-danger"><i class="fas fa-trash-alt"></i></a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <button type="button" class="btn btn-primary add_button mt-2">Add Row</button>
-                            </div>
+                    
                         </div>
 
                     </div>

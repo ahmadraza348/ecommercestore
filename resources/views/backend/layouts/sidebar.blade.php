@@ -28,6 +28,12 @@
                             alt="img"><span>
                             Product Attributes</span> <span class="menu-arrow"></span></a>
                     <ul>
+                        <li class="{{ request()->routeIs('colors.*') ? 'active' : '' }}">
+                            <a href="{{ route('colors.index') }}">
+                                <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                                <span> Colors</span>
+                            </a>
+                        </li>
                         <li class="{{ request()->routeIs('attribute.*') ? 'active' : '' }}">
                             <a href="{{ route('attribute.index') }}">
                                 <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
@@ -47,12 +53,18 @@
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/product.svg') }}"
                             alt="img"><span>
-                            Mmanage Products </span> <span class="menu-arrow"></span></a>
+                            Manage Products </span> <span class="menu-arrow"></span></a>
                     <ul>
                         <li class="{{ request()->routeIs('product.*') ? 'active' : '' }}">
                             <a href="{{ route('product.index') }}">
                                 <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                                <span> Add Product</span>
+                                <span> All Products</span>
+                            </a>
+                        </li>
+                        <li class="{{ request()->routeIs('product.*') ? 'active' : '' }}">
+                            <a href="{{ route('product.create') }}">
+                                <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                                <span> Create Product</span>
                             </a>
                         </li>
                         <li class="{{ request()->routeIs('product.*') ? 'active' : '' }}">

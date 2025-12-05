@@ -43,13 +43,10 @@
                                 </th>
                                 <th>Image</th>
                                 <th>Name</th>
-                                <th>Sku</th>
                                 <th>Price</th>
-                                <th>Stock</th>
-                                <th>Label</th>
-                                <th>Featured</th>
                                 <th>Status</th>
                                 <th>Attribute</th>
+                                <th>Images</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -71,23 +68,8 @@
                                     </a>
                                 </td>
                                 <td>{{ $item->name }} </td>
-                                <td>{{ $item->sku }} </td>
                                 <td>{{ $item->sale_price }} </td>
-                                <td>{{ $item->stock }} </td>
-                                @if ($item->label)
-                                <td> <span class="badge rounded-pill bg-success">{{ $item->label }}</span>
-                                </td>
-                                @else
-                                <td> <span class="badge rounded-pill bg-danger">None</span>
-                                    @endif
-
-                                <td>
-                                    @if ($item->is_featured == '1')
-                                    <span class="badge rounded-pill bg-success">Yes</span>
-                                    @else
-                                    <span class="badge rounded-pill bg-danger">No</span>
-                                    @endif
-                                </td>
+                            
                                 <td>
                                     @if ($item->status == 'active')
                                     <span class="badge rounded-pill bg-success">Active</span>
@@ -102,6 +84,11 @@
                                 @else
                                 <td> N/A </td>
                                 @endif
+
+                                <td>
+                                    <a href="{{ route('product.images', $item->id) }}">Add</a>
+                                </td>      
+
                                 <td>
                                     <a href="{{ route('product.edit', $item->id) }}" class="me-3">
                                         <img src="{{ asset('backend/assets/img/icons/edit.svg') }}" alt="edit">

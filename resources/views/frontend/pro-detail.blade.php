@@ -55,15 +55,14 @@
 
 
 
-                        <form action="{{route('addToCart')}}" method="post">
-                            @csrf
 
-                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                            <input type="hidden" name="final_price" id="final_price" value="">
+                        <div class="col-lg-6">
+                            <form action="{{route('addToCart')}}" method="post">
+                                @csrf
 
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="final_price" id="final_price" value="">
 
-
-                            <div class="col-lg-6">
                                 <div class="product-details-des mt-md-34 mt-sm-34">
                                     <h3><a href="product-details.html">{{ $product->name }}</a></h3>
                                     <div class="ratings">
@@ -121,15 +120,11 @@
                                     <div id="variant-attribute"></div>
                                     <br>
 
-                                    @php
-                                    $firstItem = $product->proAttributeValuesRecords->unique('color_id')->first();
-                                    $defaultStock = $firstItem->stock ?: $product->stock;
-                                    @endphp
 
                                     <div class="quantity-cart-box d-flex align-items-center">
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="number" name="pro_qty" value="1" min="1" max="{{ $defaultStock }}">
+                                                <input type="number" name="pro_qty" value="1" min="1" max="">
                                             </div>
                                         </div>
 
@@ -156,8 +151,8 @@
                                         <a class="google" href="#"><i class="fa fa-google-plus"></i>share</a>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- product details inner end -->
@@ -484,7 +479,11 @@
         const variants = colorRadio.data('variants');
 
         let colorPrice = colorRadio.data('price') > 0 ?
-        colorRadio.data('price') : {{$product->sale_price}};
+            colorRadio.data('price') : {
+                {
+                    $product - > sale_price
+                }
+            };
         $('#price').text('Rs. ' + colorPrice);
         $('#final_price').val(colorPrice);
 
