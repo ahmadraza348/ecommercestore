@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->string('colorcode')->nullable();
             $table->string('status')->default('1','active');
             $table->unsignedBigInteger('attribute_id')->nullable(); 
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');

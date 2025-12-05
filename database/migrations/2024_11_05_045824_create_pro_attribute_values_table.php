@@ -16,14 +16,16 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
+            $table->unsignedBigInteger('color_id')->nullable();
+            $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
+
+
             $table->unsignedBigInteger('attribute_id')->nullable();
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
 
             $table->unsignedBigInteger('attribute_value_id')->nullable();
             $table->foreign('attribute_value_id')->references('id')->on('attribute_values')->onDelete('cascade');
 
-            // or
-            // $table->foreignId('attribute_value_id')->references('id')->on('attribute_values')->onDelete('cascade');
             $table->integer('itemcode')->nullable();
             $table->integer('stock')->nullable();
             $table->decimal('price', 8, 2)->default(0.00)->nullable();

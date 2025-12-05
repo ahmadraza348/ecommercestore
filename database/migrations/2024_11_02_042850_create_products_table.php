@@ -14,11 +14,12 @@ class CreateProductsTable extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->unique();
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('product_type', ['simple', 'color', 'color_variant'])->default('simple');
             $table->integer('sale_price');
             $table->integer('previous_price')->nullable();
             $table->integer('purchase_price')->nullable();
             $table->string('barcode');
-            $table->integer('stock');
+            $table->integer('stock'); 
             $table->string('tags')->nullable();
             $table->string('label')->nullable();
             $table->boolean('is_featured')->default(false);
@@ -28,7 +29,7 @@ class CreateProductsTable extends Migration
             $table->string('back_image')->nullable();
             $table->string('video')->nullable();
             $table->timestamps();
-            $table->softDeletes(); // Add soft deletes column
+            $table->softDeletes();
         });
     }
 
