@@ -102,9 +102,10 @@
                                         $stock = $item->stock ?: $product->stock;
                                         $variantSet = $variants[$colorId] ?? [];
                                         @endphp
-                                       
+
                                         <input type="radio" required name="color" id="color_{{ $colorId }}"
                                             value="{{ $colorId }}"
+                                            data-stock="{{ $stock }}"
                                             data-variants='@json($variantSet)'
                                             data-price="{{ $colorPrice }}" {{ $loop->first ? 'checked' : '' }}
                                             data-name="{{ $colorName }}">
@@ -120,10 +121,18 @@
                                     <div id="variant-attribute"></div>
                                     <br>
 
+                                    @php
+                                    $firstItem = $product->proAttributeValuesRecords->unique('color_id')->first();
+                                    $defaultStock = $firstItem->stock ?: $product->stock;
+                                    @endphp
+
                                     <div class="quantity-cart-box d-flex align-items-center">
                                         <div class="quantity">
-                                            <div class="pro-qty"><input type="text"name="pro_qty" value="1"></div>
+                                            <div class="pro-qty">
+                                                <input type="number" name="pro_qty" value="1" min="1" max="{{ $defaultStock }}">
+                                            </div>
                                         </div>
+
                                         <div class="action_link">
                                             <button type="submit" style="border:none;background:none;padding:0;">
                                                 <a class="buy-btn" type="submit" style="cursor:pointer">add to cart<i
@@ -475,8 +484,7 @@
         const variants = colorRadio.data('variants');
 
         let colorPrice = colorRadio.data('price') > 0 ?
-            colorRadio.data('price') : {{$product->sale_price}} ;
-
+        colorRadio.data('price') : {{$product->sale_price}};
         $('#price').text('Rs. ' + colorPrice);
         $('#final_price').val(colorPrice);
 
@@ -527,7 +535,7 @@
 
         let price = selectedVariant.price || $('#price').text().replace('Rs. ', '');
         $('#price').text('Rs. ' + price);
-         $('#final_price').val(price);
+        $('#final_price').val(price);
 
         const attributeName = selectedVariant.attribute_value?.attribute?.name || 'Select';
         const attributeValue = selectedVariant.attribute_value?.name || '';
@@ -544,6 +552,7 @@
                        id="variant_${v.id}"
                        value="${v.attribute_value_id}"
                        data-price="${v.price}"
+                        data-stock="${v.stock}"
                        ${v.id == selectedVariant.id ? 'checked' : ''}>
                 <label for="variant_${v.id}">${v.attribute_value.name}</label>
             `;
@@ -558,7 +567,7 @@
             const vName = $(this).next('label').text();
 
             $('#price').text('Rs. ' + vPrice);
-                     $('#final_price').val(vPrice);
+            $('#final_price').val(vPrice);
 
             $('#variant-attribute label strong').text(`Select ${attributeName}: ${vName}`);
         });
