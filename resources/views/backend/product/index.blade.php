@@ -86,7 +86,7 @@
                                 @endif
 
                                 <td>
-                                    <a href="{{ route('product.images', $item->id) }}">Add</a>
+                                    <a href="{{ route('add.pro.images', $item->id) }}">Add</a>
                                 </td>      
 
                                 <td>

@@ -45,7 +45,7 @@ class Product extends Model
 
     public function gallery_images()
     {
-        return $this->hasMany(ProImages::class, 'product_id');
+        return $this->hasMany(ProductImages::class, 'product_id');
     }
 
     // for admin panel to show attributes linked to product

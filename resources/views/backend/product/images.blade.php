@@ -1,90 +1,127 @@
 @extends('backend.layouts.layout')
-@section('title', ' Product Images - Raza Mall')
 
 @section('content')
 <div class="page-wrapper">
     <div class="content">
+        <h4 class=" mb-3">Manage Images — {{ $product->name }}</h4>
 
-        {{-- Page Header --}}
-        <div class="page-header">
-            <div class="page-title">
-                <h4>Add Product Images</h4>
-            </div>
-        </div>
 
-        {{-- Attribute Form --}}
-        <form method="POST" id="attributeForm">
+        {{-- UPLOAD NEW IMAGES --}}
+        <dic action="{{ route('admin.product.store-images') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="hidden" name="product_id" value="{{ $product->id }}">
 
             <div class="row">
-                <div class="col-md-6">
-                    <input type="file" class="form-control" name="images[]" multiple id="">
+                <div class="col-4">
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                    <select name="color_id" class="form-control" required>
+                        <option value="">-- Select Color --</option>
+                        @foreach($colors as $color)
+                        <option value="{{ $color->id }}">{{ $color->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="col-md-6">
-                    <input type="submit" value="Add Images" class="btn btn-primary ">
+
+                <div class="col-4">
+
+                    <input type="file" name="images[]" multiple class="form-control">
 
                 </div>
+                <div class="col-4">
+                 <button class="btn btn-primary ">Upload</button>
+                </div>
             </div>
+        </dic>
         </form>
 
-        {{-- Product Attribute List --}}
-        <div class="page-header mt-5">
-            <div class="page-title">
-                <h4>All Product Images</h4>
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" id="select-all" onclick="selectAll(this)">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
-                                <th>Order</th>
-                                <th>Image</th>
-                                <th>Color</th>
-                                <th>Featured</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="attributeTableBody">
-                            <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" class="select-category" data-id="
-                                         "
-                                            onchange="toggleDeleteButton()">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <th>1</th>
-                                <td>
-                                    <a href="javascript:void(0);" class="product-img">
-                                        <img src="
-                                         "
-                                            alt="profile image"
-                                            style="width:60px; height:60px; border-radius:100px;">
-                                    </a>
-                                </td>
+        <hr>
 
-                                <th>Color</th>
-                                <th>Featured</th>
-                                <th>Action</th>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+
+        {{-- UPDATE + DELETE --}}
+        <form action="{{ route('admin.product.update-images') }}" method="POST">
+            @csrf
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Image</th>
+                        <th>Color</th>
+                        <th>Featured</th>
+                        <th>Back</th>
+                        <th>Sort</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($images as $img)
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="delete-check" value="{{ $img->id }}">
+                        </td>
+
+                        <td>
+                            <img src="{{ asset('storage/'.$img->image) }}" width="80">
+                        </td>
+
+                        <td>
+                            <select name="images[{{ $img->id }}][color_id]" class="form-control">
+                                @foreach($colors as $color)
+                                <option value="{{ $color->id }}"
+                                    {{ $img->color_id == $color->id ? 'selected' : '' }}>
+                                    {{ $color->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </td>
+
+                        <td>
+                            <input type="checkbox" name="images[{{ $img->id }}][is_featured]"
+                                {{ $img->is_featured ? 'checked' : '' }}>
+                        </td>
+
+                        <td>
+                            <input type="checkbox" name="images[{{ $img->id }}][is_back]"
+                                {{ $img->is_back ? 'checked' : '' }}>
+                        </td>
+
+                        <td>
+                            <input type="number" name="images[{{ $img->id }}][sort_order]"
+                                value="{{ $img->sort_order }}" class="form-control" style="width:80px;">
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+
+            </table>
+
+            <button class="btn btn-sm btn-success mt-2">Update All</button>
+        </form>
+
+
+        {{-- BULK DELETE FORM --}}
+        <form id="delete-form" action="{{ route('admin.product.delete-images') }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="delete_ids" id="delete-ids">
+        </form>
+
+        <button class="btn btn-danger btn-sm mt-2" onclick="bulkDelete()">Delete</button>
 
     </div>
 </div>
+
+<script>
+    function bulkDelete() {
+        const ids = [...document.querySelectorAll('.delete-check:checked')].map(c => c.value);
+        if (!ids.length) {
+            alert('No images selected');
+            return;
+        }
+        document.getElementById('delete-ids').value = ids.join(',');
+        document.getElementById('delete-form').submit();
+    }
+</script>
 
 @endsection

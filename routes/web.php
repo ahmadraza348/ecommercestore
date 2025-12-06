@@ -90,10 +90,11 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
        //    Product images Routes
 Route::prefix('products')->group(function () {
-    Route::get('/{id}/images', [ProImagesController::class, 'index'])->name('product.images');
-    Route::post('/{id}/images/store', [ProImagesController::class, 'store'])->name('product.images.store');
-    Route::post('/images/update/{image}', [ProImagesController::class, 'update'])->name('product.images.update');
-    Route::delete('/images/delete/{image}', [ProImagesController::class, 'destroy'])->name('product.images.delete');
+   Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
+Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
+Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
+Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
+
 });
 
     //    Product images Routes
