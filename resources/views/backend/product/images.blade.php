@@ -7,7 +7,7 @@
 
 
         {{-- UPLOAD NEW IMAGES --}}
-        <dic action="{{ route('admin.product.store-images') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.product.store-images') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row">
@@ -28,10 +28,9 @@
 
                 </div>
                 <div class="col-4">
-                 <button class="btn btn-primary ">Upload</button>
+                 <button type="submit" class="btn btn-primary ">Upload</button>
                 </div>
             </div>
-        </dic>
         </form>
 
 
