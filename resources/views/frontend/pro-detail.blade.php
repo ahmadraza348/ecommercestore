@@ -32,7 +32,6 @@
                         @else
                         <div class="col-lg-6">
 
-                            {{-- MAIN SLIDER --}}
                             <div class="product-large-slider mb-20 slick-arrow-style_2" id="main-slider">
                                 @foreach ($product->gallery_images as $item)
                                 <div class="pro-large-img img-zoom" data-color="{{ $item->color_id }}">
@@ -41,7 +40,6 @@
                                 @endforeach
                             </div>
 
-                            {{-- THUMB SLIDER --}}
                             <div class="pro-nav slick-padding2 slick-arrow-style_2" id="thumb-slider">
                                 @foreach ($product->gallery_images as $item)
                                 <div class="pro-nav-thumb" data-color="{{ $item->color_id }}">
@@ -52,8 +50,6 @@
 
                         </div>
                         @endif
-
-
 
 
                         <div class="col-lg-6">
@@ -112,7 +108,8 @@
                                             {{ $loop->first ? 'checked' : '' }}>
 
                                         <label for="color_{{ $colorId }}" class="color-box"
-                                            style="background: {{ $color }}"></label>
+                                            style="background-color: {{ $color }};">
+                                        </label>
                                         @endforeach
 
                                     </div>
@@ -498,30 +495,6 @@
     let originalMainSlides = $('#main-slider').html();
     let originalThumbSlides = $('#thumb-slider').html();
 
-    // function loadColorImages(colorId) {
-    //     let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
-    //     let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
-
-    //     if ($('#main-slider').hasClass('slick-initialized')) $('#main-slider').slick('unslick');
-    //     if ($('#thumb-slider').hasClass('slick-initialized')) $('#thumb-slider').slick('unslick');
-
-    //     $('#main-slider').html(main);
-    //     $('#thumb-slider').html(thumb);
-
-    //     $('#main-slider').slick({
-    //         slidesToShow: 1,
-    //         fade: true,
-    //         arrows: true,
-    //         asNavFor: '#thumb-slider'
-    //     });
-
-    //     $('#thumb-slider').slick({
-    //         slidesToShow: 4,
-    //         focusOnSelect: true,
-    //         asNavFor: '#main-slider'
-    //     });
-    // }
-
     function loadColorImages(colorId) {
         let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
         let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
@@ -546,14 +519,12 @@
             focusOnSelect: true,
             asNavFor: '#main-slider'
         });
-
-        // 🔥 Reapply zoom after new images are injected
         initZoom();
     }
 
     function initZoom() {
         $(".img-zoom").each(function() {
-            $(this).trigger('zoom.destroy'); // remove old zoom instance if exists
+            $(this).trigger('zoom.destroy'); 
         });
 
         $(".img-zoom").zoom({
