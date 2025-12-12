@@ -94,24 +94,25 @@
 
                                         @foreach ($product->proAttributeValuesRecords->unique('color_id') as $item)
                                         @php
-                                        $color = $item->color->colorcode ?? '#000';
+                                        $color = $item->color->color_code ?? '#000';
                                         $colorId = $item->color->id;
                                         $colorName = $item->color->name;
-                                        $colorPrice = $item->price ?: $product->sale_price;
-                                        $stock = $item->stock ?: $product->stock;
-                                        $variantSet = $variants[$colorId] ?? [];
+                                        $variantSet = $variants[$colorId] ?? collect([]);
+                                        $colorPrice = $variantSet->first()->price ?? $product->sale_price;
+                                        $stock = $variantSet->first()->stock ?? $product->stock;
                                         @endphp
 
-                                        <input type="radio" required name="color" id="color_{{ $colorId }}"
+                                        <input type="radio" name="color"
+                                            id="color_{{ $colorId }}"
                                             value="{{ $colorId }}"
+                                            data-name="{{ $colorName }}"
+                                            data-price="{{ $colorPrice }}"
                                             data-stock="{{ $stock }}"
                                             data-variants='@json($variantSet)'
-                                            data-price="{{ $colorPrice }}" {{ $loop->first ? 'checked' : '' }}
-                                            data-name="{{ $colorName }}">
-
+                                            {{ $loop->first ? 'checked' : '' }}>
 
                                         <label for="color_{{ $colorId }}" class="color-box"
-                                            style="background: {{ $color }};"></label>
+                                            style="background: {{ $color }}"></label>
                                         @endforeach
 
                                     </div>
@@ -403,7 +404,7 @@
                     <!-- sidebar banner start -->
                     <div class="sidebar-widget mb-22">
                         <div class="img-container fix img-full mt-30">
-                            <a href="#"><img src="frontend/assets/img/banner/banner_shop.jpg')}}"
+                            <a href="#"><img src=""
                                     alt=""></a>
                         </div>
                     </div>
@@ -459,42 +460,67 @@
 
 <script>
     $(document).ready(function() {
+        initZoom();
 
-        // Select first color by default
+        // SIMPLE PRODUCT CHECK
+        if ($('input[name="color"]').length === 0) {
+            // No attributes, no variants
+            return;
+        }
+
+        // Continue only if product has attributes
         let firstColor = $('input[name="color"]').first();
         firstColor.prop('checked', true);
         $('#selected-color-name').text(firstColor.data('name'));
-
         updateUI(firstColor);
+
     });
 
-    // When user selects a color
+    // COLOR CHANGE
     $('input[name="color"]').on('change', function() {
         $('#selected-color-name').text($(this).data('name'));
         updateUI($(this));
     });
 
     function updateUI(colorRadio) {
-        const colorId = colorRadio.val();
-        const variants = colorRadio.data('variants');
 
-        let colorPrice = colorRadio.data('price') > 0 ?
-            colorRadio.data('price') : {
-                {
-                    $product - > sale_price
-                }
-            };
+        const variants = colorRadio.data('variants');
+        const colorPrice = colorRadio.data('price');
+
         $('#price').text('Rs. ' + colorPrice);
         $('#final_price').val(colorPrice);
 
-
-        loadColorImages(colorId);
+        loadColorImages(colorRadio.val());
         loadVariantValues(variants);
     }
 
-    // Store original slides
+    // save original HTML
     let originalMainSlides = $('#main-slider').html();
     let originalThumbSlides = $('#thumb-slider').html();
+
+    // function loadColorImages(colorId) {
+    //     let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
+    //     let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
+
+    //     if ($('#main-slider').hasClass('slick-initialized')) $('#main-slider').slick('unslick');
+    //     if ($('#thumb-slider').hasClass('slick-initialized')) $('#thumb-slider').slick('unslick');
+
+    //     $('#main-slider').html(main);
+    //     $('#thumb-slider').html(thumb);
+
+    //     $('#main-slider').slick({
+    //         slidesToShow: 1,
+    //         fade: true,
+    //         arrows: true,
+    //         asNavFor: '#thumb-slider'
+    //     });
+
+    //     $('#thumb-slider').slick({
+    //         slidesToShow: 4,
+    //         focusOnSelect: true,
+    //         asNavFor: '#main-slider'
+    //     });
+    // }
 
     function loadColorImages(colorId) {
         let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
@@ -520,55 +546,64 @@
             focusOnSelect: true,
             asNavFor: '#main-slider'
         });
+
+        // 🔥 Reapply zoom after new images are injected
+        initZoom();
     }
+
+    function initZoom() {
+        $(".img-zoom").each(function() {
+            $(this).trigger('zoom.destroy'); // remove old zoom instance if exists
+        });
+
+        $(".img-zoom").zoom({
+            on: 'mouseover',
+            magnify: 1.5
+        });
+    }
+
 
     function loadVariantValues(variants) {
 
-        if (!variants || variants.length === 0) {
+        variants = variants || [];
+
+        if (variants.length === 0) {
             $('#variant-attribute').html('');
             return;
         }
 
-        // Select the first variant by default
-        let selectedVariant = variants[0];
-
-        let price = selectedVariant.price || $('#price').text().replace('Rs. ', '');
-        $('#price').text('Rs. ' + price);
-        $('#final_price').val(price);
-
-        const attributeName = selectedVariant.attribute_value?.attribute?.name || 'Select';
-        const attributeValue = selectedVariant.attribute_value?.name || '';
+        let first = variants[0];
 
         let html = `
-            <label><strong>Select ${attributeName}: ${attributeValue}</strong></label>
-            <div class="variant-options">
-        `;
+        <label><strong>Select ${first.attribute_value.attribute.name}: ${first.attribute_value.name}</strong></label>
+        <div class="variant-options">
+    `;
 
         variants.forEach(v => {
             html += `
-                <input type="radio"
-                       name="variant"
-                       id="variant_${v.id}"
-                       value="${v.attribute_value_id}"
-                       data-price="${v.price}"
-                        data-stock="${v.stock}"
-                       ${v.id == selectedVariant.id ? 'checked' : ''}>
-                <label for="variant_${v.id}">${v.attribute_value.name}</label>
-            `;
+            <input type="radio"
+                   name="variant"
+                   id="variant_${v.id}"
+                   value="${v.attribute_value_id}"
+                   data-price="${v.price}"
+                   data-stock="${v.stock}"
+                   ${v.id == first.id ? 'checked' : ''}>
+            <label for="variant_${v.id}">${v.attribute_value.name}</label>
+        `;
         });
 
-        html += `</div>`;
+        html += '</div>';
         $('#variant-attribute').html(html);
 
-        // When selecting variant
-        $('input[name="variant"]').off('change').on('change', function() {
-            const vPrice = $(this).data('price') || price;
-            const vName = $(this).next('label').text();
+        // Variant change
+        $('input[name="variant"]').on('change', function() {
+            const price = $(this).data('price');
+            const label = $(this).next().text();
 
-            $('#price').text('Rs. ' + vPrice);
-            $('#final_price').val(vPrice);
+            $('#price').text('Rs. ' + price);
+            $('#final_price').val(price);
 
-            $('#variant-attribute label strong').text(`Select ${attributeName}: ${vName}`);
+            $('#variant-attribute label strong').text(`Select ${first.attribute_value.attribute.name}: ${label}`);
         });
     }
 </script>

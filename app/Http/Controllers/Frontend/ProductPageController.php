@@ -11,27 +11,24 @@ use App\Models\ProAttributeValue;
 class ProductPageController extends Controller
 {
 
-    public function index($slug)
-    {
-        //showing gallery images and colors in product detail page
-        $product = Product::where('slug', $slug)
-            ->with([
-                'gallery_images',
-                'proAttributeValuesRecords',
-            ])
-            ->firstOrFail();
+   public function index($slug)
+{
+    $product = Product::where('slug', $slug)
+        ->with([
+            'gallery_images',
+            'proAttributeValuesRecords',
+        ])
+        ->firstOrFail();
 
-        // Load color based varients with values like sizes with values ,fabrics with values etc
-        $variants = ProAttributeValue::where('product_id', $product->id)
-            ->with(['attribute_value.attribute'])  //attribute values gives values like small , cotton   and attribute gives attribute like size , fabric respectively
-            ->get()
-            ->groupBy('color_id');
-        // dd($variants);
-        return view('frontend.pro-detail', [
-            'product'  => $product,
-            'variants' => $variants
-        ]);
-    }
+    // group by color
+    $variants = ProAttributeValue::where('product_id', $product->id)
+        ->with(['attribute_value.attribute', 'color'])
+        ->get()
+        ->groupBy('color_id'); // <--- THE FIX
+
+    return view('frontend.pro-detail', compact('product', 'variants'));
+}
+
 
     public function addToCart(request $request)
     {
