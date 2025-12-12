@@ -28,7 +28,6 @@ class ProImagesController extends Controller
     {
         $request->validate([
             'product_id' => 'required',
-            'color_id'   => 'required',
             'images.*'   => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 

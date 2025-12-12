@@ -25,8 +25,6 @@ class CreateProductsTable extends Migration
             $table->boolean('is_featured')->default(false);
             $table->mediumText('short_description')->nullable();
             $table->longText('long_description')->nullable();
-            $table->string('featured_image');
-            $table->string('back_image')->nullable();
             $table->string('video')->nullable();
             $table->timestamps();
             $table->softDeletes();

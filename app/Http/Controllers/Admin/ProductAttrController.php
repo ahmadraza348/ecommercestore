@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attribute;
+use App\Models\Color;
 use App\Models\ProAttributeValue;
 use App\Models\Product;
 
@@ -12,13 +13,12 @@ class ProductAttrController extends Controller
 {
     public function add_pro_attr($product_id)
     {
-        $data['colors'] = Attribute::where('slug', 'color')->with('attributevalue')->first();
+        $data['colors'] = Color::where('status', 1)->get();
         $data['product'] = Product::findOrFail($product_id);
         if ($data['product']->product_variation_type == 'color_attribute_varient') {
 
             $data['attribute_data'] = Attribute::where('id',   $data['product']->attribute_id)->with('attributevalue')->first();
         }
-// dd($data['attribute_data']);
         return view('backend.pro_attr.add', $data);
     }
 
@@ -44,6 +44,7 @@ class ProductAttrController extends Controller
 
     public function store_pro_attr(Request $request)
     {
+        // dd($request->all());
         try {
 
             ProAttributeValue::create([

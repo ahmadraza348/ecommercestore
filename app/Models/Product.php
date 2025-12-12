@@ -30,8 +30,6 @@ class Product extends Model
         'is_featured',
         'short_description',
         'long_description',
-        'featured_image',
-        'back_image',
         'video',
         'brand_id',
         'attribute_id'

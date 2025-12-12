@@ -30,22 +30,16 @@ class ProductController extends Controller
     public function create()
     {
         $data['categories'] = Category::where('status', '1')
-            ->whereNull('parent_id')   //get only parent categories
-            ->with('subcategories')   //get all (nested) sub & child categories within parent category in proper sequence
+            ->whereNull('parent_id')
+            ->with('subcategories')
             ->get();
 
         $data['attributes'] = Attribute::where('status', 1)->with('attributevalue')->get();
-        $data['attribute_colors'] = AttributeValue::whereHas('attribute', function ($query) {
-            $query->where('slug', 'color');
-        })->get();
-         $data['colorAttribute'] = Attribute::where('slug', 'color')
-        ->with('attributevalue')
-        ->first();
         $data['brands'] = Brand::where('status', 1)->get();
         return view('backend.product.create', $data);
     }
 
-   
+
     public function store(Request $request)
     {
         try {
@@ -56,10 +50,6 @@ class ProductController extends Controller
                 'sale_price' => 'required|numeric|max:99999',
                 'barcode' => 'required|string|max:255',
                 'stock' => 'required|integer|max:99999',
-                'featured_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'gallery_images' => 'required|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
                 'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
             ];
 
@@ -88,45 +78,18 @@ class ProductController extends Controller
                 'label',
                 'is_featured',
                 'short_description',
-               ' attribute_id',
-               ' product_variation_type',
+                ' attribute_id',
+                ' product_variation_type',
                 'long_description',
                 'brand_id',
             ]);
-
-            if ($request->hasFile('featured_image')) {
-                $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
-                $data['featured_image'] = $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
-            }
-
-            if ($request->hasFile('back_image')) {
-                $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
-                $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
-            }
-
             if ($request->hasFile('video')) {
                 $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
                 $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');
             }
-
             // Create Product
             $product = Product::create($data);
 
-            // Store Gallery Images
-            if ($request->hasFile('gallery_images')) {
-                $colors = $request->input('colors', []);
-
-                foreach ($request->file('gallery_images') as $index => $galleryImage) {
-                    $galleryImageName = time() . '_' . uniqid() . '.' . $galleryImage->getClientOriginalExtension();
-                    $publicGalleryPath = $galleryImage->storeAs('images/products/gallery', $galleryImageName, 'public');
-
-                    ProImages::create([
-                        'product_id' => $product->id,
-                        'image' => $publicGalleryPath,
-                        'color_id' => $colors[$index] ?? null
-                    ]);
-                }
-            }
 
             // Store Product Categories
             $categories = $request->input('category', []);
@@ -159,21 +122,10 @@ class ProductController extends Controller
         }
     }
 
-
-    public function show(string $id)
-    {
-        //
-    }
-
     public function edit(string $id)
     {
         // Fetch product with its categories
-        $data['pro_data'] = Product::with([
-            'gallery_images',
-            'attributes' => function ($query) {
-                $query->orderBy('itemcode', 'asc');
-            }
-        ])->findOrFail($id);
+        $data['pro_data'] = Product::findOrFail($id);
 
 
         $data['all_category_data'] = Category::where('status', '1')
@@ -183,10 +135,6 @@ class ProductController extends Controller
         $data['selected_categories'] = $data['pro_data']->categories->pluck('id')->toArray();
 
         $data['attributes'] = Attribute::where('status', 1)->with('attributevalue')->get();
-        $data['attribute_colors'] = AttributeValue::whereHas('attribute', function ($query) {
-            $query->where('slug', 'color');
-        })->get();
-        $data['selected_attribute'] = $data['pro_data']->attributes->pluck('id')->toArray();
         $data['brands'] = Brand::where('status', 1)->get();
         return view('backend.product.edit', $data);
     }
@@ -209,15 +157,11 @@ class ProductController extends Controller
                 'sale_price' => 'required|numeric|max:99999',
                 'barcode' => 'required|string|max:255',
                 'stock' => 'required|integer|max:99999',
-                'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'back_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:200',
-                'gallery_images' => 'nullable|array',
-                'gallery_images.*' => 'image|mimes:jpg,jpeg,png,webp|max:200',
                 'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
                 foreach ($validator->errors()->all() as $error) {
                     toastr()->error($error);
@@ -226,10 +170,10 @@ class ProductController extends Controller
                     ->withErrors($validator)
                     ->withInput();
             }
-    
+
             // Fetch Product Data
             $product = Product::findOrFail($id);
-    
+
             $data = $request->only([
                 'name',
                 'slug',
@@ -248,39 +192,39 @@ class ProductController extends Controller
                 'brand_id',
                 'attribute_id',
             ]);
-    
-            // Handle Images and Video Uploads
-            if ($request->hasFile('featured_image')) {
-                $featuredImageName = time() . '_' . uniqid() . '.' . $request->file('featured_image')->getClientOriginalExtension();
-                $data['featured_image'] = $request->file('featured_image')->storeAs('images/products', $featuredImageName, 'public');
-            }
-    
-            if ($request->hasFile('back_image')) {
-                $backImageName = time() . '_' . uniqid() . '.' . $request->file('back_image')->getClientOriginalExtension();
-                $data['back_image'] = $request->file('back_image')->storeAs('images/products', $backImageName, 'public');
-            }
-    
+
             if ($request->hasFile('video')) {
                 $videoName = time() . '_' . uniqid() . '.' . $request->file('video')->getClientOriginalExtension();
                 $data['video'] = $request->file('video')->storeAs('videos/products', $videoName, 'public');
             }
-    
+
             // Update Product Basic Data
             $product->update($data);
-    
-            // Update Product Attributes
-            $itemcodes = $request->input('itemcode', []);
-            $attributes = $request->input('attribute_value', []);
-            $stocks = $request->input('attribute_stock', []);
-            $prices = $request->input('attribute_price', []);
-      
+
+            // Update Categories
+            $categories = $request->input('category', []);
+
+            // Delete existing categories
+            RelationalCategory::where('product_id', $product->id)->delete();
+
+            // Insert new categories
+            foreach ($categories as $categoryId) {
+                RelationalCategory::create([
+                    'product_id' => $product->id,
+                    'category_id' => $categoryId,
+                    'metaable_id' => $product->id,
+                    'metaable_type' => Product::class,
+                ]);
+            }
+
+
             // Update Meta Tags
             $metaTag = $product->metaTag ?: new MetaTag();
             $metaTag->meta_title = $request->meta_title;
             $metaTag->meta_keywords = $request->meta_keywords;
             $metaTag->meta_description = $request->meta_description;
             $product->metaTag()->save($metaTag);
-    
+
             toastr()->success('Product updated successfully!');
             return redirect()->back();
         } catch (\Exception $e) {
@@ -288,7 +232,7 @@ class ProductController extends Controller
             return redirect()->back()->withInput();
         }
     }
-    
+
 
     public function deleteGalleryImage(Request $request)
     {

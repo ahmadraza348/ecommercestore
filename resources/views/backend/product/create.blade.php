@@ -18,7 +18,6 @@
                     </li>
                     <li class="nav-item"><a class="nav-link " href="#description-tab"
                             data-bs-toggle="tab">Description</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#images-tab" data-bs-toggle="tab">Media</a></li>
                     <li class="nav-item"><a class="nav-link" href="#meta-tab" data-bs-toggle="tab">Meta Info</a>
                     </li>
                 </ul>
@@ -215,6 +214,10 @@
                                                         Sale</option>
                                                 </select>
                                             </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <label for="video"class="form-label mt-2">Product Video</label>
+                                                <input type="file" name="video" class="form-control">
+                                            </div>
 
 
                                             <div class="col-lg-6 col-sm-12">
@@ -235,9 +238,9 @@
                                                 <label class="form-label mt-2" for="label">Product Variation Type*
                                                 </label>
                                                 <select name="product_variation_type" id="product_variation_type" class="form-control">
-                                                    <option value="simple"{{ old('product_variation_type') == 'simple' ? 'selected' : '' }}>Simple</option>
-                                                    <option value="color_varient"{{ old('product_variation_type') == 'color_varient' ? 'selected' : '' }}>Color varient</option>
-                                                    <option value="color_attribute_varient"{{ old('product_variation_type') == 'color_attribute_varient' ? 'selected' : '' }}>Color & attribute varient</option>
+                                                    <option value="simple" {{ old('product_variation_type') == 'simple' ? 'selected' : '' }}>Simple</option>
+                                                    <option value="color_varient" {{ old('product_variation_type') == 'color_varient' ? 'selected' : '' }}>Color varient</option>
+                                                    <option value="color_attribute_varient" {{ old('product_variation_type') == 'color_attribute_varient' ? 'selected' : '' }}>Color & attribute varient</option>
                                                 </select>
                                             </div>
 
@@ -319,108 +322,7 @@
                         </div>
                     </div>
 
-                    <!-- Images Tab -->
-                    <div class="tab-pane" id="images-tab">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row g-4">
-                                    <div class="col-lg-4">
-                                        <label for="featured_image">Featured Image*</label>
-                                        <input type="file" required name="featured_image" data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            data-bs-original-title="Only jpg, jpeg, and png files allowed"
-                                            class="form-control" onchange="previewImage(event)">
-                                        <small class="text-muted">Max 1200x1200px, 200KB</small>
-                                        <div class="text-danger">
-                                            @error('featured_image')
-                                            {{ $message }}
-                                            @enderror
-                                        </div>
-                                        <div class="mt-2">
-                                            <img id="imagePreview" src="#" alt="Image Preview"
-                                                style="display: none; max-width: 200px; max-height: 200px;">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <label for="back_image">Back Image</label>
-                                        <input type="file" name="back_image" class="form-control"
-                                            onchange="previewImage(event)" data-bs-toggle="tooltip"
-                                            data-bs-placement="top"
-                                            data-bs-original-title="Only jpg, jpeg, and png files allowed">
-                                        <small class="text-muted">Max 1200x1200px, 200KB</small>
-                                        <div class="text-danger">
-                                            @error('back_image')
-                                            {{ $message }}
-                                            @enderror
-                                        </div>
-                                        <div class="mt-2">
-                                            <img id="imagePreview" src="#" alt="Image Preview"
-                                                style="display: none; max-width: 200px; max-height: 200px;">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <label for="video">Product Video</label>
-                                        <input type="file" name="video" class="form-control">
-                                        <small class="text-muted">Only video files allowed</small>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="gallery_images">Gallery Images*</label>
-                                            <div class="image-upload">
-                                                <input type="file" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    data-bs-original-title="Only jpg, jpeg, and png files allowed" required
-                                                    id="gallery_images" name="gallery_images[]" multiple
-                                                    onchange="validateAndPreviewGalleryImages(event)">
-
-                                                <small class="text-muted">Max 1200x1200px, 200KB per image</small>
-
-                                                <div class="image-uploads">
-                                                    <img src="{{ asset('backend/assets/img/icons/upload.svg') }}"
-                                                        alt="upload icon">
-                                                    <h4>Drag and drop a file to upload</h4>
-                                                </div>
-                                            </div>
-                                            <div class="text-danger">
-                                                @error('gallery_images[]')
-                                                {{ $message }}
-                                                @enderror
-                                            </div>
-                                            <div id="galleryImagePreviewContainer"
-                                                style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane" id="attributes-tab">
-                        <div class="card-body">
-                            <!-- Select Attribute Section -->
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="mb-3">
-                                        <label for="dynamic-attribute-select" class="form-label"> Attribute: </label>
-                                        <select id="dynamic-attribute-select" class="form-select">
-                                            <option value="">Select</option>
-                                            @foreach ($attributes as $attribute)
-                                            @if ($attribute->slug !== 'color')
-                                            <option value="{{ $attribute->id }}" {{ old('selected_attribute') == $attribute->id ? 'selected' : '' }}>
-                                                {{ $attribute->name }}
-                                            </option>
-                                            @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                    
-                        </div>
-
-                    </div>
-
-
+                 
                     {{-- Meta Tabs --}}
                     <div class="tab-pane" id="meta-tab">
 
@@ -442,57 +344,4 @@
         </form>
     </div>
 </div>
-
-<script>
-    function validateAndPreviewGalleryImages(event) {
-        const files = Array.from(event.target.files);
-        const validImageTypes = ['image/jpeg', 'image/png', 'image/webp', ];
-        const galleryImagePreviewContainer = document.getElementById('galleryImagePreviewContainer');
-        galleryImagePreviewContainer.innerHTML = '';
-
-        files.forEach((file, index) => {
-            if (validImageTypes.includes(file.type)) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgContainer = document.createElement('div');
-                    imgContainer.style.display = 'flex';
-                    imgContainer.style.flexDirection = 'column';
-                    imgContainer.style.alignItems = 'center';
-                    imgContainer.style.margin = '10px';
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.width = '100px';
-                    img.style.height = '100px';
-                    img.style.borderRadius = '5px';
-                    img.style.border = '1px solid #ddd';
-                    img.style.objectFit = 'cover';
-
-                    const colorSelect = document.createElement('select');
-                    colorSelect.name = `colors[${index}]`; // Ensure name is dynamic
-                    colorSelect.style.marginTop = '5px';
-
-                    const colors = @json($attribute_colors);
-                    colorSelect.innerHTML = '<option value="">Select Color</option>';
-                    colors.forEach(color => {
-                        const option = document.createElement('option');
-                        option.value = color.id;
-                        option.text = color.name;
-                        colorSelect.appendChild(option);
-                    });
-
-                    imgContainer.appendChild(img);
-                    imgContainer.appendChild(colorSelect);
-                    galleryImagePreviewContainer.appendChild(imgContainer);
-                };
-
-                reader.readAsDataURL(file);
-            } else {
-                alert('Please select valid image files (JPG, JPEG, PNG) for gallery images.');
-                event.target.value = '';
-                return;
-            }
-        });
-    }
-</script>
 @endsection

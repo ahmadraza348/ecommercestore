@@ -14,7 +14,7 @@
                 <div class="col-4">
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
 
-                    <select name="color_id" class="form-control" required>
+                    <select name="color_id" class="form-control" >
                         <option value="">-- Select Color --</option>
                         @foreach($colors as $color)
                         <option value="{{ $color->id }}">{{ $color->name }}</option>
@@ -66,6 +66,8 @@
 
                         <td>
                             <select name="images[{{ $img->id }}][color_id]" class="form-control">
+                                                        <option value="">Select Color</option>
+
                                 @foreach($colors as $color)
                                 <option value="{{ $color->id }}"
                                     {{ $img->color_id == $color->id ? 'selected' : '' }}>

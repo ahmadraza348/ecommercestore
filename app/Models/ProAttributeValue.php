@@ -15,8 +15,7 @@ class ProAttributeValue extends Model
 
     public function color()
     {
-        // color_id points to attribute_values table entry representing the color
-        return $this->belongsTo(AttributeValue::class, 'color_id');
+        return $this->belongsTo(Color::class, 'color_id');
     }
 
     public function attribute_value()

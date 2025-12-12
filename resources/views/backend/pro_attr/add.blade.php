@@ -48,7 +48,7 @@
                                         <td>
                                             <select name="color_id" class="form-select" style="width:150px" required>
                                                 <option value="">Select Color</option>
-                                                @foreach ($colors->attributevalue as $color)
+                                                @foreach ($colors as $color)
                                                     <option value="{{ $color->id }}">{{ $color->name }}</option>
                                                 @endforeach
                                             </select>
