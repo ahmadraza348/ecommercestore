@@ -553,7 +553,7 @@
         variants.forEach(v => {
             html += `
             <input type="radio"
-                   name="variant"
+                   name="attribute_value_id"
                    id="variant_${v.id}"
                    value="${v.attribute_value_id}"
                    data-price="${v.price}"
@@ -567,7 +567,7 @@
         $('#variant-attribute').html(html);
 
         // Variant change
-        $('input[name="variant"]').on('change', function() {
+        $('input[name="attribute_value_id"]').on('change', function() {
             const price = $(this).data('price');
             const label = $(this).next().text();
 
