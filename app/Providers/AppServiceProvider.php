@@ -31,18 +31,18 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
             $data['brands'] = Brand::where(['status' => 1])->get();
 
-            // Cart (guest OR user)
+           
             if (Auth::check()) {
-                $data['cartData'] = Cart::with('items')
+                $data['cartData'] = Cart::with(['items'])
                     ->where('user_id', Auth::id())
                     ->first();
             } else {
-                $data['cartData'] = Cart::with('items')
+                $data['cartData'] = Cart::with(['items'])
                     ->where('session_id', Session::getId())
                     ->first();
             }
-            // Cart (guest OR user)
-
+           
+// dd($data['cartData']);
 
             $view->with($data);
         });

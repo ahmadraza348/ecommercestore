@@ -16,32 +16,51 @@ class CartService
     {
         $product = Product::findOrFail($data['product_id']);
 
-        $userId = Auth::id();
-        $sessionId = Session::getId();
+        // -------------------------
+        // 1. Resolve cart identity
+        // -------------------------
+        if (Auth::check()) {
+            $cart = Cart::firstOrCreate(
+                ['user_id' => Auth::id()],
+                [
+                    'subtotal' => 0,
+                    'discount' => 0,
+                    'total' => 0,
+                ]
+            );
+        } else {
+            $cart = Cart::firstOrCreate(
+                ['session_id' => Session::getId()],
+                [
+                    'subtotal' => 0,
+                    'discount' => 0,
+                    'total' => 0,
+                ]
+            );
+        }
 
-        $cart = Cart::firstOrCreate(
-            [
-                'user_id' => $userId,
-                'session_id' => $userId ? null : $sessionId,
-            ],
-            [
-                'subtotal' => 0,
-                'discount' => 0,
-                'total' => 0,
-            ]
-        );
-
-        // Default price & stock (simple product)
+        // -------------------------
+        // 2. Base price & stock
+        // -------------------------
         $price = $product->sale_price;
         $stock = $product->stock;
 
-        // Variant logic
+        // -------------------------
+        // 3. Variant handling
+        // -------------------------
         if (!empty($data['color']) || !empty($data['attribute_value_id'])) {
 
-            $variant = ProAttributeValue::where('product_id', $product->id)
-                ->where('color_id', $data['color'] ?? null)
-                ->where('attribute_value_id', $data['attribute_value_id'] ?? null)
-                ->first();
+            $variantQuery = ProAttributeValue::where('product_id', $product->id);
+
+            if (!empty($data['color'])) {
+                $variantQuery->where('color_id', $data['color']);
+            }
+
+            if (!empty($data['attribute_value_id'])) {
+                $variantQuery->where('attribute_value_id', $data['attribute_value_id']);
+            }
+
+            $variant = $variantQuery->first();
 
             if (!$variant) {
                 throw new Exception('Invalid product variant selected.');
@@ -51,14 +70,31 @@ class CartService
             $stock = $variant->stock ?? 0;
         }
 
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product->id)
-            ->where('color_id', $data['color'] ?? null)
-            ->where('attribute_value_id', $data['attribute_value_id'] ?? null)
-            ->first();
+        // -------------------------
+        // 4. Existing cart item?
+        // -------------------------
+        $cartItemQuery = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $product->id);
 
-        $qty = $data['pro_qty'];
+        if (!empty($data['color'])) {
+            $cartItemQuery->where('color_id', $data['color']);
+        } else {
+            $cartItemQuery->whereNull('color_id');
+        }
 
+        if (!empty($data['attribute_value_id'])) {
+            $cartItemQuery->where('attribute_value_id', $data['attribute_value_id']);
+        } else {
+            $cartItemQuery->whereNull('attribute_value_id');
+        }
+
+        $cartItem = $cartItemQuery->first();
+
+        $qty = (int) $data['pro_qty'];
+
+        // -------------------------
+        // 5. Quantity & stock check
+        // -------------------------
         if ($cartItem) {
             $newQty = $cartItem->quantity + $qty;
 
@@ -67,7 +103,7 @@ class CartService
             }
 
             $cartItem->update([
-                'quantity' => $newQty,
+                'quantity'   => $newQty,
                 'line_total' => $newQty * $price,
             ]);
         } else {
@@ -76,20 +112,25 @@ class CartService
             }
 
             CartItem::create([
-                'cart_id' => $cart->id,
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'color_id' => $data['color'] ?? null,
+                'cart_id'            => $cart->id,
+                'product_id'         => $product->id,
+                'product_name'       => $product->name,
+                'color_id'           => $data['color'] ?? null,
                 'attribute_value_id' => $data['attribute_value_id'] ?? null,
-                'price' => $price,
-                'quantity' => $qty,
-                'line_total' => $price * $qty,
+                'price'              => $price,
+                'quantity'           => $qty,
+                'line_total'         => $price * $qty,
             ]);
         }
 
+        // -------------------------
+        // 6. Recalculate totals
+        // -------------------------
+        $subtotal = $cart->items()->sum('line_total');
+
         $cart->update([
-            'subtotal' => $cart->items()->sum('line_total'),
-            'total' => $cart->subtotal - $cart->discount,
+            'subtotal' => $subtotal,
+            'total'    => $subtotal - $cart->discount,
         ]);
 
         return true;

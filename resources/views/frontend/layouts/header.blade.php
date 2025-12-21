@@ -80,35 +80,6 @@
                 </div> <!-- end logo area -->
                 <div class="col-lg-9">
                     <div class="header-middle-right">
-                        <div class="header-middle-shipping mb-20">
-                            <div class="single-block-shipping">
-                                <div class="shipping-icon">
-                                    <i class="fa fa-clock-o"></i>
-                                </div>
-                                <div class="shipping-content">
-                                    <h5>Working time</h5>
-                                    <span>Mon- Sun: 8.00 - 18.00</span>
-                                </div>
-                            </div> <!-- end single shipping -->
-                            <div class="single-block-shipping">
-                                <div class="shipping-icon">
-                                    <i class="fa fa-truck"></i>
-                                </div>
-                                <div class="shipping-content">
-                                    <h5>free shipping</h5>
-                                    <span>On order over $199</span>
-                                </div>
-                            </div> <!-- end single shipping -->
-                            <div class="single-block-shipping">
-                                <div class="shipping-icon">
-                                    <i class="fa fa-money"></i>
-                                </div>
-                                <div class="shipping-content">
-                                    <h5>money back 100%</h5>
-                                    <span>Within 30 Days after delivery</span>
-                                </div>
-                            </div> <!-- end single shipping -->
-                        </div>
                         <div class="header-middle-block">
                             <div class="header-middle-searchbox">
                                 <input type="text" placeholder="Search...">
@@ -124,34 +95,28 @@
                                     $50.00
                                 </div>
                                 <ul class="cart-list">
-                                    <li>
-                                        <div class="cart-img">
-                                            <a href="product-details.html"><img
-                                                    src="{{ asset('frontend/assets/img/cart/cart-1.jpg') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="cart-info">
-                                            <h4><a href="product-details.html">simple product 09</a></h4>
-                                            <span>$60.00</span>
-                                        </div>
-                                        <div class="del-icon">
-                                            <i class="fa fa-times"></i>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="cart-img">
-                                            <a href="product-details.html"><img
-                                                    src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
-                                                    alt=""></a>
-                                        </div>
-                                        <div class="cart-info">
-                                            <h4><a href="product-details.html">virtual product 10</a></h4>
-                                            <span>$50.00</span>
-                                        </div>
-                                        <div class="del-icon">
-                                            <i class="fa fa-times"></i>
-                                        </div>
-                                    </li>
+
+                                    @if ($cartData)
+                                        @foreach ($cartData->items as $item)
+                                            <li>
+                                                <div class="cart-img">
+                                                    <a href="product-details.html"><img
+                                                            src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
+                                                            alt=""></a>
+                                                </div>
+                                                <div class="cart-info">
+                                                    <h4><a href="product-details.html">{{ $item->product_name }}</a></h4>
+                                                    <span>{{ $item->price }} PKR</span>
+                                                </div>
+                                                <div class="del-icon">
+                                                    <i class="fa fa-times"></i>
+                                                </div>
+                                            </li>
+                                        @endforeach
+
+                                    @endif
+
+
                                     <li class="mini-cart-price">
                                         <span class="subtotal">subtotal : </span>
                                         <span class="subtotal-price">$88.66</span>
