@@ -20,9 +20,6 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         View::composer('*', function ($view) {
@@ -31,18 +28,17 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
             $data['brands'] = Brand::where(['status' => 1])->get();
 
-           
+
             if (Auth::check()) {
-                $data['cartData'] = Cart::with(['items'])
+                $data['cartData'] = Cart::with(['items.product.gallery_images', 'items.proColor', 'items.proAttribute.attribute'])
                     ->where('user_id', Auth::id())
                     ->first();
             } else {
-                $data['cartData'] = Cart::with(['items'])
+                $data['cartData'] = Cart::with(['items.product.gallery_images', 'items.proColor', 'items.proAttribute.attribute'])
                     ->where('session_id', Session::getId())
                     ->first();
             }
-           
-// dd($data['cartData']);
+            // dd($data['cartData']);
 
             $view->with($data);
         });

@@ -21,33 +21,33 @@
                         <nav>
                             <ul>
                                 @if (!Auth::check())
-                                    <li> <a href="{{ route('login') }}"> login</a>
-                                    </li>
+                                <li> <a href="{{ route('login') }}"> login</a>
+                                </li>
                                 @else
-                                    <li>
-                                        <div class="dropdown header-top-dropdown">
-                                            <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                My Account
-                                                <i class="fa fa-angle-down"></i>
-                                            </a>
+                                <li>
+                                    <div class="dropdown header-top-dropdown">
+                                        <a class="dropdown-toggle" id="myaccount" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            My Account
+                                            <i class="fa fa-angle-down"></i>
+                                        </a>
 
-                                            <div class="dropdown-menu" aria-labelledby="myaccount">
-                                                <a class="dropdown-item" href="{{ route('profile.edit') }}"> Account</a>
-                                                <form method="POST" action="{{ route('logout') }}">
-                                                    @csrf
+                                        <div class="dropdown-menu" aria-labelledby="myaccount">
+                                            <a class="dropdown-item" href="{{ route('profile.edit') }}"> Account</a>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
 
-                                                    <x-dropdown-link :href="route('logout')"
-                                                        onclick="event.preventDefault();
+                                                <x-dropdown-link :href="route('logout')"
+                                                    onclick="event.preventDefault();
                                                                         this.closest('form').submit();">
-                                                        {{ __('Log Out') }}
-                                                    </x-dropdown-link>
-                                                </form>
-                                            </div>
-
-
+                                                    {{ __('Log Out') }}
+                                                </x-dropdown-link>
+                                            </form>
                                         </div>
-                                    </li>
+
+
+                                    </div>
+                                </li>
                                 @endif
                                 <li>
                                     <a href="#">my wishlist</a>
@@ -90,9 +90,9 @@
                                     <i class="fa fa-shopping-cart"></i>
 
                                     @if ($cartData && $cartData->items->count() > 0)
-                                        <span class="cart-notification">
-                                            {{ $cartData->items->count() }}
-                                        </span>
+                                    <span class="cart-notification">
+                                        {{ $cartData->items->count() }}
+                                    </span>
                                     @endif
                                 </div>
 
@@ -102,42 +102,59 @@
                                 </div>
 
                                 @if ($cartData && $cartData->items->count() > 0)
-                                    <ul class="cart-list">
-                                        @foreach ($cartData->items as $item)
-                                            <li>
-                                                <div class="cart-img">
-                                                    <a href="#">
-                                                        <img src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
-                                                            alt="">
-                                                    </a>
-                                                </div>
+                                <ul class="cart-list">
+                                    @foreach ($cartData->items as $item)
 
-                                                <div class="cart-info">
-                                                    <h4>{{ $item->product_name }}</h4>
-                                                    <span>{{ $item->price }} PKR</span>
-                                                </div>
+                                    @php
+                                    $images = $item->product?->gallery_images;
+                                    $featuredImage = $images
+                                    ?->where('color_id', $item->color_id)
+                                    ->where('is_featured', 1)
+                                    ->first()
+                                    ?? $images
+                                    ?->where('color_id', $item->color_id)
+                                    ->first();
+                                    @endphp
 
-                                                <div class="del-icon">
-                                                    <i class="fa fa-times"></i>
-                                                </div>
-                                            </li>
-                                        @endforeach
+                                    <li>
+                                        <div class="cart-img">
+                                            <a href="#">
+                                                <img src="{{ $featuredImage
+                                                            ? asset('storage/' . $featuredImage->image)
+                                                            : asset('backend/assets/img/noimage.png')
+                                                        }}">
 
-                                        <li class="mini-cart-price">
-                                            <span class="subtotal">Total :</span>
-                                            <span class="subtotal-price">
-                                                {{ $cartData->total }} PKR
-                                            </span>
-                                        </li>
+                                            </a>
+                                        </div>
 
-                                        <li class="checkout-btn">
-                                            <a href="#">Checkout</a>
-                                        </li>
-                                    </ul>
+                                        <div class="cart-info">
+                                            <h4>{{ $item->product_name }}</h4>
+                                            <h4>Color: {{ $item->proColor?->name ?? Null }}</h4>
+                                            <h4>{{ $item->proAttribute?->attribute?->name ?? Null }}: {{ $item->proAttribute?->name ?? Null }}</h4>
+                                            <span>{{ $item->price }} PKR</span>
+                                        </div>
+
+                                        <div class="del-icon">
+                                            <i class="fa fa-times"></i>
+                                        </div>
+                                    </li>
+                                    @endforeach
+
+                                    <!-- <li class="mini-cart-price">
+                                        <span class="subtotal">Total :</span>
+                                        <span class="subtotal-price">
+                                            {{ $cartData->total }} PKR
+                                        </span>
+                                    </li> -->
+
+                                    <li class="checkout-btn">
+                                        <a href="#">Checkout</a>
+                                    </li>
+                                </ul>
                                 @else
-                                    <ul class="cart-list text-dark">
-                                        <li>No item added to cart</li>
-                                    </ul>
+                                <ul class="cart-list text-dark">
+                                    <li>No item added to cart</li>
+                                </ul>
                                 @endif
                             </div>
 
@@ -157,7 +174,13 @@
                 <div class="col-lg-12">
                     <style>
                         .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
-                            display: {{ in_array(Route::currentRouteName(), ['login', 'register', 'profile.edit', 'verification.notice', 'password.request', 'password.reset', 'shop', 'pro.details']) ? 'none' : 'block' }};
+                            display: {
+                                    {
+                                    in_array(Route::currentRouteName(), ['login', 'register', 'profile.edit', 'verification.notice', 'password.request', 'password.reset', 'shop', 'pro.details']) ? 'none': 'block'
+                                }
+                            }
+
+                            ;
                         }
                     </style>
 
@@ -173,38 +196,38 @@
                             <nav class="category-menu hm-1">
                                 <ul>
                                     @foreach ($categories as $category)
-                                        <li>
-                                            <!-- Parent Category -->
-                                            <a href="{{ route('shop', ['slug' => $category->slug]) }}">
-                                                {{ $category->name }}
-                                            </a>
-                                            @if ($category->subcategories->isNotEmpty())
-                                                <ul class="category-mega-menu">
-                                                    @foreach ($category->subcategories as $subcategory)
-                                                        <li>
-                                                            <!-- Subcategory -->
-                                                            <a
-                                                                href="{{ route('shop', ['slug' => $category->slug, 'subslug' => $subcategory->slug]) }}">
-                                                                {{ $subcategory->name }}
-                                                            </a>
-                                                            @if ($subcategory->subcategories->isNotEmpty())
-                                                                <ul>
-                                                                    @foreach ($subcategory->subcategories as $subsubcategory)
-                                                                        <li>
-                                                                            <!-- Sub-Subcategory -->
-                                                                            <a
-                                                                                href="{{ route('shop', ['slug' => $category->slug, 'subslug' => $subcategory->slug, 'childslug' => $subsubcategory->slug]) }}">
-                                                                                {{ $subsubcategory->name }}
-                                                                            </a>
-                                                                        </li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            @endif
-                                                        </li>
+                                    <li>
+                                        <!-- Parent Category -->
+                                        <a href="{{ route('shop', ['slug' => $category->slug]) }}">
+                                            {{ $category->name }}
+                                        </a>
+                                        @if ($category->subcategories->isNotEmpty())
+                                        <ul class="category-mega-menu">
+                                            @foreach ($category->subcategories as $subcategory)
+                                            <li>
+                                                <!-- Subcategory -->
+                                                <a
+                                                    href="{{ route('shop', ['slug' => $category->slug, 'subslug' => $subcategory->slug]) }}">
+                                                    {{ $subcategory->name }}
+                                                </a>
+                                                @if ($subcategory->subcategories->isNotEmpty())
+                                                <ul>
+                                                    @foreach ($subcategory->subcategories as $subsubcategory)
+                                                    <li>
+                                                        <!-- Sub-Subcategory -->
+                                                        <a
+                                                            href="{{ route('shop', ['slug' => $category->slug, 'subslug' => $subcategory->slug, 'childslug' => $subsubcategory->slug]) }}">
+                                                            {{ $subsubcategory->name }}
+                                                        </a>
+                                                    </li>
                                                     @endforeach
                                                 </ul>
-                                            @endif
-                                        </li>
+                                                @endif
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                        @endif
+                                    </li>
                                     @endforeach
                                 </ul>
                             </nav>
@@ -221,9 +244,9 @@
 
                                             <ul class="megamenu dropdown">
                                                 @foreach ($brands as $item)
-                                                    <li><a
-                                                            href="{{ route('shop', $item->slug) }}">{{ $item->name }}</a>
-                                                    </li>
+                                                <li><a
+                                                        href="{{ route('shop', $item->slug) }}">{{ $item->name }}</a>
+                                                </li>
                                                 @endforeach
 
                                             </ul>
