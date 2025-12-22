@@ -21,4 +21,7 @@ class CartItem extends Model
     {
         return $this->belongsTo(Cart::class);
     }
+    public function gallery_images(){
+        return $this->hasMany(ProductImages::class, 'product_id');
+    }
 }

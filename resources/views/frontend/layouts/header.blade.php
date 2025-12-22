@@ -88,44 +88,60 @@
                             <div class="header-mini-cart">
                                 <div class="mini-cart-btn">
                                     <i class="fa fa-shopping-cart"></i>
-                                    <span class="cart-notification">2</span>
-                                </div>
-                                <div class="cart-total-price">
-                                    <span>total</span>
-                                    $50.00
-                                </div>
-                                <ul class="cart-list">
 
-                                    @if ($cartData)
+                                    @if ($cartData && $cartData->items->count() > 0)
+                                        <span class="cart-notification">
+                                            {{ $cartData->items->count() }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="cart-total-price">
+                                    <span><b>Total</b></span>
+                                    <span>{{ $cartData?->total ?? 0 }} PKR</span>
+                                </div>
+
+                                @if ($cartData && $cartData->items->count() > 0)
+                                    <ul class="cart-list">
                                         @foreach ($cartData->items as $item)
                                             <li>
                                                 <div class="cart-img">
-                                                    <a href="product-details.html"><img
-                                                            src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
-                                                            alt=""></a>
+                                                    <a href="#">
+                                                        <img src="{{ asset('frontend/assets/img/cart/cart-2.jpg') }}"
+                                                            alt="">
+                                                    </a>
                                                 </div>
+
                                                 <div class="cart-info">
-                                                    <h4><a href="product-details.html">{{ $item->product_name }}</a></h4>
+                                                    <h4>{{ $item->product_name }}</h4>
                                                     <span>{{ $item->price }} PKR</span>
                                                 </div>
+
                                                 <div class="del-icon">
                                                     <i class="fa fa-times"></i>
                                                 </div>
                                             </li>
                                         @endforeach
 
-                                    @endif
+                                        <li class="mini-cart-price">
+                                            <span class="subtotal">Total :</span>
+                                            <span class="subtotal-price">
+                                                {{ $cartData->total }} PKR
+                                            </span>
+                                        </li>
 
-
-                                    <li class="mini-cart-price">
-                                        <span class="subtotal">subtotal : </span>
-                                        <span class="subtotal-price">$88.66</span>
-                                    </li>
-                                    <li class="checkout-btn">
-                                        <a href="#">checkout</a>
-                                    </li>
-                                </ul>
+                                        <li class="checkout-btn">
+                                            <a href="#">Checkout</a>
+                                        </li>
+                                    </ul>
+                                @else
+                                    <ul class="cart-list text-dark">
+                                        <li>No item added to cart</li>
+                                    </ul>
+                                @endif
                             </div>
+
+
                         </div>
                     </div>
                 </div>
