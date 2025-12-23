@@ -29,6 +29,7 @@ Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct'])
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
 Route::get('/cart', [CartPageControlller::class, 'cart'])->name('cartPage');
+Route::post('/cart/update', [CartPageControlller::class, 'cart_update'])->name('cart.update');
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
