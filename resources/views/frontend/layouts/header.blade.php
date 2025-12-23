@@ -130,7 +130,9 @@
                                         <div class="cart-info">
                                             <h4>{{ $item->product_name }}</h4>
                                             <h4>Color: {{ $item->proColor?->name ?? Null }}</h4>
+                                            @if( $item->proAttribute)
                                             <h4>{{ $item->proAttribute?->attribute?->name ?? Null }}: {{ $item->proAttribute?->name ?? Null }}</h4>
+                                            @endif
                                             <span>{{ $item->price }} PKR</span>
                                         </div>
 
@@ -148,7 +150,7 @@
                                     </li> -->
 
                                     <li class="checkout-btn">
-                                        <a href="#">Checkout</a>
+                                        <a href="{{ route('cartPage') }}">View cart</a>
                                     </li>
                                 </ul>
                                 @else

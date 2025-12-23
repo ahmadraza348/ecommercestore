@@ -10,13 +10,14 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProImagesController;
+use App\Http\Controllers\Admin\ProductAttrController;
 use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\ShopPageController;
-use App\Http\Controllers\Frontend\ProductPageController;
-use App\Http\Controllers\Admin\AttributevalueController;
-use App\Http\Controllers\Admin\ProductAttrController;
+use App\Http\Controllers\Frontend\CartPageControlller;
 use App\Http\Controllers\Admin\ProductColorsController;
-use App\Http\Controllers\Admin\ProImagesController;
+use App\Http\Controllers\Admin\AttributevalueController;
+use App\Http\Controllers\Frontend\ProductPageController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -27,6 +28,7 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
+Route::get('/cart', [CartPageControlller::class, 'cart'])->name('cartPage');
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
