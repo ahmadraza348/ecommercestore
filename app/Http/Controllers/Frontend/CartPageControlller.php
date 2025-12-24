@@ -29,91 +29,120 @@ class CartPageControlller extends Controller
     }
 
 
-    public function cart_update(Request $request)
-    {
-        $itemIds    = $request->input('ItemId', []);
-        $quantities = $request->input('quantity', []);
+public function cart_update(Request $request)
+{
+    // -------------------------
+    // Basic request validation
+    // -------------------------
+    $request->validate([
+        'ItemId'   => 'required|array',
+        'ItemId.*' => 'integer|exists:cart_items,id',
+        'quantity' => 'required|array',
+    ]);
 
-        DB::transaction(function () use ($itemIds, $quantities) {
+    try {
 
-            foreach ($itemIds as $itemId) {
+        DB::transaction(function () use ($request) {
 
-                if (!isset($quantities[$itemId])) {
-                    continue;
+            $itemIds    = $request->ItemId;
+            $quantities = $request->quantity;
+
+            // Fetch all cart items in one query
+            $cartItems = CartItem::with(['product'])
+                ->whereIn('id', $itemIds)
+                ->get();
+
+            if ($cartItems->isEmpty()) {
+                throw new \Exception("Invalid cart items.");
+            }
+
+            // Ensure all items belong to ONE cart
+            $cartId = $cartItems->pluck('cart_id')->unique();
+
+            if ($cartId->count() !== 1) {
+                throw new \Exception("Invalid cart state detected.");
+            }
+
+            foreach ($cartItems as $cartItem) {
+
+                // Quantity must exist for every item
+                if (!isset($quantities[$cartItem->id])) {
+                    throw new \Exception("Quantity missing for cart item.");
                 }
 
-                $qty = (int) $quantities[$itemId];
+                $qty = filter_var(
+                    $quantities[$cartItem->id],
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['min_range' => 0]]
+                );
 
-                // Remove item if qty <= 0
-                if ($qty <= 0) {
-                    CartItem::where('id', $itemId)->delete();
-                    continue;
+                if ($qty === false) {
+                    throw new \Exception("Invalid quantity value.");
                 }
 
-                $cartItem = CartItem::with(['product'])->find($itemId);
-
-                if (!$cartItem) {
+                // Remove item if qty = 0
+                if ($qty === 0) {
+                    $cartItem->delete();
                     continue;
                 }
 
                 // -------------------------
-                // Stock resolution (same rule as add)
+                // Resolve stock
                 // -------------------------
                 $stock = $cartItem->product->stock;
 
                 if ($cartItem->color_id || $cartItem->attribute_value_id) {
 
-                    $variant = ProAttributeValue::where('product_id', $cartItem->product_id)
-                        ->when(
-                            $cartItem->color_id,
-                            fn($q) =>
-                            $q->where('color_id', $cartItem->color_id)
-                        )
-                        ->when(
-                            $cartItem->attribute_value_id,
-                            fn($q) =>
-                            $q->where('attribute_value_id', $cartItem->attribute_value_id)
-                        )
-                        ->first();
+                    $variant = ProAttributeValue::where([
+                            'product_id'          => $cartItem->product_id,
+                            'color_id'            => $cartItem->color_id,
+                            'attribute_value_id'  => $cartItem->attribute_value_id,
+                        ])->first();
 
                     if (!$variant) {
-                        toastr()->error("Invalid variant detected in cart.");
-                        return redirect()->back();
+                        throw new \Exception("Product variation no longer exists.");
                     }
 
-                    $stock = $variant->stock ?? 0;
+                    $stock = (int) $variant->stock;
                 }
 
                 if ($qty > $stock) {
-                    toastr()->error("Only {$stock} item(s) available.");
-                    return redirect()->back();
+                    throw new \Exception(
+                        "Updated Cart Item of {$cartItem->product->name} only has {$stock} item(s) in stock."
+                    );
                 }
 
                 // -------------------------
-                // Quantity & price update
+                // Update cart item
                 // -------------------------
                 $cartItem->update([
                     'quantity'   => $qty,
-                    'line_total' => $qty * $cartItem->price, // price stays frozen
+                    'line_total' => bcmul($qty, $cartItem->price, 2),
                 ]);
             }
 
             // -------------------------
             // Recalculate cart totals
             // -------------------------
-            $cartId = CartItem::whereIn('id', $itemIds)->value('cart_id');
+            $cart = Cart::findOrFail($cartId->first());
 
-            if ($cartId) {
-                $cart = Cart::find($cartId);
-                $subtotal = $cart->items()->sum('line_total');
+            $subtotal = $cart->items()->sum('line_total');
+            $discount = min($cart->discount ?? 0, $subtotal);
 
-                $cart->update([
-                    'subtotal' => $subtotal,
-                    'total'    => $subtotal - $cart->discount,
-                ]);
-            }
+            $cart->update([
+                'subtotal' => $subtotal,
+                'total'    => $subtotal - $discount,
+            ]);
         });
-        toastr()->success("Cart updated successfully");
+
+    } catch (\Exception $e) {
+
+        toastr()->error($e->getMessage());
         return redirect()->back();
     }
+
+    toastr()->success("Cart updated successfully.");
+    return redirect()->back();
+}
+
 }
