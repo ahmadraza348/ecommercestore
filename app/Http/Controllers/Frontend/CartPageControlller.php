@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Models\Cart;
+use App\Models\CartItem;
+use Illuminate\Http\Request;
+use App\Models\ProAttributeValue;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Cart;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Http\Request;
 
 class CartPageControlller extends Controller
 {
@@ -25,8 +28,90 @@ class CartPageControlller extends Controller
         return view('frontend.cart');
     }
 
-    public function cart_update(request $request)
+
+    public function cart_update(Request $request)
     {
-        dd($request->all());
+        $itemIds    = $request->input('ItemId', []);
+        $quantities = $request->input('quantity', []);
+
+        DB::transaction(function () use ($itemIds, $quantities) {
+
+            foreach ($itemIds as $itemId) {
+
+                if (!isset($quantities[$itemId])) {
+                    continue;
+                }
+
+                $qty = (int) $quantities[$itemId];
+
+                // Remove item if qty <= 0
+                if ($qty <= 0) {
+                    CartItem::where('id', $itemId)->delete();
+                    continue;
+                }
+
+                $cartItem = CartItem::with(['product'])->find($itemId);
+
+                if (!$cartItem) {
+                    continue;
+                }
+
+                // -------------------------
+                // Stock resolution (same rule as add)
+                // -------------------------
+                $stock = $cartItem->product->stock;
+
+                if ($cartItem->color_id || $cartItem->attribute_value_id) {
+
+                    $variant = ProAttributeValue::where('product_id', $cartItem->product_id)
+                        ->when(
+                            $cartItem->color_id,
+                            fn($q) =>
+                            $q->where('color_id', $cartItem->color_id)
+                        )
+                        ->when(
+                            $cartItem->attribute_value_id,
+                            fn($q) =>
+                            $q->where('attribute_value_id', $cartItem->attribute_value_id)
+                        )
+                        ->first();
+
+                    if (!$variant) {
+                        toastr()->error("Invalid variant detected in cart.");
+                    }
+
+                    $stock = $variant->stock ?? 0;
+                }
+
+                if ($qty > $stock) {
+                    toastr()->error("Only {$stock} item(s) available.");
+                }
+
+                // -------------------------
+                // Quantity & price update
+                // -------------------------
+                $cartItem->update([
+                    'quantity'   => $qty,
+                    'line_total' => $qty * $cartItem->price, // price stays frozen
+                ]);
+            }
+
+            // -------------------------
+            // Recalculate cart totals
+            // -------------------------
+            $cartId = CartItem::whereIn('id', $itemIds)->value('cart_id');
+
+            if ($cartId) {
+                $cart = Cart::find($cartId);
+                $subtotal = $cart->items()->sum('line_total');
+
+                $cart->update([
+                    'subtotal' => $subtotal,
+                    'total'    => $subtotal - $cart->discount,
+                ]);
+            }
+        });
+        toastr()->success("Cart updated successfully");
+        return redirect()->back();
     }
 }
