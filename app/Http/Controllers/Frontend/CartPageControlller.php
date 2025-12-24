@@ -78,6 +78,7 @@ class CartPageControlller extends Controller
 
                     if (!$variant) {
                         toastr()->error("Invalid variant detected in cart.");
+                        return redirect()->back();
                     }
 
                     $stock = $variant->stock ?? 0;
@@ -85,6 +86,7 @@ class CartPageControlller extends Controller
 
                 if ($qty > $stock) {
                     toastr()->error("Only {$stock} item(s) available.");
+                    return redirect()->back();
                 }
 
                 // -------------------------
