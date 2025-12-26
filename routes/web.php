@@ -78,6 +78,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');       
+        Route::post('/create', [CouponController::class, 'create'])->name('create');
     });
 
 

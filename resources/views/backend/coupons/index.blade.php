@@ -31,7 +31,7 @@
                             <tr>
 
                                 <th>Label</th>
-                                <th>Discount</th>
+                                <th>Amount</th>
                                 <th>Type</th>
                                 <th>Starting</th>
                                 <th>Ending</th>
@@ -40,20 +40,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                               
-                                <td>SGST 9% </td>
-                                <td>9.00</td>
-                                <td>SGST 9% </td>
-                                <td>9.00</td>
-                                <td>9.00</td>
-                                <td>
-                                    <div
-                                        class="status-toggle d-flex justify-content-between align-items-center">
-                                        <input type="checkbox" id="user1" class="check" checked="">
-                                        <label for="user1" class="checktoggle">checkbox</label>
-                                    </div>
-                                </td>
+                            @foreach($coupons as $coupon)
+                            <tr>                               
+                                <td>{{$coupon->label}} </td>
+                                <td>{{$coupon->amount}}</td>
+                                <td>{{$coupon->discount_type}}</td>
+                                <td>{{$coupon->starting_from}}</td>
+                                <td>{{$coupon->ending_at}}</td>
+                                <td>{{ $coupon->status }}</td>
                                 <td class="text-end">
                                     <a class="me-3" href="javascript:void(0);" data-bs-toggle="modal"
                                         data-bs-target="#editpayment">
@@ -64,6 +58,7 @@
                                     </a>
                                 </td>
                             </tr>
+                            @endforeach
                      
                         </tbody>
                     </table>
@@ -77,41 +72,71 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add TAX </h5>
+                    <h5 class="modal-title">Add Coupon </h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                <form action="{{route('coupons.create')}}" method="POST">
+                    @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
-                                <label>Tax Name<span class="manitory">*</span></label>
-                                <input type="text">
+                                <label>Label<span class="manitory">*</span></label>
+                                <input type="text"name="label"required>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
-                                <label>Tax Rate(%)<span class="manitory">*</span></label>
-                                <input type="text">
+                                <label>Discount Type<span class="manitory">*</span></label>
+                                <select required class="select" name="discount_type" id="discount_type">
+                                    <option value="percentage">Percentage</option>
+                                    <option value="fixed_amount">Fixed Amount</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label>Amount<span class="manitory">*</span></label>
+                                <input type="text"name="amount"required>
+                            </div>
+                        </div>
+                         <div class="col-6">
+                            <div class="form-group">
+                                <label>Code<span class="manitory">*</span></label>
+                                <input type="text"name="code"required>
+                            </div>
+                        </div>
+                         <div class="col-6">
+                            <div class="form-group">
+                                <label>Starting From<span class="manitory">*</span></label>
+                                <input type="date" class="form-control"name="starting_from"required>
+                            </div>
+                        </div>
+                         <div class="col-6">
+                            <div class="form-group">
+                                <label>Ending At<span class="manitory">*</span></label>
+                                <input type="date" class="form-control" name="ending_at"required>
+                            </div>
+                        </div>
+                        <div class="col-6">
                             <div class="form-group mb-0">
                                 <label>Status</label>
-                                <select class="select">
+                                <select name="status"class="select"required>
                                     <option>Choose Status</option>
-                                    <option> Active</option>
-                                    <option> InActive</option>
+                                    <option value="active"> Active</option>
+                                    <option value="inactive"> InActive</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-submit">Confirm</button>
+                    <button type="submit" class="btn btn-submit">Confirm</button>
                     <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -127,19 +152,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label>Tax Name<span class="manitory">*</span></label>
                                 <input type="text" value="SGST 4.5%	">
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group">
                                 <label>Tax Rate(%)<span class="manitory">*</span></label>
                                 <input type="text" value="4.50">
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-6">
                             <div class="form-group mb-0">
                                 <label>Status</label>
                                 <select class="select">
