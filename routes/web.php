@@ -14,9 +14,10 @@ use App\Http\Controllers\Admin\ProImagesController;
 use App\Http\Controllers\Admin\ProductAttrController;
 use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\ShopPageController;
-use App\Http\Controllers\Frontend\CartPageControlller;
+use App\Http\Controllers\Frontend\CartPageController;
 use App\Http\Controllers\Admin\ProductColorsController;
 use App\Http\Controllers\Admin\AttributevalueController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Frontend\ProductPageController;
 
 Route::get('/hash', function () {
@@ -28,8 +29,14 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
-Route::get('/cart', [CartPageControlller::class, 'cart'])->name('cartPage');
-Route::post('/cart/update', [CartPageControlller::class, 'cart_update'])->name('cart.update');
+
+Route::prefix('cart')->group(function(){
+Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
+Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
+Route::post('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
+});
+
+
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
@@ -66,6 +73,11 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/edit/{id}', [ProductColorsController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [ProductColorsController::class, 'update'])->name('update');
         Route::delete('/destroy/{id}', [ProductColorsController::class, 'destroy'])->name('destroy');
+    });
+
+
+    Route::prefix('coupons')->name('coupons.')->group(function () {
+        Route::get('/', [CouponController::class, 'index'])->name('index');       
     });
 
 

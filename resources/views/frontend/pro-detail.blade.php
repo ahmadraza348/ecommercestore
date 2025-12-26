@@ -121,7 +121,7 @@
                                             <div class="quantity">
                                                 <div class="pro-qty">
                                                     <input type="number" name="pro_qty" value="1" min="1"
-                                                        max="">
+                                                        max="{{$stock ?? $product->stock}}">
                                                 </div>
                                             </div>
 

@@ -8,23 +8,11 @@ use Illuminate\Http\Request;
 use App\Models\ProAttributeValue;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
-class CartPageControlller extends Controller
+class CartPageController extends Controller
 {
     public function cart()
     {
-
-        if (Auth::check()) {
-            $data['cartData'] = Cart::with(['items.product.gallery_images', 'items.proColor', 'items.proAttribute.attribute'])
-                ->where('user_id', Auth::id())
-                ->first();
-        } else {
-            $data['cartData'] = Cart::with(['items.product.gallery_images', 'items.proColor', 'items.proAttribute.attribute'])
-                ->where('session_id', Session::getId())
-                ->first();
-        }
         return view('frontend.cart');
     }
 
@@ -145,4 +133,37 @@ public function cart_update(Request $request)
     return redirect()->back();
 }
 
+public function cart_remove($id)
+{
+    try {
+        DB::transaction(function () use ($id) {
+
+            $cartItem = CartItem::findOrFail($id);
+            $cartId = $cartItem->cart_id;
+
+            // Delete the cart item
+            $cartItem->delete();
+
+            // Recalculate cart totals
+            $cart = Cart::findOrFail($cartId);
+
+            $subtotal = $cart->items()->sum('line_total');
+            $discount = min($cart->discount ?? 0, $subtotal);
+
+            $cart->update([
+                'subtotal' => $subtotal,
+                'total'    => $subtotal - $discount,
+            ]);
+        });
+
+    } catch (\Exception $e) {
+
+        toastr()->error($e->getMessage());
+        return redirect()->back();
+    }
+
+    toastr()->success("Item removed from cart successfully.");
+    return redirect()->back();
+
+}
 }

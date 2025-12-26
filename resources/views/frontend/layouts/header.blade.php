@@ -137,7 +137,13 @@
                                         </div>
 
                                         <div class="del-icon">
-                                            <i class="fa fa-times"></i>
+                                            <form action="{{route('cart.remove', $item->id)}}" method="POST">
+                                                @csrf
+                                                <button type="submit" style="border:none; background:none; padding:0; margin:0;">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </form>
+
                                         </div>
                                     </li>
                                     @endforeach

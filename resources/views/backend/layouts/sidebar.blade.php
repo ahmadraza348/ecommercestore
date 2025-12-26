@@ -22,6 +22,12 @@
                         <span>Brands</span>
                     </a>
                 </li>
+                <li class="{{ request()->routeIs('coupons.*') ? 'active' : '' }}">
+                    <a href="{{ route('coupons.index') }}">
+                        <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                        <span>Coupons</span>
+                    </a>
+                </li>
 
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/product.svg') }}"
