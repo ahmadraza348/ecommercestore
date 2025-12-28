@@ -37,5 +37,21 @@ class CouponController extends Controller
         toastr()->success('Coupon created successfully.');
         return redirect()->back();
     }
-    
+
+    public function update(Request $request, $id)
+    {
+        $coupon = Coupon::findOrFail($id);
+        $coupon->update($request->all());
+
+        toastr()->success('Coupon Updated successfully.');
+        return redirect()->back();
+    }
+    public function destroy($id)
+    {
+        $coupon = Coupon::findOrFail($id);
+        $coupon->delete();
+
+        toastr()->success('Coupon Deleted successfully.');
+        return redirect()->back();
+    }
 }
