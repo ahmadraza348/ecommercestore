@@ -76,12 +76,12 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     });
 
 
-    Route::prefix('coupons')->name('coupons.')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('index');       
-        Route::post('/create', [CouponController::class, 'create'])->name('create');
-        Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
-        Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('destroy');
-    });
+Route::prefix('coupons')->name('coupons.')->group(function () {
+    Route::get('/', [CouponController::class, 'index'])->name('index');
+    Route::post('/store', [CouponController::class, 'store'])->name('store');
+    Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
+    Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('destroy');
+});
 
 
 

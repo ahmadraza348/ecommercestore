@@ -13,7 +13,7 @@ class CouponController extends Controller
         $data['coupons'] = Coupon::all();
         return view('backend.coupons.index', $data);
     }
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'label' => 'required|string',
