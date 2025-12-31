@@ -15,6 +15,7 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th class="pro-thumbnail">Id</th>
                                     <th class="pro-thumbnail">Image</th>
                                     <th class="pro-title">Product</th>
                                     <th class="pro-price">Item Price</th>
@@ -38,6 +39,7 @@
                                 @endphp
 
                                 <tr>
+                                    <td class="">{{ $item->id }}</td>
                                     <td class="pro-thumbnail"><a
                                             href="{{ route('pro.details', $item->product->slug) }}"><img
                                                 class="img-fluid"
@@ -85,8 +87,9 @@
                 <!-- Cart Update Option -->
                 <div class="cart-update-option d-block d-md-flex justify-content-between">
                     <div class="apply-coupon-wrapper">
-                        <form action="#" method="post" class=" d-block d-md-flex">
-                            <input type="text" placeholder="Enter Your Coupon Code" required />
+                        <form action="{{ route('coupon.apply') }}" method="post" class=" d-block d-md-flex">
+                            @csrf
+                            <input type="text" name="coupon_code" placeholder="Enter Your Coupon Code" required />
                             <button class="sqr-btn">Apply Coupon</button>
                         </form>
                     </div>

@@ -31,10 +31,11 @@ Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pr
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
 
 Route::prefix('cart')->group(function(){
-Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
-Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
-Route::post('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
+    Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
+    Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
+    Route::post('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
 });
+Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
 
 
 
