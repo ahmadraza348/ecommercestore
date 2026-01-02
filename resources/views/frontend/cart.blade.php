@@ -63,12 +63,13 @@
                                     </td>
                                     <td class="pro-subtotal"><span>{{ $item->line_total }}</span></td>
                                     <td class="pro-remove">
-                                        <a href="{{ route('cart.remove', $item->id) }}"
+                                        <a href="javascript:void(0);"
                                             class="remove-item"
-                                            data-route="{{ route('cart.remove', $item->id) }}">
+                                            data-id="{{ $item->id }}">
                                             <i class="fa fa-trash-o"></i>
                                         </a>
                                     </td>
+
 
 
                                     </td>
@@ -84,6 +85,19 @@
                     </div>
                 </form>
 
+
+                @foreach ($cartData->items as $item)
+                <form id="remove-form-{{ $item->id }}"
+                    action="{{ route('cart.remove', $item->id) }}"
+                    method="POST"
+                    class="d-none">
+                    @csrf
+                    @method('DELETE')
+                </form>
+                @endforeach
+
+
+
                 <!-- Cart Update Option -->
                 <div class="cart-update-option d-block d-md-flex justify-content-between">
                     <div class="apply-coupon-wrapper">
@@ -98,67 +112,99 @@
 
 
             </div>
-            </div>
+        </div>
+        @php
+        $subtotal = $cartData->items->sum('line_total');
+        $shipping = 250;
 
-            <div class="row">
-                <div class="col-lg-5 ml-auto">
-                    <!-- Cart Calculation Area -->
-                    <div class="cart-calculator-wrapper">
-                        <div class="cart-calculate-items">
-                            <h3>Cart Totals</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <tr>
-                                        <td>Sub Total</td>
-                                        <td>{{ $cartData->subtotal }} PKR</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Shipping</td>
-                                        <td>250</td>
-                                    </tr>
-                                    <tr class="total">
-                                        <td>Total</td>
-                                        <td class="total-amount">{{ $cartData->total }} PKR</td>
-                                    </tr>
-                                </table>
-                            </div>
+        $discount = session('coupon_discount', 0);
+
+        $total = max(0, ($subtotal + $shipping) - $discount);
+        @endphp
+
+        <div class="row">
+            <div class="col-lg-5 ml-auto">
+                <div class="cart-calculator-wrapper">
+                    <div class="cart-calculate-items">
+                        <h3>Cart Totals</h3>
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <td>Sub Total</td>
+                                    <td>{{ number_format($subtotal, 2) }} PKR</td>
+                                </tr>
+
+                                @if(session()->has('coupon_code'))
+                                <tr>
+                                    <td>
+                                        Coupon
+                                        <small class="text-success">
+                                            ({{ session('coupon_code') }})
+                                        </small>
+                                    </td>
+                                    <td class="text-success">
+                                        -{{ number_format(session('coupon_discount'), 2) }} PKR
+                                    </td>
+                                </tr>
+                                @endif
+
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td>{{ number_format($shipping, 2) }} PKR</td>
+                                </tr>
+
+                                <tr class="total">
+                                    <td>Total</td>
+                                    <td class="total-amount">
+                                        {{ number_format($total, 2) }} PKR
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
-                        <a href="checkout.html" class="sqr-btn d-block">Proceed To Checkout</a>
                     </div>
-                </div>
-            </div>
 
-            @else
-            <div class="col-lg-12">
-                <div class="text-center py-5">
-                    <h4>Your cart is empty</h4>
-                    <p class="text-muted">Looks like you haven’t added anything yet.</p>
-                    <a href="{{ route('home') }}" class="sqr-btn mt-3">Continue Shopping</a>
+                    <a href=""
+                        class="sqr-btn d-block">
+                        Proceed To Checkout
+                    </a>
                 </div>
             </div>
-            @endif
+        </div>
+
+
+        @else
+        <div class="col-lg-12">
+            <div class="text-center py-5">
+                <h4>Your cart is empty</h4>
+                <p class="text-muted">Looks like you haven’t added anything yet.</p>
+                <a href="{{ route('home') }}" class="sqr-btn mt-3">Continue Shopping</a>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 
 <script>
     document.addEventListener('click', function(e) {
-
         const btn = e.target.closest('.remove-item');
-        if (!btn) return; // <- this is NOT optional
+        if (!btn) return;
 
         e.preventDefault();
 
         if (!confirm('Remove this item from cart?')) return;
 
-        const form = btn.closest('form');
+        const id = btn.dataset.id;
+        const form = document.getElementById(`remove-form-${id}`);
+
         if (!form) {
-            console.error('Form not found');
+            console.error('Remove form not found');
             return;
         }
 
-        form.action = btn.getAttribute('data-route');
         form.submit();
     });
 </script>
+
 
 @endsection

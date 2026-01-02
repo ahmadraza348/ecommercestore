@@ -18,40 +18,63 @@ class Coupon extends Model
     ];
 
     protected $casts = [
-    'starting_from' => 'date',
-    'ending_at'     => 'date',
-];
+        'starting_from' => 'datetime',
+        'ending_at'     => 'datetime',
+    ];
 
+    // Status constants
+    const STATUS_ACTIVE = 'active';
 
-      public function getLabelAttribute($value)
+    // ----- Business logic -----
+    public function isActive(): bool
+    {
+        // Compare normalized lowercase status to constant
+        return strtolower(trim($this->status)) === self::STATUS_ACTIVE;
+    }
+
+    // Check if coupon is currently valid (within start/end dates)
+    public function isValid(): bool
+    {
+        $now = now();
+        return $this->isActive()
+            && (! $this->starting_from || $now->greaterThanOrEqualTo($this->starting_from))
+            && (! $this->ending_at   || $now->lessThanOrEqualTo($this->ending_at->endOfDay()));
+    }
+
+    // ----- Accessors -----
+    
+    // Label formatting
+    public function getLabelAttribute($value): string
     {
         return Str::title(str_replace('_', ' ', $value));
     }
-      // Discount type
-    public function getDiscountTypeAttribute($value)
+
+    // Discount type formatting
+    public function getDiscountTypeAttribute($value): string
     {
-        return Str::title(str_replace('_', ' ', $value  ));
+        return Str::title(str_replace('_', ' ', $value));
     }
 
-    // Status
-    public function getStatusAttribute($value)
+    // Status formatting for display (keep raw in DB)
+    public function getStatusForDisplayAttribute(): string
     {
-        return Str::title($value);
+        return Str::title($this->status);
     }
 
-     // Dates
-    public function getStartingFromAttribute($value)
+    // Amount formatting
+    public function getAmountFormattedAttribute(): string
     {
-        return $value ? date('M d, Y', strtotime($value)) : null;
+        return number_format($this->amount, 2);
     }
 
-    public function getEndingAtAttribute($value)
+    // Dates formatting for display
+    public function getStartingFromFormattedAttribute(): ?string
     {
-        return $value ? date('M d, Y', strtotime($value)) : null;
+        return $this->starting_from ? $this->starting_from->format('M d, Y') : null;
     }
-    // Amount (money formatting)
-     public function getAmountAttribute($value)
+
+    public function getEndingAtFormattedAttribute(): ?string
     {
-        return number_format($value, 2);
+        return $this->ending_at ? $this->ending_at->format('M d, Y') : null;
     }
 }

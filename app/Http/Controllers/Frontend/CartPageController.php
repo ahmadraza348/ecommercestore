@@ -9,6 +9,7 @@ use App\Models\ProAttributeValue;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use Illuminate\Support\Facades\Session;
 
 class CartPageController extends Controller
 {
@@ -25,6 +26,8 @@ class CartPageController extends Controller
             'ItemId.*' => 'integer|exists:cart_items,id',
             'quantity' => 'required|array',
         ]);
+        Session()->forget(['coupon_code', 'coupon_discount', 'coupon_subtotal', 'coupon_total']);
+
 
         try {
 
@@ -132,6 +135,8 @@ class CartPageController extends Controller
 
     public function cart_remove($id)
     {
+        Session()->forget(['coupon_code', 'coupon_discount', 'coupon_subtotal', 'coupon_total']);
+
         try {
             DB::transaction(function () use ($id) {
 
@@ -168,38 +173,42 @@ class CartPageController extends Controller
             'coupon_code' => 'required|string',
         ]);
 
-        $coupon = Coupon::where('code', $request->coupon_code)->first();
+        $coupon_code = $request->coupon_code;
 
+        $coupon = Coupon::where('code', $coupon_code)->first();
         if (!$coupon) {
             toastr()->error('Invalid coupon code.');
             return back();
         }
 
-        if ($coupon->status == 'inactive') {
+        if (! $coupon->isActive()) {
             toastr()->error('Coupon is not active.');
             return back();
         }
 
-        if (now()->greaterThan($coupon->ending_at)) {
+        // Check expiry using endOfDay for today-inclusive validity
+        if (now()->greaterThan($coupon->ending_at->endOfDay())) {
             toastr()->error('Coupon has expired.');
             return back();
         }
 
-        $cart = Cart::where('session_id', session('session_id'))->first();
+        // Check cart exists
+        $session_id = session()->getId();
+        $cart = Cart::where('session_id', $session_id)->first();
 
         if (!$cart || $cart->items()->count() === 0) {
             toastr()->error('Cart is empty.');
             return back();
         }
 
-        if ($cart->coupon_code) {
+        // Check if a coupon is already applied in session
+        if (session()->has('coupon_code')) {
             toastr()->error('A coupon is already applied.');
             return back();
         }
 
-        // Recalculate subtotal (trust nothing)
+        // Recalculate subtotal
         $subtotal = $cart->items()->sum('line_total');
-
         if ($subtotal <= 0) {
             toastr()->error('Invalid cart total.');
             return back();
@@ -212,12 +221,12 @@ class CartPageController extends Controller
             $discount = round(($subtotal * $coupon->amount) / 100, 2);
         }
 
-        // Update cart (SOURCE OF TRUTH)
-        $cart->update([
-            'subtotal'    => $subtotal,
-            'discount'    => $discount,
-            'total'       => $subtotal - $discount,
+        // Store coupon details in session
+        session([
             'coupon_code' => $coupon->code,
+            'coupon_discount' => $discount,
+            'coupon_subtotal' => $subtotal,
+            'coupon_total' => $subtotal - $discount,
         ]);
 
         toastr()->success('Coupon applied successfully.');

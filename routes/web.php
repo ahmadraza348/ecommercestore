@@ -33,7 +33,7 @@ Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])
 Route::prefix('cart')->group(function(){
     Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
     Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
-    Route::post('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
+    Route::delete('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
 });
 Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
 

@@ -136,13 +136,13 @@
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <label>Starting From<span class="manitory">*</span></label>
-                                    <input type="date" class="form-control" name="starting_from" value="{{ old('starting_from') }}" required>
+                                    <input type="datetime-local" class="form-control" name="starting_from" value="{{ old('starting_from') }}" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <label>Ending At<span class="manitory">*</span></label>
-                                    <input type="date" class="form-control" name="ending_at" value="{{ old('ending_at') }}" required>
+                                    <input type="datetime-local" class="form-control" name="ending_at" value="{{ old('ending_at') }}" required>
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
@@ -218,14 +218,14 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>Starting From<span class="manitory">*</span></label>
-                                    <input type="date" name="starting_from" id="editStart" class="form-control" required>
+                                    <input type="datetime-local" name="starting_from" id="editStart" class="form-control" required>
                                 </div>
                             </div>
 
                             <div class="col-6">
                                 <div class="form-group">
                                     <label>Ending At<span class="manitory">*</span></label>
-                                    <input type="date" name="ending_at" id="editEnd" class="form-control" required>
+                                    <input type="datetime-local" name="ending_at" id="editEnd" class="form-control" required>
                                 </div>
                             </div>
 

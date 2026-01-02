@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->string('discount_type')->nullable();
             $table->decimal('amount', 10, 2)->nullable();
-            $table->date('starting_from')->nullable();
-            $table->date('ending_at')->nullable();
+            $table->dateTime('starting_from')->nullable();
+            $table->dateTime('ending_at')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
         });
