@@ -40,6 +40,8 @@ Route::prefix('cart')->group(function(){
 Route::prefix('checkout')->group(function(){
     Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
 });
+    Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
+
 
 
 
