@@ -18,6 +18,7 @@ use App\Http\Controllers\Frontend\CartPageController;
 use App\Http\Controllers\Admin\ProductColorsController;
 use App\Http\Controllers\Admin\AttributevalueController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Frontend\CheckoutPageController;
 use App\Http\Controllers\Frontend\ProductPageController;
 
 Route::get('/hash', function () {
@@ -34,8 +35,11 @@ Route::prefix('cart')->group(function(){
     Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
     Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
     Route::delete('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
+    Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
 });
-Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
+Route::prefix('checkout')->group(function(){
+    Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
+});
 
 
 

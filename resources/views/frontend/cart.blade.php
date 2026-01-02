@@ -164,7 +164,7 @@
                         </div>
                     </div>
 
-                    <a href=""
+                    <a href="{{ route('checkoutPage') }}"
                         class="sqr-btn d-block">
                         Proceed To Checkout
                     </a>

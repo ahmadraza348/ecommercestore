@@ -27,8 +27,6 @@ class CartPageController extends Controller
             'quantity' => 'required|array',
         ]);
         Session()->forget(['coupon_code', 'coupon_discount', 'coupon_subtotal', 'coupon_total']);
-
-
         try {
 
             DB::transaction(function () use ($request) {

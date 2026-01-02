@@ -42,6 +42,7 @@ class ProductPageController extends Controller
 
         try {
             $cartService->add($request->all());
+            session()->forget(['coupon_code', 'coupon_discount', 'coupon_subtotal', 'coupon_total']);
             toastr()->success('Product added to cart successfully');
         } catch (\Exception $e) {
             toastr()->error($e->getMessage());
