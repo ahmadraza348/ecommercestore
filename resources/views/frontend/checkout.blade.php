@@ -58,9 +58,22 @@
                 <!-- Checkout Login Coupon Accordion End -->
             </div>
         </div>
+           @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
         <form action="{{ route('order.place') }}" method="POST" id="checkoutForm">
             @csrf
             <div class="row">
+
+             
+
+
                 <!-- Checkout Billing Details -->
 
                 <div class="col-lg-6">
@@ -385,7 +398,7 @@
                                 <div class="single-payment-method show">
                                     <div class="payment-method-name">
                                         <div class="custom-control custom-radio">
-                                            <input type="radio" id="cashon" name="paymentmethod"name="payment_method" value="cash" class="custom-control-input" checked />
+                                            <input type="radio" id="cashon" name="payment_method" value="cash" class="custom-control-input" checked />
                                             <label class="custom-control-label" for="cashon">Cash On Delivery</label>
                                         </div>
                                     </div>
@@ -406,11 +419,6 @@
                                     </div>
                                 </div>
                                 <div class="summary-footer-area">
-                                    <div class="custom-control custom-checkbox mb-14">
-                                        <input type="checkbox" class="custom-control-input" id="terms" required />
-                                        <label class="custom-control-label" for="terms">I have read and agree to the website <a
-                                                href="index.html">terms and conditions.</a></label>
-                                    </div>
                                     <button type="submit" class="check-btn sqr-btn">Place Order</button>
                                 </div>
                             </div>

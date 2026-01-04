@@ -41,6 +41,7 @@ Route::prefix('checkout')->group(function(){
     Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
 });
     Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
+    Route::get('/order-thankyou', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
 
 
 
