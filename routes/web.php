@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\AttributevalueController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Frontend\CheckoutPageController;
 use App\Http\Controllers\Frontend\ProductPageController;
+use App\Http\Controllers\Frontend\OrderInvoiceController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -42,6 +43,13 @@ Route::prefix('checkout')->group(function(){
 });
     Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
     Route::get('/order-thankyou', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
+
+    Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
+    ->name('order.invoice');
+
+Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'download'])
+    ->name('order.invoice.pdf');
+
 
 
 
