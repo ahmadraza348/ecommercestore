@@ -18,24 +18,24 @@ class OrderConfirmationMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public Order $order;
+    public $order;
+    // Accept the Order data when we create the email
     public function __construct(Order $order)
     {
         $this->order = $order;
-    } 
+    }
 
-     public function build()
+    public function build()
     {
-        // Create invoice PDF from blade
-        $pdf = Pdf::loadView('frontend.invoice', [
-            'order' => $this->order
-        ]);
+        // 1. Generate the PDF Invoice
+        // We assume you will create a view file at resources/views/emails/invoice_pdf.blade.php
+        $pdf = Pdf::loadView('frontend.invoice', ['order' => $this->order]);
 
-        return $this->subject('Your Order Invoice')
-            ->view('emails.order_confirmation')
-            ->attachData(
-                $pdf->output(),
-                'invoice-' . $this->order->order_number . '.pdf'
-            );
+        // 2. Build the email and attach the PDF
+        return $this->subject('Order Confirmation #' . $this->order->id)
+            ->view('emails.order_confirmation') // Your HTML email body
+            ->attachData($pdf->output(), 'invoice_' . $this->order->id . '.pdf', [
+                'mime' => 'application/pdf',
+            ]);
     }
 }

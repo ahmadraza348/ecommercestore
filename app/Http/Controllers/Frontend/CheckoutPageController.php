@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendOrderEmailJob;
+use Illuminate\Support\Facades\Log;
 
 use function Flasher\Toastr\Prime\toastr;
 
@@ -63,7 +65,7 @@ class CheckoutPageController extends Controller
         $cartData = $this->getCartData();
 
         if (!$cartData || $cartData->items->isEmpty()) {
-            return redirect()->route('cart')->with('error', 'Your cart is empty!');
+            return redirect()->route('cartPage')->with('error', 'Your cart is empty!');
         }
 
         // Calculate totals
@@ -152,6 +154,13 @@ class CheckoutPageController extends Controller
             // Commit transaction
             DB::commit();
 
+            try {
+                SendOrderEmailJob::dispatch($order);
+            } catch (\Exception $e) {
+                // If email fails, don't stop the user, just log it
+                Log::error('Order email failed to send: ' . $e->getMessage());
+            }
+
             // Send email notification (you can implement this later)
             // $this->sendOrderConfirmationEmail($order);
 
@@ -166,13 +175,10 @@ class CheckoutPageController extends Controller
         }
     }
 
-    public function thankyou($orderNumber)
-    {
-        $order = Order::where('order_number', $orderNumber)
-            ->with('items.product')
-            ->firstOrFail();
 
-        return view('frontend.thankyou', compact('order'));
+    public function order_thankyou($order_number)
+    {
+        return view('frontend.thankyou', compact('order_number'));
     }
 
     private function getCartData()
@@ -186,10 +192,5 @@ class CheckoutPageController extends Controller
         return Cart::with(['items.product.gallery_images', 'items.proColor', 'items.proAttribute.attribute'])
             ->where('session_id', Session::getId())
             ->first();
-    }
-
-    public function order_thankyou()
-    {
-        return view('frontend.thankyou');
     }
 }

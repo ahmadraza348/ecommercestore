@@ -42,7 +42,7 @@ Route::prefix('checkout')->group(function(){
     Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
 });
     Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
-    Route::get('/order-thankyou', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
+    Route::get('/order-thankyou/{order_number}', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
 
     Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
     ->name('order.invoice');
