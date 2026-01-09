@@ -410,11 +410,11 @@
                                 <div class="single-payment-method">
                                     <div class="payment-method-name">
                                         <div class="custom-control custom-radio">
-                                            <input type="radio" id="cardPayment" name="payment_method" value="paypal" class="custom-control-input" />
+                                            <input type="radio" id="cardPayment" name="payment_method" value="stripe" class="custom-control-input" />
                                             <label class="custom-control-label" for="cardPayment">Card Payment <img src="{{ asset('frontend/assets/img/paypal-card.jpg') }}" class="img-fluid paypal-card" alt="Paypal" /></label>
                                         </div>
                                     </div>
-                                    <div class="payment-method-details" data-method="paypal">
+                                    <div class="payment-method-details" data-method="stripe">
                                         <p>Card Payment</p>
                                     </div>
                                 </div>

@@ -32,33 +32,27 @@ class CheckoutPageController extends Controller
     public function placeOrder(Request $request)
     {
         // Validate the request
-        $validated = $request->validate([
+        $request->validate([
             'billing.first_name' => 'required|string|max:255',
             'billing.last_name' => 'required|string|max:255',
             'billing.email' => 'required|email|max:255',
-            'billing.company' => 'nullable|string|max:255',
             'billing.country' => 'required|string|max:255',
             'billing.address_1' => 'required|string|max:500',
-            'billing.address_2' => 'nullable|string|max:500',
             'billing.city' => 'required|string|max:255',
-            'billing.state' => 'nullable|string|max:255',
             'billing.postcode' => 'required|string|max:20',
-            'billing.phone' => 'nullable|string|max:20',
-            'payment_method' => 'required|in:cash,paypal',
-            'order_note' => 'nullable|string|max:1000',
+            'billing.phone' => 'required|string|max:20',
+            'payment_method' => 'required|in:cash,stripe',
 
             // Shipping validation if different shipping is selected
             'different_shipping' => 'sometimes|boolean',
             'shipping.first_name' => 'required_if:different_shipping,1|nullable|string|max:255',
             'shipping.last_name' => 'required_if:different_shipping,1|nullable|string|max:255',
             'shipping.email' => 'required_if:different_shipping,1|nullable|email|max:255',
-            'shipping.company' => 'nullable|string|max:255',
             'shipping.country' => 'required_if:different_shipping,1|nullable|string|max:255',
             'shipping.address_1' => 'required_if:different_shipping,1|nullable|string|max:500',
-            'shipping.address_2' => 'nullable|string|max:500',
             'shipping.city' => 'required_if:different_shipping,1|nullable|string|max:255',
-            'shipping.state' => 'nullable|string|max:255',
             'shipping.postcode' => 'required_if:different_shipping,1|nullable|string|max:20',
+            'shipping.phone' => 'required_if:different_shipping,1|nullable|string|max:20',
         ]);
 
         // Get cart data
@@ -137,12 +131,40 @@ class CheckoutPageController extends Controller
                     'attribute_name' => $cartItem->proAttribute->attribute->name ?? null,
                     'attribute_value' => $cartItem->proAttribute->name ?? null,
                 ]);
-
-                // Update product stock if needed
-                if ($cartItem->product) {
-                    $cartItem->product->decrement('stock', $cartItem->quantity);
-                }
             }
+
+
+
+            // --- BRANCHING LOGIC ---
+
+            if ($request->payment_method === 'stripe') {
+                Stripe::setApiKey(config('services.stripe.secret'));
+                $checkout_session = StripeSession::create([
+                    'payment_method_types' => ['card'],
+                    'line_items' => [[
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => ['name' => 'Order #' . $order->order_number],
+                            'unit_amount' => $total * 100,
+                        ],
+                        'quantity' => 1,
+                    ]],
+                    'mode' => 'payment',
+                    'success_url' => route('order.thankyou', $order->order_number),
+                    'cancel_url' => route('checkout.index'),
+                    'metadata' => ['order_id' => $order->id] // Critical for the webhook
+                ]);
+                $order->update(['stripe_session_id' => $checkout_session->id]);
+
+                return redirect($checkout_session->url);
+            }
+            // --- END BRANCHING LOGIC ---
+
+
+            foreach ($order->items as $item) {
+                $item->product->decrement('stock', $item->quantity);
+            }
+
 
             // Clear the cart
             $cartData->items()->delete();
@@ -159,11 +181,6 @@ class CheckoutPageController extends Controller
             } catch (\Exception $e) {
                 Log::error('Order email failed to send: ' . $e->getMessage());
             }
-
-            // Send email notification (you can implement this later)
-            // $this->sendOrderConfirmationEmail($order);
-
-            // Redirect to thank you page
 
             toastr()->success('Order placed successfully!');
             return redirect()->route('order.thankyou', $order->order_number);
