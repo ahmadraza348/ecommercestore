@@ -11,22 +11,26 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class SendOrderEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
-    protected $order;
 
-    // Accept the order data
-    public function __construct(Order $order)
-    {
-        $this->order = $order;
-    }
-    // This is what the "Chef" does when he picks up the ticket
+    public function __construct(public int $orderId) {}
+
     public function handle()
     {
-        // Send the email to the billing email address
-        Mail::to($this->order->billing_email)->send(new OrderConfirmationMail($this->order));
+        $order = Order::findOrFail($this->orderId);
+
+        // Safety Check: If order is still null for some reason, don't crash.
+        if (!$order) {
+            Log::error('Order not found in SendOrderEmailJob');
+            return;
+        }
+
+        Mail::to($order->billing_email)
+            ->send(new OrderConfirmationMail($order));
     }
 }
+

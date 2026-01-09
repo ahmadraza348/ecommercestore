@@ -155,9 +155,8 @@ class CheckoutPageController extends Controller
             DB::commit();
 
             try {
-                SendOrderEmailJob::dispatch($order);
+                SendOrderEmailJob::dispatch($order->id)->afterCommit();
             } catch (\Exception $e) {
-                // If email fails, don't stop the user, just log it
                 Log::error('Order email failed to send: ' . $e->getMessage());
             }
 

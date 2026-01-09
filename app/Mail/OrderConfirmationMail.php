@@ -19,7 +19,6 @@ class OrderConfirmationMail extends Mailable
      * Create a new message instance.
      */
     public $order;
-    // Accept the Order data when we create the email
     public function __construct(Order $order)
     {
         $this->order = $order;
@@ -28,8 +27,7 @@ class OrderConfirmationMail extends Mailable
     public function build()
     {
         // 1. Generate the PDF Invoice
-        // We assume you will create a view file at resources/views/emails/invoice_pdf.blade.php
-        $pdf = Pdf::loadView('frontend.invoice', ['order' => $this->order]);
+        $pdf = Pdf::loadView('frontend.order_invoice', ['order' => $this->order]);
 
         // 2. Build the email and attach the PDF
         return $this->subject('Order Confirmation #' . $this->order->id)
