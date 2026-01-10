@@ -52,12 +52,11 @@
                                 <li>
                                     <a href="#">my wishlist</a>
                                 </li>
+                              
                                 <li>
-                                    <a href="#">my cart</a>
+                                    <a href="#">Compare</a>
                                 </li>
-                                <li>
-                                    <a href="#">checkout</a>
-                                </li>
+                              
                             </ul>
                         </nav>
                     </div>

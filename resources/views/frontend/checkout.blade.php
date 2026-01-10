@@ -11,45 +11,9 @@
 
                         <div id="logInaccordion" class="collapse" data-parent="#checkOutAccordion">
                             <div class="card-body">
-                                <p>If you have shopped with us before, please enter your details in the boxes below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
-                                <div class="login-reg-form-wrap mt-20">
-                                    <div class="row">
-                                        <div class="col-lg-7 m-auto">
-                                            <form action="#" method="post">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="single-input-item">
-                                                            <input type="email" placeholder="Enter your Email" required />
-                                                        </div>
-                                                    </div>
+                                <p class="my-3">If you have shopped with us before, please enter your details in the boxes below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                                    @include('auth.login_partial')
 
-                                                    <div class="col-md-12">
-                                                        <div class="single-input-item">
-                                                            <input type="password" placeholder="Enter your Password" required />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="single-input-item">
-                                                    <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
-                                                        <div class="remember-meta">
-                                                            <div class="custom-control custom-checkbox">
-                                                                <input type="checkbox" class="custom-control-input" id="rememberMe" required />
-                                                                <label class="custom-control-label" for="rememberMe">Remember Me</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <a href="#" class="forget-pwd">Forget Password?</a>
-                                                    </div>
-                                                </div>
-
-                                                <div class="single-input-item">
-                                                    <button class="check-btn sqr-btn">Login</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -192,23 +156,6 @@
                                     <input type="text" id="billing_phone" name="billing[phone]"
                                         value="{{ old('billing.phone', Auth::check() ? $user->phone : '') }}"
                                         placeholder="Phone" />
-                                </div>
-
-
-                                <div class="checkout-box-wrap mb-4">
-                                    <div class="single-input-item">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="create_pwd">
-                                            <label class="form-check-label" for="create_pwd">Create an account?</label>
-                                        </div>
-                                    </div>
-                                    <div class="account-create single-form-row">
-                                        <p>Create an account by entering the information below. If you are a returning customer please login at the top of the page.</p>
-                                        <div class="single-input-item">
-                                            <label for="pwd" class="required">Account Password</label>
-                                            <input type="password" id="pwd" placeholder="Account Password" />
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="checkout-box-wrap mb-4">
