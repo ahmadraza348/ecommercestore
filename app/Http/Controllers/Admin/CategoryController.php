@@ -29,7 +29,6 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request, CategoryService $service)
     {
         $service->create($request->validated());
-
         toastr()->success('Category created successfully');
         return redirect()->route('category.index');
     }
@@ -40,8 +39,8 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
 
         $categories = Category::with('subcategories.subcategories')
-            ->whereNull('parent_id')  // Include parent category
-            ->where('id', '!=', $id)  // Exclude current category
+            ->whereNull('parent_id')
+            ->where('id', '!=', $id)
             ->orderby('name', 'asc')
             ->get();
 
@@ -49,15 +48,17 @@ class CategoryController extends Controller
     }
 
 
-    public function update(UpdateCategoryRequest $request, $id, CategoryService $service)
-    {
-        $category = Category::findOrFail($id);
-
+    public function update(
+        UpdateCategoryRequest $request,
+        Category $category,
+        CategoryService $service
+    ) {
         $service->update($category, $request->validated());
 
         toastr()->success('Category updated successfully');
         return redirect()->route('category.index');
     }
+
 
 
     public function destroy($id, CategoryService $service)
