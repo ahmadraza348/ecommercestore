@@ -18,10 +18,30 @@ class Admin extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
+        'username',
+        'phone',
+        'gender',
+        'image',
+        'status',
         'email',
         'password',
+        'role',
     ];
+
+    public function isAdmin(): bool
+    {
+        return $this->role == 'admin';
+    }
+    public function isManager(): bool
+    {
+        return $this->role == 'manager';
+    }
+    public function isViewer(): bool
+    {
+        return $this->role == 'viewer';
+    }
 
     /**
      * The attributes that should be hidden for serialization.

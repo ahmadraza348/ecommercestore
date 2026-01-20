@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class AdminAuth
 {
@@ -19,6 +20,7 @@ class AdminAuth
             toastr()->error('Please login first');
             return redirect()->route('admin.login');
         }
+        Auth::shouldUse('admin');
         return $next($request);
     }
 }
