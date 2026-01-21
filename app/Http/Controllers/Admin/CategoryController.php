@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\CategoryService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\Admin\{StoreCategoryRequest, ImportCategoryRequest, UpdateCategoryRequest, BulkDeleteCategoryRequest};
 
 class CategoryController extends Controller
 {
+    use AuthorizesRequests;
+    public function __construct()
+    {
+        $this->authorizeResource(Category::class, 'category');
+    }
 
     public function index()
     {
@@ -18,24 +24,19 @@ class CategoryController extends Controller
 
     public function create()
     {
-        $this->authorize('create', Category::class);
         $data['categories'] = Category::with('subcategories')->whereNull('parent_id')->orderby('name', 'asc')->get();
         return view('backend.category.create', $data);
     }
 
-
     public function store(StoreCategoryRequest $request, CategoryService $service)
     {
-        $this->authorize('create', Category::class);
         $service->create($request->validated());
         toastr()->success('Category created successfully');
         return redirect()->route('category.index');
     }
 
-
     public function edit(Category $category)
     {
-        $this->authorize('update', $category);
         $categories = Category::with('subcategories.subcategories')
             ->whereNull('parent_id')
             ->where('id', '!=', $category->id)
@@ -45,43 +46,32 @@ class CategoryController extends Controller
         return view('backend.category.edit', compact('category', 'categories'));
     }
 
-
     public function update(
         UpdateCategoryRequest $request,
         Category $category,
         CategoryService $service
     ) {
-        $this->authorize('update', $category);
         $service->update($category, $request->validated());
 
         toastr()->success('Category updated successfully');
         return redirect()->route('category.index');
     }
 
-
-
     public function destroy(Category $category, CategoryService $service)
     {
-        $this->authorize('delete', $category);
         $service->delete($category);
-
         toastr()->success('Category Deleted Successfully');
         return back();
     }
 
-
     public function bulkDelete(
         BulkDeleteCategoryRequest $request,
-        CategoryService $service,
-        Category $category
+        CategoryService $service
     ) {
-        $this->authorize('delete', $category);
         $service->bulkDelete($request->getCategoryIds());
-
         toastr()->success('Categories deleted successfully');
         return back();
     }
-
 
     public function import(
         ImportCategoryRequest $request,

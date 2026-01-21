@@ -30,17 +30,21 @@ class Admin extends Authenticatable
         'role',
     ];
 
+    // THis code is helping to check permissions in policies
+    
     public function isAdmin(): bool
     {
-        return $this->role == 'admin';
+        return $this->role === 'admin';
     }
+
     public function isManager(): bool
     {
-        return $this->role == 'manager';
+        return $this->role === 'manager';
     }
+
     public function isViewer(): bool
     {
-        return $this->role == 'viewer';
+        return $this->role === 'viewer';
     }
 
     /**
