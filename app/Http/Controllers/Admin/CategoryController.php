@@ -18,13 +18,13 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $data['categories_data'] = Category::orderBy('id', 'ASC')->with('parent')->get();
+        $data['categories_data'] = Category::with('parent')->ordered()->get();
         return view('backend.category.index', $data);
     }
 
     public function create()
     {
-        $data['categories'] = Category::with('subcategories')->whereNull('parent_id')->orderby('name', 'asc')->get();
+        $data['categories'] = Category::with('subcategories')->whereNull('parent_id')->ordered()->get();
         return view('backend.category.create', $data);
     }
 
@@ -40,7 +40,7 @@ class CategoryController extends Controller
         $categories = Category::with('subcategories.subcategories')
             ->whereNull('parent_id')
             ->where('id', '!=', $category->id)
-            ->orderby('name', 'asc')
+            ->ordered()
             ->get();
 
         return view('backend.category.edit', compact('category', 'categories'));

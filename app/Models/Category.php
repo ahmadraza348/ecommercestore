@@ -9,10 +9,10 @@ class Category extends Model
 {
     use HasFactory;
     public function getImageNameAttribute($value)
-{
+    {
 
         return public_path($value);
-}
+    }
 
     protected $fillable = ['name', 'slug', 'parent_id', 'image', 'is_featured', 'description', 'status'];
 
@@ -33,17 +33,21 @@ class Category extends Model
 
     // if we delete category then all its meta tags will also be deleted
     public static function boot()
-{
-    parent::boot();
+    {
+        parent::boot();
 
-    static::deleting(function ($category) {
-        $category->metaTag()->delete();
-    });
-}
+        static::deleting(function ($category) {
+            $category->metaTag()->delete();
+        });
+    }
 
-public function products()
-{
-    return $this->belongsToMany(Product::class, 'relational_categories', 'category_id', 'product_id');
-}
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'relational_categories', 'category_id', 'product_id');
+    }
 
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('name', 'ASC');
+    }
 }

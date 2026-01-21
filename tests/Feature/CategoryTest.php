@@ -190,6 +190,5 @@ class CategoryTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        // You can also test Category count if CategoriesImport works with fake data
     }
 }
