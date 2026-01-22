@@ -3,11 +3,22 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomePageController;
+use App\Http\Controllers\Api\Admin\CategoryApiController;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum'])
+    ->prefix('admin')
+    ->name('api.admin.category.')
+    ->group(function () {
 
+        Route::get('categories', [CategoryApiController::class, 'index']);
+        Route::post('categories', [CategoryApiController::class, 'store']);
+        Route::get('categories/{category}', [CategoryApiController::class, 'show']);
+        Route::put('categories/{category}', [CategoryApiController::class, 'update']);
+        Route::delete('categories/{category}', [CategoryApiController::class, 'destroy']);
+
+        Route::delete('categories', [CategoryApiController::class, 'bulkDelete']);
+        Route::post('categories/import', [CategoryApiController::class, 'import']);
+    });
 
 
 Route::get('/featured-categories', [HomePageController::class, 'fetch_featured_categories'])->name('api.featured_categories.fetch');
