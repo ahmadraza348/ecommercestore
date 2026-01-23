@@ -56,19 +56,19 @@
                                         <option value="">None</option>
                                         @foreach ($categories as $parentCategory)
                                             <!-- Ensure current category is excluded and parent category is selected -->
-                                            <option value="{{ $parentCategory->id }}" 
+                                            <!-- <option value="{{ $parentCategory->id }}" 
                                                 {{ old('parent_id', $category->parent_id) == $parentCategory->id ? 'selected' : '' }}>
                                                 {{ $parentCategory->name }}
-                                            </option>
+                                            </option> -->
                                             
                                             <!-- Include subcategories and check for parent selection -->
-                                            @if (count($parentCategory->subcategories))
+                                            <!-- @if (count($parentCategory->subcategories))
                                                 @include('backend.category.partialcategory', [
                                                     'subcategory_data' => $parentCategory->subcategories,
                                                     'dash' => '-- ',
                                                     'category' => $category  // Pass the current category for preselection
                                                 ])
-                                            @endif
+                                            @endif -->
                                         @endforeach
                                     </select>
                                 </div>

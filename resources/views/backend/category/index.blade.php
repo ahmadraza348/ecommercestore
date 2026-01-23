@@ -17,10 +17,10 @@
 
 
         </div>
-        <form action="{{ route('categories.import') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('categories.import') }}"class=" d-flex justify-content-end" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="form-group d-flex">
-                <input type="file" name="categories_file" id="categories_file" class="form-control" required>
+            <div class="form-group d-flex"style="width:400px;">
+                <input type="file" name="categories_file" id="categories_file" class="form-control mx-2 " required>
                 <button type="submit" class="btn btn-primary">Import </button>
             </div>
         </form>
@@ -118,7 +118,7 @@
                     </table>
                 </div>
 
-                <button id="delete-selected-btn" class="btn btn-danger btn-sm mt-3" style="display: none; "
+                <button id="delete-selected-btn" class="btn btn-danger mt-3" style="display: none; "
                     onclick="deleteSelectedCategories()">Delete Selected
                 </button>
 

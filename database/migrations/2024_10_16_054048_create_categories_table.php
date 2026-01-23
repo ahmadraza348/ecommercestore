@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
@@ -17,16 +14,16 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('image')->nullable();
             $table->longText('description')->nullable();
-            $table->integer('parent_id')->nullable();
-            $table->string('is_featured')->default('0','inactive');
-            $table->string('status')->default('1','active');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->boolean('is_featured')->default(false); // 0 = not featured
+            $table->boolean('status')->default(true); // 1 = active
             $table->timestamps();
+        
+            // Foreign key for parent category
+            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
         });
+        
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('categories');

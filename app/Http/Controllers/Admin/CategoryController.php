@@ -35,9 +35,10 @@ class CategoryController extends Controller
             ->where('id', '!=', $category->id)
             ->ordered()
             ->get();
-
+    
         return view('backend.category.edit', compact('category', 'categories'));
     }
+    
 
     public function update(
         UpdateCategoryRequest $request,
