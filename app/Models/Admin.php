@@ -31,8 +31,21 @@ class Admin extends Authenticatable
         'role',
     ];
 
-    // THis code is helping to check permissions in policies
-    
+    //   For Gates used in categories for learning
+    /* 
+     * public function hasRole($roles): bool
+     * {
+     *    if (is_array($roles)) {
+     *        return in_array($this->role, $roles);
+     *   }
+     *  return $this->role === $roles;
+    }
+     */
+
+
+
+    //  For Policies used in categories for learning
+  /*
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -47,6 +60,7 @@ class Admin extends Authenticatable
     {
         return $this->role === 'viewer';
     }
+  */
 
     /**
      * The attributes that should be hidden for serialization.

@@ -10,15 +10,13 @@
 
             </div>
 
-            @can('create', App\Models\Category::class)
             <div class="page-btn">
                 <a href="{{ route('category.create') }}" class="btn btn-added"><img
                         src="{{ asset('backend/assets/img/icons/plus.svg') }}" alt="img">Add Category</a>
             </div>
-            @endcan
+
 
         </div>
-        @can('create', App\Models\Category::class)
         <form action="{{ route('categories.import') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group d-flex">
@@ -26,7 +24,7 @@
                 <button type="submit" class="btn btn-primary">Import </button>
             </div>
         </form>
-        @endcan
+
 
 
 
@@ -44,6 +42,7 @@
                                         <span class="checkmarks"></span>
                                     </label>
                                 </th>
+
                                 <th>Image</th>
                                 <th>Category</th>
                                 <th>Parent</th>
@@ -62,6 +61,7 @@
                                         <span class="checkmarks"></span>
                                     </label>
                                 </td>
+
                                 <td>
                                     <a href="javascript:void(0);" class="product-img">
                                         <img src="{{ $category->image ? asset('storage/' . $category->image) : asset('backend/assets/img/noimage.png') }}"
@@ -90,11 +90,11 @@
                                     @endif
                                 </td>
                                 <td>
-                                    @can('update', $category)
+
                                     <a href="{{ route('category.edit', $category->id) }}" class="me-3">
                                         <img src="{{ asset('backend/assets/img/icons/edit.svg') }}" alt="edit">
                                     </a>
-                                    @endcan
+
 
                                     <form id="deleteCat-{{ $category->id }}"
                                         action="{{ route('category.destroy', $category->id) }}" method="POST"
@@ -103,24 +103,25 @@
                                         @method('delete')
                                     </form>
 
-                                    @can('delete', $category)
+
                                     <a onclick="if(confirm('Are you sure to permanently delete this?')) { document.getElementById('deleteCat-{{ $category->id }}').submit(); } return false;"
                                         class="me-3">
                                         <img src="{{ asset('backend/assets/img/icons/delete.svg') }}"
                                             alt="delete">
                                     </a>
-                                    @endcan
+
                                 </td>
                             </tr>
                             @endforeach
                         </tbody>
+
                     </table>
                 </div>
-                @can('delete', $category)
+
                 <button id="delete-selected-btn" class="btn btn-danger btn-sm mt-3" style="display: none; "
                     onclick="deleteSelectedCategories()">Delete Selected
                 </button>
-                @endcan
+
             </div>
         </div>
 

@@ -5,17 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\CategoryService;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\Admin\{StoreCategoryRequest, ImportCategoryRequest, UpdateCategoryRequest, BulkDeleteCategoryRequest};
 
 class CategoryController extends Controller
 {
-    use AuthorizesRequests;
-    public function __construct()
-    {
-        $this->authorizeResource(Category::class, 'category');
-    }
-
     public function index()
     {
         $data['categories_data'] = Category::with('parent')->ordered()->get();
