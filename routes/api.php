@@ -1,10 +1,18 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomePageController;
 use App\Http\Controllers\Api\Admin\CategoryApiController;
+use Illuminate\Support\Facades\Hash;
 
+// Route::get('/hash', function () {
+//     return Hash::make('ahmadraza');
+// });
+
+
+Route::post('/login', [AuthController::class, 'login'])->name('api.admin.login');
 Route::middleware(['auth:sanctum'])
     ->prefix('admin')
     ->name('api.admin.category.')
