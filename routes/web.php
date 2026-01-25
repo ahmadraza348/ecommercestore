@@ -1,26 +1,28 @@
 <?php
 
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AttributeController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProImagesController;
-use App\Http\Controllers\Admin\ProductAttrController;
-use App\Http\Controllers\Frontend\HomePageController;
-use App\Http\Controllers\Frontend\ShopPageController;
-use App\Http\Controllers\Frontend\CartPageController;
-use App\Http\Controllers\Admin\ProductColorsController;
 use App\Http\Controllers\Admin\AttributevalueController;
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductAttrController;
+use App\Http\Controllers\Admin\ProductColorsController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProImagesController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Frontend\CartPageController;
 use App\Http\Controllers\Frontend\CheckoutPageController;
-use App\Http\Controllers\Frontend\ProductPageController;
+use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\OrderInvoiceController;
+use App\Http\Controllers\Frontend\ProductPageController;
+use App\Http\Controllers\Frontend\ShopPageController;
+use App\Http\Controllers\ProfileController;
+use FontLib\Table\Type\name;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -32,27 +34,23 @@ Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct'])
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
 
-Route::prefix('cart')->group(function(){
+Route::prefix('cart')->group(function () {
     Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
     Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');
     Route::delete('/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
     Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
 });
-Route::prefix('checkout')->group(function(){
+Route::prefix('checkout')->group(function () {
     Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
 });
-    Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
-    Route::get('/order-thankyou/{order_number}', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
+Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
+Route::get('/order-thankyou/{order_number}', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
 
-    Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
+Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
     ->name('order.invoice');
 
 Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'download'])
     ->name('order.invoice.pdf');
-
-
-
-
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
@@ -91,22 +89,47 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('/destroy/{id}', [ProductColorsController::class, 'destroy'])->name('destroy');
     });
 
+    // Route::middleware(['checkPermission:menu.roles_permissions'])->group(function () {
 
-Route::prefix('coupons')->name('coupons.')->group(function () {
-    Route::get('/', [CouponController::class, 'index'])->name('index');
-    Route::post('/store', [CouponController::class, 'store'])->name('store');
-    Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
-    Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('destroy');
-});
+    // Roles
+    Route::prefix('roles')->name('admin.roles.')->group(function () {
+        Route::get('/', [RoleController::class, 'all_roles'])->name('index');
+        // Route::get('add/roles', [RoleController::class, 'add_roles'])->name('add.role');
+        // Route::post('store/roles', [RoleController::class, 'store_roles'])->name('store.role');
+        // Route::get('edit/roles/{id}', [RoleController::class, 'edit_roles'])->name('edit.role');
+        // Route::post('update/roles/{id}', [RoleController::class, 'update_roles'])->name('update.role');
+        // Route::get('delete/roles/{id}', [RoleController::class, 'delete_roles'])->name('delete.role');
+    });
 
+    // Permissions
+    Route::get('all/permissions', [RoleController::class, 'all_permissions'])->name('all.permission');
+    Route::get('add/permissions', [RoleController::class, 'add_permissions'])->name('add.permission');
+    Route::post('store/permissions', [RoleController::class, 'store_permissions'])->name('store.permission');
+    Route::get('edit/permissions/{id}', [RoleController::class, 'edit_permissions'])->name('edit.permission');
+    Route::post('update/permissions/{id}', [RoleController::class, 'update_permissions'])->name('update.permission');
+    Route::get('delete/permissions/{id}', [RoleController::class, 'delete_permissions'])->name('delete.permission');
 
+    // apply Roles and Permissions
+    Route::get('show/roles/permissions', [RoleController::class, 'show_roles_permissions'])->name('show.roles.permissions');
+    Route::get('all/roles/permissions', [RoleController::class, 'all_roles_permissions'])->name('add.roles.permissions');
+    Route::post('store/roles/permissions', [RoleController::class, 'store_roles_permissions'])->name('store.roles.permissions');
+    Route::get('edit/roles/permissions/{id}', [RoleController::class, 'edit_roles_permissions'])->name('edit.roles.permissions');
+    Route::post('update/roles/permissions/{id}', [RoleController::class, 'update_roles_permissions'])->name('update.roles.permissions');
+    Route::get('delete/roles/permissions/{id}', [RoleController::class, 'delete_roles_permissions'])->name('delete.roles.permimssions');
+    // });
+
+    Route::prefix('coupons')->name('coupons.')->group(function () {
+        Route::get('/', [CouponController::class, 'index'])->name('index');
+        Route::post('/store', [CouponController::class, 'store'])->name('store');
+        Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('destroy');
+    });
 
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
     Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
     Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');
     Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
-
 
     //    Product Attribute Routes
     // Route::post('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
@@ -121,19 +144,14 @@ Route::prefix('coupons')->name('coupons.')->group(function () {
         ->name('admin.product.delete-attribute');
     //    Product Attribute Routes
 
-
-       //    Product images Routes
-Route::prefix('products')->group(function () {
-   Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
-Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
-Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
-Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
-
-});
-
     //    Product images Routes
-
-
+    Route::prefix('products')->group(function () {
+        Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
+        Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
+        Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
+        Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
+    });
+    //    Product images Routes
 
     // Separate routes for profile functionality
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
@@ -160,4 +178,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

@@ -79,18 +79,36 @@
                                 <span> Restore Product</span>
                             </a>
                         </li>
-                       
-                        </li>
 
-                    </ul>
                 </li>
 
-                <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
-                    <a href="{{ route('admin.user.show') }}">
-                        <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                        <span>Admin Users</span>
-                    </a>
-                </li>
+            </ul>
+            </li>
+
+
+
+            <li class="submenu">
+                <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/users1.svg') }}"
+                        alt="img"><span>
+                        For Admin Only </span> <span class="menu-arrow"></span></a>
+                <ul>
+                    <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.user.show') }}">
+                            <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                            <span>Admin Users</span>
+                        </a>
+                    </li>
+                    <li class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.roles.index') }}">
+                            <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                            <span>Admin Roles</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+
+
 
 
 
