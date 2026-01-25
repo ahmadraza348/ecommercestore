@@ -20,7 +20,6 @@ use App\Http\Controllers\Frontend\OrderInvoiceController;
 use App\Http\Controllers\Frontend\ProductPageController;
 use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\ProfileController;
-use FontLib\Table\Type\name;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -92,14 +91,13 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     // Route::middleware(['checkPermission:menu.roles_permissions'])->group(function () {
 
     // Roles
-    Route::prefix('roles')->name('admin.roles.')->group(function () {
-        Route::get('/', [RoleController::class, 'all_roles'])->name('index');
-        // Route::get('add/roles', [RoleController::class, 'add_roles'])->name('add.role');
-        // Route::post('store/roles', [RoleController::class, 'store_roles'])->name('store.role');
-        // Route::get('edit/roles/{id}', [RoleController::class, 'edit_roles'])->name('edit.role');
-        // Route::post('update/roles/{id}', [RoleController::class, 'update_roles'])->name('update.role');
-        // Route::get('delete/roles/{id}', [RoleController::class, 'delete_roles'])->name('delete.role');
-    });
+Route::prefix('roles')->name('admin.roles.')->group(function () {
+    Route::get('/', [RoleController::class, 'all_roles'])->name('index');
+    Route::post('store', [RoleController::class, 'add_roles'])->name('store');
+    Route::get('edit/{role}', [RoleController::class, 'edit_roles'])->name('edit'); 
+    Route::put('update/{role}', [RoleController::class, 'update_roles'])->name('update'); 
+    Route::delete('delete/{role}', [RoleController::class, 'delete_roles'])->name('delete');
+});
 
     // Permissions
     Route::get('all/permissions', [RoleController::class, 'all_permissions'])->name('all.permission');
