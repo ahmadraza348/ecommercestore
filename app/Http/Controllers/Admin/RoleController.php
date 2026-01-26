@@ -4,43 +4,52 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleStoreRequest;
-use Illuminate\Http\Request;
+use App\Services\Admin\RoleService;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function all_roles()
+     protected RoleService $roleService;
+
+      public function __construct(RoleService $roleService)
     {
-        $data['roles'] = Role::all();
-        return view('backend.roles_permissions.roles', $data);
+        $this->roleService = $roleService;
     }
 
-    public function add_roles(Role $role, RoleStoreRequest $request)
+ public function all_roles()
     {
-        $role->create($request->validated());
+        return view('backend.roles_permissions.roles', [
+            'roles' => Role::latest()->get()
+        ]);
+    }
+
+ public function add_roles(RoleStoreRequest $request)
+    {
+        $this->roleService->createRole($request->validated());
+
         toastr()->success('Role created successfully');
         return redirect()->route('admin.roles.index');
     }
-
-    public function edit_roles(Role $role)
+  public function edit_roles(Role $role)
     {
-        $roles = Role::latest()->get();
-
         return view('backend.roles_permissions.roles', [
-            'roles' => $roles,
+            'roles'       => Role::latest()->get(),
             'editingRole' => $role,
         ]);
     }
 
     public function update_roles(RoleStoreRequest $request, Role $role)
     {
-        $role->update($request->validated());
+        $this->roleService->updateRole($role, $request->validated());
+
         toastr()->success('Role updated successfully');
         return redirect()->route('admin.roles.index');
     }
-    public function delete_roles( Role $role)
+
+    public function delete_roles(Role $role)
     {
-        $role->delete();
+        $this->roleService->deleteRole($role);
+
         toastr()->success('Role deleted successfully');
         return redirect()->route('admin.roles.index');
     }
