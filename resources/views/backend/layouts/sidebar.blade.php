@@ -104,6 +104,12 @@
                             <span>Admin Roles</span>
                         </a>
                     </li>
+                    <li class="{{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.permissions.index') }}">
+                            <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                            <span>Admin Permissions</span>
+                        </a>
+                    </li>
 
                 </ul>
             </li>

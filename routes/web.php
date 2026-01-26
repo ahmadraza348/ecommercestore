@@ -91,21 +91,21 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     // Route::middleware(['checkPermission:menu.roles_permissions'])->group(function () {
 
     // Roles
-Route::prefix('roles')->name('admin.roles.')->group(function () {
-    Route::get('/', [RoleController::class, 'all_roles'])->name('index');
-    Route::post('store', [RoleController::class, 'add_roles'])->name('store');
-    Route::get('edit/{role}', [RoleController::class, 'edit_roles'])->name('edit'); 
-    Route::put('update/{role}', [RoleController::class, 'update_roles'])->name('update'); 
-    Route::delete('delete/{role}', [RoleController::class, 'delete_roles'])->name('delete');
-});
+    Route::prefix('roles')->name('admin.roles.')->group(function () {
+        Route::get('/', [RoleController::class, 'all_roles'])->name('index');
+        Route::post('store', [RoleController::class, 'add_roles'])->name('store');
+        Route::get('edit/{role}', [RoleController::class, 'edit_roles'])->name('edit');
+        Route::put('update/{role}', [RoleController::class, 'update_roles'])->name('update');
+        Route::delete('delete/{role}', [RoleController::class, 'delete_roles'])->name('delete');
+    });
 
-    // Permissions
-    Route::get('all/permissions', [RoleController::class, 'all_permissions'])->name('all.permission');
-    Route::get('add/permissions', [RoleController::class, 'add_permissions'])->name('add.permission');
-    Route::post('store/permissions', [RoleController::class, 'store_permissions'])->name('store.permission');
-    Route::get('edit/permissions/{id}', [RoleController::class, 'edit_permissions'])->name('edit.permission');
-    Route::post('update/permissions/{id}', [RoleController::class, 'update_permissions'])->name('update.permission');
-    Route::get('delete/permissions/{id}', [RoleController::class, 'delete_permissions'])->name('delete.permission');
+    Route::prefix('permissions')->name('admin.permissions.')->group(function () {
+        Route::get('/', [RoleController::class, 'all_permissions'])->name('index');
+        Route::post('store', [RoleController::class, 'add_permissions'])->name('store');
+        Route::get('edit/{permission}', [RoleController::class, 'edit_permissions'])->name('edit');
+        Route::put('update/{permission}', [RoleController::class, 'update_permissions'])->name('update');
+        Route::delete('delete/{permission}', [RoleController::class, 'delete_permissions'])->name('delete');
+    });
 
     // apply Roles and Permissions
     Route::get('show/roles/permissions', [RoleController::class, 'show_roles_permissions'])->name('show.roles.permissions');
@@ -176,4 +176,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
