@@ -107,14 +107,14 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('delete/{permission}', [RoleController::class, 'delete_permissions'])->name('delete');
     });
 
-    // apply Roles and Permissions
-    Route::get('show/roles/permissions', [RoleController::class, 'show_roles_permissions'])->name('show.roles.permissions');
-    Route::get('all/roles/permissions', [RoleController::class, 'all_roles_permissions'])->name('add.roles.permissions');
-    Route::post('store/roles/permissions', [RoleController::class, 'store_roles_permissions'])->name('store.roles.permissions');
-    Route::get('edit/roles/permissions/{id}', [RoleController::class, 'edit_roles_permissions'])->name('edit.roles.permissions');
-    Route::post('update/roles/permissions/{id}', [RoleController::class, 'update_roles_permissions'])->name('update.roles.permissions');
-    Route::get('delete/roles/permissions/{id}', [RoleController::class, 'delete_roles_permissions'])->name('delete.roles.permimssions');
-    // });
+    Route::prefix('roles-permissions')->name('admin.roles_permissions.')->group(function () {
+        Route::get('/', [RoleController::class, 'all_roles_permissions'])->name('index');
+        Route::get('/create', [RoleController::class, 'create_roles_permissions'])->name('create');
+        Route::post('store', [RoleController::class, 'store_roles_permissions'])->name('store');
+        Route::get('edit/{role_permission}', [RoleController::class, 'edit_roles_permissions'])->name('edit');
+        Route::put('update/{role_permission}', [RoleController::class, 'update_roles_permissions'])->name('update');
+        Route::delete('delete/{role_permission}', [RoleController::class, 'delete_roles_permissions'])->name('delete');
+    });
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');

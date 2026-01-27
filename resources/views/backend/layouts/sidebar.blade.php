@@ -95,19 +95,25 @@
                     <li class="{{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.user.show') }}">
                             <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                            <span>Admin Users</span>
+                            <span> Users</span>
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.roles.index') }}">
                             <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                            <span>Admin Roles</span>
+                            <span> Roles</span>
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('admin.permissions.*') ? 'active' : '' }}">
                         <a href="{{ route('admin.permissions.index') }}">
                             <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                            <span>Admin Permissions</span>
+                            <span> Permissions</span>
+                        </a>
+                    </li>
+                    <li class="{{ request()->routeIs('admin.roles_permissions.*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.roles_permissions.index') }}">
+                            <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+                            <span> Roles & Permissions</span>
                         </a>
                     </li>
 

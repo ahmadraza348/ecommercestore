@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-
+use Spatie\Permission\Models\Permission;
 
 class Admin extends Authenticatable
 {
@@ -32,6 +32,18 @@ class Admin extends Authenticatable
         'password',
         'role',
     ];
+
+    
+    public static function getPermissionGroups(){
+    $permission__groups = Permission::select('group_name')->groupBy('group_name')->get();
+    return $permission__groups;
+    }
+    
+    public static function getPermissionByGroupName($group_name){
+        $permissions = Permission::select('name', 'id')->where('group_name',$group_name)->get();
+        return $permissions;
+    }
+
 
     //   For Gates used in categories for learning
     /* 

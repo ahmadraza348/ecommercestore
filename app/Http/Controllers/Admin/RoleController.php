@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\RoleStoreRequest;
 use App\Services\Admin\RoleService;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Models\Admin;
 
 class RoleController extends Controller
 {
@@ -92,5 +93,18 @@ class RoleController extends Controller
 
         toastr()->success('Permission deleted successfully');
         return redirect()->route('admin.permissions.index');
+    }
+
+    // Roles & Permissions methods
+    public function all_roles_permissions(){
+        return view('backend.roles_permissions.index',[
+            'roles' =>Role::latest()->get(),         
+        ]);
+    }
+    public function create_roles_permissions(){
+        return view('backend.roles_permissions.create',[
+             'roles' =>Role::latest()->get(),            
+             'permission_groups' =>Admin::getPermissionGroups(),            
+        ]);
     }
 }
