@@ -17,10 +17,10 @@
                         <div class="col-lg-12 col-sm-12">
                             <div class="form-group mb-3">
                                 <label class="form-label" for="role">Role*</label>
-                                <select name="role" id="role" class="form-select" required>
+                                <select name="role_id" id="role" class="form-select" required>
                                     <option value="" selected disabled>Select Role</option>
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
+                                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
@@ -55,7 +55,7 @@
                                             @foreach ($permissions as $permission)
                                                 <div class="col-md-4">
                                                     <div class="form-check">
-                                                        <input type="checkbox" name="permission[]" 
+                                                        <input type="checkbox" name="permissions[]" 
                                                             class="form-check-input permission-checkbox" 
                                                             id="perm-{{ $permission->id }}" 
                                                             value="{{ $permission->id }}"

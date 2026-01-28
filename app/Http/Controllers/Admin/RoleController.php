@@ -3,40 +3,43 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AssignPermissionRequest;
 use App\Http\Requests\Admin\PermissionStoreRequest;
 use App\Http\Requests\Admin\RoleStoreRequest;
-use App\Services\Admin\RoleService;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Models\Admin;
+use App\Services\Admin\RoleService;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-     protected RoleService $roleService;
+    protected RoleService $roleService;
 
-      public function __construct(RoleService $roleService)
+    public function __construct(RoleService $roleService)
     {
         $this->roleService = $roleService;
     }
 
- public function all_roles()
+    public function all_roles()
     {
         return view('backend.roles_permissions.roles', [
-            'roles' => Role::latest()->get()
+            'roles' => Role::latest()->get(),
         ]);
     }
 
- public function add_roles(RoleStoreRequest $request)
+    public function add_roles(RoleStoreRequest $request)
     {
         $this->roleService->createRole($request->validated());
 
         toastr()->success('Role created successfully');
+
         return redirect()->route('admin.roles.index');
     }
-  public function edit_roles(Role $role)
+
+    public function edit_roles(Role $role)
     {
         return view('backend.roles_permissions.roles', [
-            'roles'       => Role::latest()->get(),
+            'roles' => Role::latest()->get(),
             'editingRole' => $role,
         ]);
     }
@@ -46,6 +49,7 @@ class RoleController extends Controller
         $this->roleService->updateRole($role, $request->validated());
 
         toastr()->success('Role updated successfully');
+
         return redirect()->route('admin.roles.index');
     }
 
@@ -54,14 +58,15 @@ class RoleController extends Controller
         $this->roleService->deleteRole($role);
 
         toastr()->success('Role deleted successfully');
+
         return redirect()->route('admin.roles.index');
     }
 
-
     // Permissions methods
-    public function all_permissions(){
+    public function all_permissions()
+    {
         return view('backend.roles_permissions.permissions', [
-            'permissions' => Permission::latest()->get()
+            'permissions' => Permission::latest()->get(),
         ]);
     }
 
@@ -70,41 +75,57 @@ class RoleController extends Controller
         $this->roleService->createPermission($request->validated());
 
         toastr()->success('Permission created successfully');
+
         return redirect()->route('admin.permissions.index');
     }
 
-      public function edit_permissions(Permission $permission)
+    public function edit_permissions(Permission $permission)
     {
         return view('backend.roles_permissions.permissions', [
-            'permissions'       => Permission::latest()->get(),
+            'permissions' => Permission::latest()->get(),
             'editingPermission' => $permission,
         ]);
     }
+
     public function update_permissions(PermissionStoreRequest $request, Permission $permission)
     {
         $this->roleService->updatePermission($permission, $request->validated());
 
         toastr()->success('Permission updated successfully');
+
         return redirect()->route('admin.permissions.index');
     }
+
     public function delete_permissions(Permission $permission)
     {
         $this->roleService->deletePermission($permission);
 
         toastr()->success('Permission deleted successfully');
+
         return redirect()->route('admin.permissions.index');
     }
 
     // Roles & Permissions methods
-    public function all_roles_permissions(){
-        return view('backend.roles_permissions.index',[
-            'roles' =>Role::latest()->get(),         
+    public function all_roles_permissions()
+    {
+        return view('backend.roles_permissions.index', [
+            'roles' => Role::latest()->get(),
         ]);
     }
-    public function create_roles_permissions(){
-        return view('backend.roles_permissions.create',[
-             'roles' =>Role::latest()->get(),            
-             'permission_groups' =>Admin::getPermissionGroups(),            
+
+    public function create_roles_permissions()
+    {
+        return view('backend.roles_permissions.create', [
+            'roles' => Role::latest()->get(),
+            'permission_groups' => Admin::getPermissionGroups(),
         ]);
+    }
+
+    public function store_roles_permissions(AssignPermissionRequest $request)
+    {
+        $this->roleService->storeRolePermissions($request->validated());
+        toastr()->success('Role & permissions assigned successfully');
+
+        return redirect()->route('admin.roles_permissions.index');
     }
 }

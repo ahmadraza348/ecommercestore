@@ -3,8 +3,8 @@
 namespace App\Services\Admin;
 
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleService
 {
@@ -12,6 +12,7 @@ class RoleService
     {
         return DB::transaction(function () use ($data) {
             $role = Role::create($data);
+
             return $role;
         });
     }
@@ -36,11 +37,12 @@ class RoleService
     {
         return DB::transaction(function () use ($data) {
             $permission = Permission::create($data);
+
             return $permission;
         });
     }
 
-      public function updatePermission(Permission $permission, array $data): Permission
+    public function updatePermission(Permission $permission, array $data): Permission
     {
         return DB::transaction(function () use ($permission, $data) {
             $permission->update($data);
@@ -53,6 +55,21 @@ class RoleService
     {
         DB::transaction(function () use ($permission) {
             $permission->delete();
+        });
+    }
+
+    // Roles Permissions Assignment
+
+    public function storeRolePermissions(array $data): void
+    {
+        DB::transaction(function () use ($data) {
+            $role = Role::findById($data['role_id']);
+            $role->syncPermissions(
+                Permission::whereIn('id', $data['permissions'])
+                    ->where('guard_name', $role->guard_name)
+                    ->pluck('name')
+            );
+
         });
     }
 }
