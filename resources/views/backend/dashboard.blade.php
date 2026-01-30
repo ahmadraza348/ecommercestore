@@ -2,7 +2,6 @@
 @section('content')
 
 <div class="page-wrapper">
-    @can('view-reports', auth()->guard('admin')->user())
     <div class="content">
         <div class="row">
             <div class="col-lg-3 col-sm-6 col-12">
@@ -297,7 +296,6 @@
             </div>
         </div>
     </div>
-    @endcan
 
      <div class="content">
         <h2>Welcome to the dashboard!</h2>

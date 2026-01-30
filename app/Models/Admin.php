@@ -13,7 +13,7 @@ use Spatie\Permission\Models\Permission;
 class Admin extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
-    protected $guard = 'admin';
+    protected $guard_name = 'admin';
 
     /**
      * The attributes that are mass assignable.
@@ -33,14 +33,16 @@ class Admin extends Authenticatable
         'role',
     ];
 
-    
-    public static function getPermissionGroups(){
-    $permission__groups = Permission::select('group_name')->groupBy('group_name')->get();
-    return $permission__groups;
+
+    public static function getPermissionGroups()
+    {
+        $permission__groups = Permission::select('group_name')->groupBy('group_name')->get();
+        return $permission__groups;
     }
-    
-    public static function getPermissionByGroupName($group_name){
-        $permissions = Permission::select('name', 'id')->where('group_name',$group_name)->get();
+
+    public static function getPermissionByGroupName($group_name)
+    {
+        $permissions = Permission::select('name', 'id')->where('group_name', $group_name)->get();
         return $permissions;
     }
 

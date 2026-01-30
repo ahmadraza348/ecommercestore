@@ -98,6 +98,19 @@
                         <!-- Status Field -->
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group mb-0">
+                                <label class="form-label" for="role">Role*</label>
+                                <div class="">
+                                    <select name="role" required class="form-select" id="role">
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}" {{ old('role', $admin_data->roles->first()->id ?? null) == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="col-lg-6 col-sm-12">
+                            <div class="form-group mb-0">
                                 <label class="form-label" for="status">Status*</label>
                                 <div class="">
                                     <select name="status" required class="form-select" id="status">
@@ -107,6 +120,7 @@
                                 </div>
                             </div>
                         </div>
+                       
                         <!-- Submit and Cancel Buttons -->
                         <div class="col-lg-12">
                             <button type="submit" class="btn btn-submit me-2">Update</button>

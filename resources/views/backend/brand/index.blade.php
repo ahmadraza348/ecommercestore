@@ -11,10 +11,12 @@
                 <div class="page-btn">
                     
                 </div>
+                @can('create_brands', 'admin')
                 <div class="page-btn">
                     <a href="{{ route('brand.create') }}" class="btn btn-added"><img
                             src="{{ asset('backend/assets/img/icons/plus.svg') }}" alt="img">Add Brand</a>
                 </div>
+                @endcan
         
             </div>
 

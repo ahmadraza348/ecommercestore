@@ -38,8 +38,8 @@ class PermissionSeeder extends Seeder
 
         foreach ($modules as $module) {
             foreach ($actions as $action) {
-                // Formatting the name, e.g., "view categories"
-                $permissionName = "{$action} {$module}";
+                // Formatting the name, e.g., "view_categories"
+                $permissionName = "{$action}_{$module}";
                 
                 Permission::updateOrCreate(
                     [

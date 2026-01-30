@@ -12,7 +12,7 @@
             <!-- Form for updating the brand -->
             <form method="post" action="{{ route('brand.update', $brand->id) }}" enctype="multipart/form-data">
                 @csrf
-                @method('PUT') <!-- Important for PUT method -->
+              
                 <div class="card">
                     <div class="card-body">
                         <div class="row g-4">

@@ -74,7 +74,24 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::post('/brand/bulk-delete', [BrandController::class, 'bulkDelete'])->name('brand.bulk-delete');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
 
-    Route::resource('brand', BrandController::class)->names('brand');
+
+    Route::prefix('brand')->name('brand.')->group(function () {
+
+        Route::get('/', [BrandController::class, 'index'])->middleware('permission:view_brands')->name('index');
+        Route::group(['middleware' => 'permission:create_brands'], function () {
+            Route::get('create', [BrandController::class, 'create'])->name('create');
+            Route::post('store', [BrandController::class, 'store'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_brands'], function () {
+            Route::get('edit/{id}', [BrandController::class, 'edit'])->name('edit');
+            Route::post('update/{id}', [BrandController::class, 'update'])->name('update');
+        });
+        Route::delete('delete/{id}', [BrandController::class, 'destroy'])->middleware('permission:delete_brands')->name('destroy');
+    });
+
+
+
+
     Route::resource('attribute', AttributeController::class)->names('attribute');
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
     Route::resource('product', ProductController::class)->names('product');

@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminUserController extends Controller
 {
@@ -16,7 +17,8 @@ class AdminUserController extends Controller
     }
     public function add()
     {
-        return view('backend.adminuser.add');
+        $data['roles'] = Role::all();
+        return view('backend.adminuser.add', $data);
     }
     public function store(request $request)
     {
@@ -27,6 +29,7 @@ class AdminUserController extends Controller
             'email' => 'required|email|unique:admins',
             'password' => 'required|min:8|confirmed',
             'password_confirmation' => 'required',
+            'role' => 'required',
         ]);
         $admin = new Admin;
         $admin->first_name = $request->first_name;
@@ -35,16 +38,20 @@ class AdminUserController extends Controller
         $admin->username = $request->username;
         $admin->password = Hash::make($request->password);
         $admin->status = $request->status;
+        $role = Role::findOrFail($request->role);
+        $admin->assignRole($role->name);
+
         $admin->save();
         toastr()->success('Admin User registered Successfully');
         return redirect()->route('admin.user.show');
     }
 
- 
+
 
     public function edit($id)
     {
         $data['admin_data'] = Admin::findOrFail($id);
+        $data['roles'] = Role::all();
         return view('backend.adminuser.edit', $data);
     }
 
@@ -55,6 +62,7 @@ class AdminUserController extends Controller
             'last_name' => 'required|max:30',
             'username' => 'required|max:30|unique:admins,username,' . $id,
             'email' => 'required|email|unique:admins,email,' . $id,
+            'role' => 'required|exists:roles,id',
         ]);
         if ($request->filled('password')) {
             $request->validate([
@@ -72,9 +80,11 @@ class AdminUserController extends Controller
         if ($request->password) {
             $admin->password = Hash::make($request->password);
         }
+        $role = Role::findOrFail($request->role);
+        $admin->syncRoles([$role->name]);
 
         $admin->save();
-        toastr()->success( 'Admin User updated Successfully');
+        toastr()->success('Admin User updated Successfully');
         return redirect()->route('admin.user.show');
     }
 
@@ -86,45 +96,45 @@ class AdminUserController extends Controller
         return redirect()->route('admin.user.show');
     }
 
-    public function profile(){
-        $user = auth()->guard('admin')->user(); 
+    public function profile()
+    {
+        $user = auth()->guard('admin')->user();
         return view('backend.adminuser.profile', compact('user'));
-        
+
         return view('backend.adminuser.profile');
     }
     public function profile_update(Request $request, $id)
-{
-    // dd($request->all());
-    $request->validate([
-        'first_name' => 'required|max:30',
-        'last_name' => 'required|max:30',
-        'username' => 'required|max:30|unique:users,username,' . $id,
-        'email' => 'required|email|unique:users,email,' . $id,
-    ]);
-
-    $user = Admin::findOrFail($id);
-    $user->first_name = $request->first_name;
-    $user->last_name = $request->last_name;
-    $user->username = $request->username;
-    $user->email = $request->email;
-    $user->phone = $request->phone;
-    $user->gender = $request->gender;
-
-    if ($request->filled('password')) {
+    {
+        // dd($request->all());
         $request->validate([
-            'password' => 'required|min:8|confirmed',
+            'first_name' => 'required|max:30',
+            'last_name' => 'required|max:30',
+            'username' => 'required|max:30|unique:users,username,' . $id,
+            'email' => 'required|email|unique:users,email,' . $id,
         ]);
-        $user->password = Hash::make($request->password);
+
+        $user = Admin::findOrFail($id);
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->gender = $request->gender;
+
+        if ($request->filled('password')) {
+            $request->validate([
+                'password' => 'required|min:8|confirmed',
+            ]);
+            $user->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profile', 'public');
+            $user->image = $imagePath;
+        }
+
+        $user->save();
+        toastr()->success('Profile updated successfully.');
+        return redirect()->back();
     }
-
-    if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('profile', 'public');
-        $user->image = $imagePath;
-    }
-
-    $user->save();
-toastr()->success('Profile updated successfully.');
-    return redirect()->back();
-}
-
 }

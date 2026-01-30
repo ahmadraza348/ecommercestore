@@ -96,6 +96,18 @@
 
                         <div class="col-lg-6 col-sm-12">
                             <div class="form-group mb-0">
+                                <label class="form-label" for="role">Role*</label>
+                                <div class="">
+                                    <select name="role" required class="form-select" id="role">
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group mb-0">
                                 <label class="form-label" for="status">Status*</label>
                                 <div class="">
                                     <select name="status" required class="form-select" id="status">

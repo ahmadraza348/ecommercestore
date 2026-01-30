@@ -69,18 +69,17 @@ class RoleService
                     ->where('guard_name', $role->guard_name)
                     ->pluck('name')
             );
-
         });
     }
 
     public function updateRolePermissions(Role $role, array $data): void
     {
         DB::transaction(function () use ($role, $data) {
-            $role->syncPermissions(
-                Permission::whereIn('id', $data['permissions'])
-                    ->where('guard_name', $role->guard_name)
-                    ->pluck('name')
-            );
+            $permissionNames = Permission::whereIn('id', $data['permissions'])
+                ->where('guard_name', $role->guard_name)
+                ->pluck('name');
+
+            $role->syncPermissions($permissionNames);
         });
     }
     public function deleteRolePermissions(Role $role): void

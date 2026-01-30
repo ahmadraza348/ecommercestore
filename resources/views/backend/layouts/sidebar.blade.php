@@ -16,12 +16,14 @@
                         <span>Category</span>
                     </a>
                 </li>
-                <li class="{{ request()->routeIs('brand.*') ? 'active' : '' }}">
-                    <a href="{{ route('brand.index') }}">
-                        <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
-                        <span>Brands</span>
-                    </a>
-                </li>
+@can('view_brands', 'admin')
+    <li class="{{ request()->routeIs('brand.*') ? 'active' : '' }}">
+        <a href="{{ route('brand.index') }}">
+            <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
+            <span>Brands</span>
+        </a>
+    </li>
+@endcan
                 <li class="{{ request()->routeIs('coupons.*') ? 'active' : '' }}">
                     <a href="{{ route('coupons.index') }}">
                         <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
