@@ -1,29 +1,27 @@
 @extends('backend.layouts.layout')
-@section('title', 'Assign Permissions to Roles - Raza Mall')
+@section('title', 'Edit Permissions - Raza Mall')
+
 @section('content')
 <div class="page-wrapper">
     <div class="content">
         <div class="page-header">
             <div class="page-title">
-                <h6>Assign Permissions to Roles</h6>
+                <h6>Edit Permissions for Role: <span class="text-primary">{{ $role->name }}</span></h6>
             </div>
         </div>
 
-        <form method="post" action="{{ route('admin.roles_permissions.store') }}">
-            @csrf
+      <form method="post" action="{{ route('admin.roles_permissions.update', ['role_permission' => $role->id]) }}">
+    @csrf
+    @method('PUT')
+
             <div class="card">
                 <div class="card-body">
                     <div class="row g-4">
-                        <div class="col-lg-12 col-sm-12">
+                        <div class="col-lg-12">
                             <div class="form-group mb-3">
-                                <label class="form-label" for="role">Role*</label>
+                                <label class="form-label font-weight-bold" for="role">Role</label>
                                 <select name="role" id="role" class="form-select" required>
-                                    <option value="" selected disabled>Select Role</option>
-                                    @foreach ($roles as $role)
-                                    <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
-                                        {{ $role->name }}
-                                    </option>
-                                    @endforeach
+                                    <option value="{{ $role->id }}" selected>{{ $role->name }}</option>
                                 </select>
                                 @error('role')
                                 <p class="text-danger">{{ $message }}</p>
@@ -34,18 +32,16 @@
                         <hr>
 
                         <div class="col-lg-12">
-                            @error('permissions')
-                            <p class="text-danger">{{ $message }}</p>
-                            @enderror
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="checkAllPermissions">
                                 <label class="form-check-label" for="checkAllPermissions"><strong>Select All Permissions</strong></label>
                             </div>
 
                             @foreach ($permission_groups as $group)
-                            <div class="row mb-4">
+                            <div class="row mb-4 border-bottom pb-2">
                                 <div class="col-lg-3">
                                     <div class="form-check">
+                                        {{-- Group Checkbox --}}
                                         <input type="checkbox" class="form-check-input group-checkbox" id="group-{{ $loop->index }}">
                                         <label class="form-check-label text-primary" for="group-{{ $loop->index }}">
                                             <strong>{{ $group->group_name }}</strong>
@@ -65,13 +61,13 @@
                                                     class="form-check-input permission-checkbox"
                                                     id="perm-{{ $permission->id }}"
                                                     value="{{ $permission->id }}"
-                                                    data-group="group-{{ $loop->parent->index }}">
+                                                    data-group="group-{{ $loop->parent->index }}"
+                                                    {{ $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="perm-{{ $permission->id }}">
                                                     {{ $permission->name }}
                                                 </label>
                                             </div>
                                         </div>
-
                                         @endforeach
                                     </div>
                                 </div>
@@ -79,8 +75,9 @@
                             @endforeach
                         </div>
 
-                        <div class="col-lg-12">
-                            <button type="submit" class="btn btn-submit me-2 btn-primary">Submit</button>
+                        <div class="col-lg-12 mt-3">
+                            <button type="submit" class="btn btn-primary">Update Permissions</button>
+                            <a href="{{ route('admin.roles_permissions.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -92,40 +89,51 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        // 1. Handle "Select All Permissions"
+
+        // --- INITIALIZE ON PAGE LOAD ---
+        // Checks if groups or "Select All" should be checked based on existing permissions
+        initCheckboxes();
+
+        function initCheckboxes() {
+            $('.group-checkbox').each(function() {
+                const groupId = $(this).attr('id');
+                const total = $(`.permission-checkbox[data-group=${groupId}]`).length;
+                const checked = $(`.permission-checkbox[data-group=${groupId}]:checked`).length;
+                if (total > 0 && total === checked) {
+                    $(this).prop('checked', true);
+                }
+            });
+            updateMasterCheckbox();
+        }
+
+        // --- EVENT HANDLERS ---
+
+        // 1. Master Checkbox
         $('#checkAllPermissions').click(function() {
-            if ($(this).is(':checked')) {
-                $('input[type=checkbox]').prop('checked', true);
-            } else {
-                $('input[type=checkbox]').prop('checked', false);
-            }
+            $('input[type=checkbox]').prop('checked', $(this).is(':checked'));
         });
 
-        // 2. Handle Group-specific "Select All"
+        // 2. Group Checkbox
         $('.group-checkbox').click(function() {
             const groupId = $(this).attr('id');
-            if ($(this).is(':checked')) {
-                $(`input[data-group=${groupId}]`).prop('checked', true);
-            } else {
-                $(`input[data-group=${groupId}]`).prop('checked', false);
-            }
+            $(`input[data-group=${groupId}]`).prop('checked', $(this).is(':checked'));
             updateMasterCheckbox();
         });
 
-        // 3. Update parent checkboxes if individual ones are unchecked
+        // 3. Individual Checkbox
         $('.permission-checkbox').click(function() {
             const groupId = $(this).data('group');
-            const groupChecked = $(`.permission-checkbox[data-group=${groupId}]:checked`).length;
-            const groupTotal = $(`.permission-checkbox[data-group=${groupId}]`).length;
+            const total = $(`.permission-checkbox[data-group=${groupId}]`).length;
+            const checked = $(`.permission-checkbox[data-group=${groupId}]:checked`).length;
 
-            $(`#${groupId}`).prop('checked', groupChecked === groupTotal);
+            $(`#${groupId}`).prop('checked', total === checked);
             updateMasterCheckbox();
         });
 
         function updateMasterCheckbox() {
-            const totalPermissions = $('.permission-checkbox').length;
-            const checkedPermissions = $('.permission-checkbox:checked').length;
-            $('#checkAllPermissions').prop('checked', totalPermissions === checkedPermissions);
+            const totalPerms = $('.permission-checkbox').length;
+            const checkedPerms = $('.permission-checkbox:checked').length;
+            $('#checkAllPermissions').prop('checked', totalPerms === checkedPerms && totalPerms > 0);
         }
     });
 </script>

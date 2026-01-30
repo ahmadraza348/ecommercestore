@@ -63,13 +63,30 @@ class RoleService
     public function storeRolePermissions(array $data): void
     {
         DB::transaction(function () use ($data) {
-            $role = Role::findById($data['role_id']);
+            $role = Role::findById($data['role']);
             $role->syncPermissions(
                 Permission::whereIn('id', $data['permissions'])
                     ->where('guard_name', $role->guard_name)
                     ->pluck('name')
             );
 
+        });
+    }
+
+    public function updateRolePermissions(Role $role, array $data): void
+    {
+        DB::transaction(function () use ($role, $data) {
+            $role->syncPermissions(
+                Permission::whereIn('id', $data['permissions'])
+                    ->where('guard_name', $role->guard_name)
+                    ->pluck('name')
+            );
+        });
+    }
+    public function deleteRolePermissions(Role $role): void
+    {
+        DB::transaction(function () use ($role) {
+            $role->permissions()->detach();
         });
     }
 }

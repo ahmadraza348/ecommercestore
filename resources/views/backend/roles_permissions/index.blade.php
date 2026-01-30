@@ -5,7 +5,7 @@
     <div class="content">
         <div class="page-header">
             <div class="page-title">
-                <h4>Manage Colors</h4>
+                <h4>Manage Roles and permissions</h4>
             </div>
             <div class="page-btn">
 
@@ -35,7 +35,11 @@
                             @foreach ($roles as $item)
                             <tr>
                                 <td>{{ $item->name }} </td>                               
-                                <td>{{ $item->group_name }} </td>                               
+                                <td>
+                                    @foreach ($item->permissions as $permission)
+                                        <span class="badge bg-primary">{{ $permission->name }}</span>
+                                    @endforeach
+                                </td>                               
                                 <td>
                                     <a href="
                                             {{ route('admin.roles_permissions.edit', $item->id) }}

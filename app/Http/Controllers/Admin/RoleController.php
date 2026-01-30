@@ -128,4 +128,26 @@ class RoleController extends Controller
 
         return redirect()->route('admin.roles_permissions.index');
     }
+
+    public function edit_roles_permissions(Role $role_permission)
+    {
+        return view('backend.roles_permissions.edit', [
+            'role' => $role_permission, // Passing it as 'role' for the view
+            'permission_groups' => Admin::getPermissionGroups(),
+        ]);
+    }
+    public function update_roles_permissions(AssignPermissionRequest $request, Role $role_permission)
+    {
+        // If you are using a Service Layer like in your store method:
+        $this->roleService->updateRolePermissions($role_permission, $request->validated());
+        toastr()->success('Role & permissions updated successfully');
+        return redirect()->route('admin.roles_permissions.index');
+    }
+
+    public function delete_roles_permissions(Role $role_permission)
+    {
+        $this->roleService->deleteRolePermissions($role_permission);
+        toastr()->success('Permissions Unassigned');
+        return redirect()->back();
+    }
 }
