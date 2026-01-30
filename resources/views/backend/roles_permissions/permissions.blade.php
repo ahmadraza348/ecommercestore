@@ -17,19 +17,19 @@
                         <form method="POST" action="{{ isset($editingPermission) ? route('admin.permissions.update', $editingPermission->id) : route('admin.permissions.store') }}">
                             @csrf
                             @if(isset($editingPermission))
-                                @method('PUT')
+                            @method('PUT')
                             @endif
 
                             {{-- Permission Name --}}
                             <div class="form-group">
                                 <label>Permission Name*</label>
-                                <input type="text" 
-                                       class="form-control" 
-                                       value="{{ old('name', $editingPermission->name ?? '') }}" 
-                                       name="name" 
-                                       required>
+                                <input type="text"
+                                    class="form-control"
+                                    value="{{ old('name', $editingPermission->name ?? '') }}"
+                                    name="name"
+                                    required>
                                 @error('name')
-                                    <div class="text-danger">{{ $message }}</div>
+                                <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
@@ -39,27 +39,27 @@
                                 <select name="group_name" class="form-control" required>
                                     <option value="" selected disabled>Select One</option>
                                     @php
-                                        $groups = ['categories', 'brands', 'coupons', 'products', 'product_attributes', 'manage_orders', 'manage_site', 'system_admins', 'roles_permissions'];
+                                    $groups = ['categories', 'brands', 'coupons', 'products', 'product_attributes', 'manage_orders', 'manage_site', 'system_admins', 'roles_permissions'];
                                     @endphp
-                                    
+
                                     @foreach($groups as $group)
-                                        <option value="{{ $group }}" 
-                                            {{ (old('group_name', $editingPermission->group_name ?? '') == $group) ? 'selected' : '' }}>
-                                            {{ ucwords(str_replace('_', ' ', $group)) }}
-                                        </option>
+                                    <option value="{{ $group }}"
+                                        {{ (old('group_name', $editingPermission->group_name ?? '') == $group) ? 'selected' : '' }}>
+                                        {{ ucwords(str_replace('_', ' ', $group)) }}
+                                    </option>
                                     @endforeach
                                 </select>
                                 @error('group_name')
-                                    <div class="text-danger">{{ $message }}</div>
+                                <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary mt-2"> 
+                            <button type="submit" class="btn btn-primary mt-2">
                                 {{ isset($editingPermission) ? 'Update Permission' : 'Add Permission' }}
                             </button>
 
                             @if(isset($editingPermission))
-                                <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary mt-2">Cancel</a>
+                            <a href="{{ route('admin.permissions.index') }}" class="btn btn-secondary mt-2">Cancel</a>
                             @endif
                         </form>
                     </div>
@@ -71,35 +71,32 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table datanew">
+
+                            <table class="table table-bordered datanew">
                                 <thead>
-                                    <tr>
-                                        <th>Permission</th>
-                                        <th>Group</th>
-                                        <th>Action</th>
+                                    <tr class="table-light">
+                                        <th width="70%">Permission</th>
+                                        <th width="30%">Action</th>
                                     </tr>
                                 </thead>
+                                @foreach ($permissions as $groupName => $groupPermissions)
                                 <tbody>
-                                    @foreach ($permissions as $item)
+                                    @foreach ($groupPermissions as $item)
                                     <tr>
                                         <td>{{ $item->name }}</td>
-                                        <td><span class="badge bg-dark">{{str_replace('_', ' ', ucwords($item->group_name))}}</span></td>
                                         <td>
-                                            {{-- Edit Button --}}
                                             <a href="{{ route('admin.permissions.edit', $item->id) }}" class="me-3">
                                                 <img src="{{ asset('backend/assets/img/icons/edit.svg') }}" alt="edit">
                                             </a>
 
-                                            {{-- Delete Button with Hidden Form --}}
-                                            <a href="javascript:void(0);" 
-                                               onclick="if(confirm('Are you sure to permanently delete this?')) { document.getElementById('delete-form-{{ $item->id }}').submit(); }" 
-                                               class="me-3">
+                                            <a href="javascript:void(0);"
+                                                onclick="if(confirm('Are you sure?')) { document.getElementById('delete-form-{{ $item->id }}').submit(); }">
                                                 <img src="{{ asset('backend/assets/img/icons/delete.svg') }}" alt="delete">
                                             </a>
-                                            <form id="delete-form-{{ $item->id }}" 
-                                                  action="{{ route('admin.permissions.delete', $item->id) }}" 
-                                                  method="POST" 
-                                                  style="display: none;">
+
+                                            <form id="delete-form-{{ $item->id }}"
+                                                action="{{ route('admin.permissions.delete', $item->id) }}"
+                                                method="POST" style="display: none;">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>
@@ -107,8 +104,10 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
+                                @endforeach
                             </table>
                         </div>
+
                     </div>
                 </div>
             </div>

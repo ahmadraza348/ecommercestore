@@ -27,7 +27,6 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Assigned Permissions</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -35,11 +34,7 @@
                             @foreach ($roles as $item)
                             <tr>
                                 <td>{{ $item->name }} </td>                               
-                                <td>
-                                    @foreach ($item->permissions as $permission)
-                                        <span class="badge bg-primary">{{ $permission->name }}</span>
-                                    @endforeach
-                                </td>                               
+                                                  
                                 <td>
                                     <a href="
                                             {{ route('admin.roles_permissions.edit', $item->id) }}

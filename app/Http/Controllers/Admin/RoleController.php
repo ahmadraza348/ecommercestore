@@ -66,7 +66,7 @@ class RoleController extends Controller
     public function all_permissions()
     {
         return view('backend.roles_permissions.permissions', [
-            'permissions' => Permission::latest()->get(),
+            'permissions' => Permission::latest()->get()->groupBy('group_name'),
         ]);
     }
 
