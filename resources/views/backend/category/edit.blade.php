@@ -12,7 +12,6 @@
 
             <form method="post" class="" action="{{ route('category.update', $category->id) }}" enctype="multipart/form-data">
                 @csrf
-                @method('PUT') <!-- Use PUT method for updating -->
                 
                 <div class="card">
                     <div class="card-body">

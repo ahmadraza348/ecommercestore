@@ -9,6 +9,12 @@ use App\Http\Requests\Admin\{StoreCategoryRequest, ImportCategoryRequest, Update
 
 class CategoryController extends Controller
 {
+protected CategoryService $service;
+
+public function __construct(CategoryService $service)
+{
+    $this->service = $service;
+}
     public function index()
     {
         $data['categories_data'] = Category::with('parent')->ordered()->get();
@@ -21,9 +27,9 @@ class CategoryController extends Controller
         return view('backend.category.create', $data);
     }
 
-    public function store(StoreCategoryRequest $request, CategoryService $service)
+    public function store(StoreCategoryRequest $request)
     {
-        $service->create($request->validated());
+        $this->service->create($request->validated());
         toastr()->success('Category created successfully');
         return redirect()->route('category.index');
     }
@@ -43,36 +49,32 @@ class CategoryController extends Controller
     public function update(
         UpdateCategoryRequest $request,
         Category $category,
-        CategoryService $service
     ) {
-        $service->update($category, $request->validated());
-
+        $this->service->update($category, $request->validated());
         toastr()->success('Category updated successfully');
         return redirect()->route('category.index');
     }
 
-    public function destroy(Category $category, CategoryService $service)
+    public function destroy(Category $category)
     {
-        $service->delete($category);
+        $this->service->delete($category);
         toastr()->success('Category Deleted Successfully');
         return back();
     }
 
     public function bulkDelete(
         BulkDeleteCategoryRequest $request,
-        CategoryService $service
     ) {
-        $service->bulkDelete($request->getCategoryIds());
+        $this->service->bulkDelete($request->getCategoryIds());
         toastr()->success('Categories deleted successfully');
         return back();
     }
 
     public function import(
-        ImportCategoryRequest $request,
-        CategoryService $service
+        ImportCategoryRequest $request,       
     ) {
         try {
-            $service->importCategories($request->file('categories_file'));
+            $this->service->importCategories($request->file('categories_file'));
 
             toastr()->success('Categories imported successfully');
             return back();

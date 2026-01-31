@@ -66,11 +66,32 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
     });
-    Route::post('/categories/import', [CategoryController::class, 'import'])->name('categories.import');
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
 
     Route::resource('category', CategoryController::class)->names('category');
-    Route::post('/category/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('category.bulk-delete');
+
+
+
+    Route::prefix('category')->name('category.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->middleware('permission:view_categories')->name('index');
+        Route::group(['middleware' => 'permission:create_categories'], function () {
+            Route::get('create', [CategoryController::class, 'create'])->name('create');
+            Route::post('store', [CategoryController::class, 'store'])->name('store');
+            Route::post('/import', [CategoryController::class, 'import'])->name('import');
+        });
+        Route::group(['middleware' => 'permission:edit_categories'], function () {
+            Route::get('edit/{category}', [CategoryController::class, 'edit'])->name('edit');
+            Route::post('update/{category}', [CategoryController::class, 'update'])->name('update');
+        });
+        Route::group(['middleware' => 'permission:delete_categories'], function () {
+            Route::delete('delete/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-delete', [CategoryController::class, 'bulkDelete'])->name('bulk-delete');
+        });
+    });
+
+
+
+
     Route::post('/brand/bulk-delete', [BrandController::class, 'bulkDelete'])->name('brand.bulk-delete');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
 

@@ -9,21 +9,25 @@
                 <h6>Manage your Product Categories </h6>
 
             </div>
-
+@can('create_categories')
             <div class="page-btn">
                 <a href="{{ route('category.create') }}" class="btn btn-added"><img
                         src="{{ asset('backend/assets/img/icons/plus.svg') }}" alt="img">Add Category</a>
-            </div>
+            </div>               
+@endcan
 
 
         </div>
-        <form action="{{ route('categories.import') }}"class=" d-flex justify-content-end" method="POST" enctype="multipart/form-data">
+        @can('create_categories')
+
+        <form action="{{ route('category.import') }}"class=" d-flex justify-content-end" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="form-group d-flex"style="width:400px;">
                 <input type="file" name="categories_file" id="categories_file" class="form-control mx-2 " required>
                 <button type="submit" class="btn btn-primary">Import </button>
             </div>
         </form>
+        @endcan
 
 
 
