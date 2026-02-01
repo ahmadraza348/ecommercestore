@@ -30,7 +30,6 @@ class Admin extends Authenticatable
         'status',
         'email',
         'password',
-        'role',
     ];
 
 

@@ -51,25 +51,29 @@ Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
 Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'download'])
     ->name('order.invoice.pdf');
 
+// Admin Panel Routes 
+
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
     // Admin User Routes
-    Route::prefix('user')->group(function () {
-        Route::get('/', [AdminUserController::class, 'show'])->name('admin.user.show');
-        Route::get('/add', [AdminUserController::class, 'add'])->name('admin.user.add');
-        Route::post('/store', [AdminUserController::class, 'store'])->name('admin.user.store');
-        Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('admin.user.edit');
-        Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('admin.user.update');
-        Route::get('/delete/{id}', [AdminUserController::class, 'delete'])->name('admin.user.delete');
-        Route::get('/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
-        Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
+    Route::prefix('user')->name('admin.user.')->group(function () {
+        Route::get('/', [AdminUserController::class, 'show'])->middleware('permission:view_admins')->name('show');
+        Route::group(['middleware' => 'permission:create_admins'], function () {
+            Route::get('/add', [AdminUserController::class, 'add'])->name('add');
+            Route::post('/store', [AdminUserController::class, 'store'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_admins'], function () {
+            Route::get('/edit/{id}', [AdminUserController::class, 'edit'])->name('edit');
+            Route::post('/update/{id}', [AdminUserController::class, 'update'])->name('update');
+        });
+        Route::group(['middleware' => 'permission:delete_admins'], function () {
+            Route::get('/delete/{id}', [AdminUserController::class, 'delete'])->name('delete');
+        });
+        Route::get('/profile', [AdminUserController::class, 'profile'])->name('profile');
+        Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('profile.update');
     });
-    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
-
-    Route::resource('category', CategoryController::class)->names('category');
-
 
 
     Route::prefix('category')->name('category.')->group(function () {
@@ -89,13 +93,6 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         });
     });
 
-
-
-
-    Route::post('/brand/bulk-delete', [BrandController::class, 'bulkDelete'])->name('brand.bulk-delete');
-    Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
-
-
     Route::prefix('brand')->name('brand.')->group(function () {
 
         Route::get('/', [BrandController::class, 'index'])->middleware('permission:view_brands')->name('index');
@@ -108,6 +105,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
             Route::post('update/{id}', [BrandController::class, 'update'])->name('update');
         });
         Route::delete('delete/{id}', [BrandController::class, 'destroy'])->middleware('permission:delete_brands')->name('destroy');
+        Route::post('bulk-delete', [BrandController::class, 'bulkDelete'])->name('bulk-delete');
     });
 
 
@@ -116,7 +114,9 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::resource('attribute', AttributeController::class)->names('attribute');
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
     Route::resource('product', ProductController::class)->names('product');
+    Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
 
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
     Route::prefix('colors')->name('colors.')->group(function () {
         Route::get('/', [ProductColorsController::class, 'index'])->name('index');
         Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
@@ -126,33 +126,40 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('/destroy/{id}', [ProductColorsController::class, 'destroy'])->name('destroy');
     });
 
-    // Route::middleware(['checkPermission:menu.roles_permissions'])->group(function () {
-
-    // Roles
+    // Roles And Permissions Routes start here
     Route::prefix('roles')->name('admin.roles.')->group(function () {
-        Route::get('/', [RoleController::class, 'all_roles'])->name('index');
-        Route::post('store', [RoleController::class, 'add_roles'])->name('store');
-        Route::get('edit/{role}', [RoleController::class, 'edit_roles'])->name('edit');
-        Route::put('update/{role}', [RoleController::class, 'update_roles'])->name('update');
-        Route::delete('delete/{role}', [RoleController::class, 'delete_roles'])->name('delete');
+        Route::get('/', [RoleController::class, 'all_roles'])->name('index')->middleware('permission:view_roles');
+        Route::post('store', [RoleController::class, 'add_roles'])->name('store')->middleware('permission:add_roles');
+        Route::group(['middleware' => 'permission:edit_roles'], function () {
+            Route::get('edit/{role}', [RoleController::class, 'edit_roles'])->name('edit');
+            Route::put('update/{role}', [RoleController::class, 'update_roles'])->name('update');
+        });
+        Route::delete('delete/{role}', [RoleController::class, 'delete_roles'])->name('delete')->middleware('permission:delete_roles');
     });
 
     Route::prefix('permissions')->name('admin.permissions.')->group(function () {
-        Route::get('/', [RoleController::class, 'all_permissions'])->name('index');
-        Route::post('store', [RoleController::class, 'add_permissions'])->name('store');
-        Route::get('edit/{permission}', [RoleController::class, 'edit_permissions'])->name('edit');
-        Route::put('update/{permission}', [RoleController::class, 'update_permissions'])->name('update');
-        Route::delete('delete/{permission}', [RoleController::class, 'delete_permissions'])->name('delete');
+        Route::get('/', [RoleController::class, 'all_permissions'])->name('index')->middleware('permission:view_permissions');
+        Route::post('store', [RoleController::class, 'add_permissions'])->name('store')->middleware('permission:add_permissions');
+        Route::group(['middleware' => 'permission:edit_permissions'], function () {
+            Route::get('edit/{permission}', [RoleController::class, 'edit_permissions'])->name('edit');
+            Route::put('update/{permission}', [RoleController::class, 'update_permissions'])->name('update');
+        });
+        Route::delete('delete/{permission}', [RoleController::class, 'delete_permissions'])->name('delete')->middleware('permission:delete_permissions');
     });
 
     Route::prefix('roles-permissions')->name('admin.roles_permissions.')->group(function () {
-        Route::get('/', [RoleController::class, 'all_roles_permissions'])->name('index');
-        Route::get('/create', [RoleController::class, 'create_roles_permissions'])->name('create');
-        Route::post('store', [RoleController::class, 'store_roles_permissions'])->name('store');
-        Route::get('edit/{role_permission}', [RoleController::class, 'edit_roles_permissions'])->name('edit');
-        Route::put('update/{role_permission}', [RoleController::class, 'update_roles_permissions'])->name('update');
-        Route::delete('delete/{role_permission}', [RoleController::class, 'delete_roles_permissions'])->name('delete');
+        Route::get('/', [RoleController::class, 'all_roles_permissions'])->name('index')->middleware('permission:view_roles_permissions');
+        Route::group(['middleware' => 'permission:add_roles_permissions'], function () {
+            Route::get('/create', [RoleController::class, 'create_roles_permissions'])->name('create');
+            Route::post('store', [RoleController::class, 'store_roles_permissions'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_roles_permissions'], function () {
+            Route::get('edit/{role_permission}', [RoleController::class, 'edit_roles_permissions'])->name('edit');
+            Route::put('update/{role_permission}', [RoleController::class, 'update_roles_permissions'])->name('update');
+        });
+        Route::delete('delete/{role_permission}', [RoleController::class, 'delete_roles_permissions'])->name('delete')->middleware('permission:delete_roles_permissions');
     });
+    // Roles And Permissions Routes end here
 
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');

@@ -1,97 +1,59 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Admin\AdminUserStoreRequest;
+use App\Http\Requests\Admin\AdminUserUpdateRequest;
+use App\Services\Admin\AdminUserService;
 use Spatie\Permission\Models\Role;
+use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
 {
+    protected $adminService;
+
+    public function __construct(AdminUserService $adminService)
+    {
+        $this->adminService = $adminService;
+    }
+
     public function show()
     {
-        $data['adminusers'] = Admin::latest()->get();
-        return view('backend.adminuser.show', $data);
+        $adminusers = Admin::latest()->get();
+        return view('backend.adminuser.show', compact('adminusers'));
     }
+
     public function add()
     {
-        $data['roles'] = Role::all();
-        return view('backend.adminuser.add', $data);
+        $roles = Role::all();
+        return view('backend.adminuser.add', compact('roles'));
     }
-    public function store(request $request)
-    {
-        $request->validate([
-            'first_name' => 'required|max:30',
-            'last_name' => 'required|max:30',
-            'username' => ['required', 'unique:admins', 'max:30'],
-            'email' => 'required|email|unique:admins',
-            'password' => 'required|min:8|confirmed',
-            'password_confirmation' => 'required',
-            'role' => 'required',
-        ]);
-        $admin = new Admin;
-        $admin->first_name = $request->first_name;
-        $admin->last_name = $request->last_name;
-        $admin->email = $request->email;
-        $admin->username = $request->username;
-        $admin->password = Hash::make($request->password);
-        $admin->status = $request->status;
-        $role = Role::findOrFail($request->role);
-        $admin->assignRole($role->name);
 
-        $admin->save();
+    public function store(AdminUserStoreRequest $request)
+    {
+        $this->adminService->storeUser($request->validated());
         toastr()->success('Admin User registered Successfully');
         return redirect()->route('admin.user.show');
     }
 
-
-
     public function edit($id)
     {
-        $data['admin_data'] = Admin::findOrFail($id);
-        $data['roles'] = Role::all();
-        return view('backend.adminuser.edit', $data);
+        $admin_data = Admin::findOrFail($id);
+        $roles = Role::all();
+        return view('backend.adminuser.edit', compact('admin_data', 'roles'));
     }
 
-    public function update(Request $request, $id)
+    public function update(AdminUserUpdateRequest $request, $id)
     {
-        $request->validate([
-            'first_name' => 'required|max:30',
-            'last_name' => 'required|max:30',
-            'username' => 'required|max:30|unique:admins,username,' . $id,
-            'email' => 'required|email|unique:admins,email,' . $id,
-            'role' => 'required|exists:roles,id',
-        ]);
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'required|min:8|confirmed',
-                'password_confirmation' => 'required',
-            ]);
-        }
-
-        $admin = Admin::find($id);
-        $admin->first_name = $request->first_name;
-        $admin->last_name = $request->last_name;
-        $admin->username = $request->username;
-        $admin->email = $request->email;
-        $admin->status = $request->status;
-        if ($request->password) {
-            $admin->password = Hash::make($request->password);
-        }
-        $role = Role::findOrFail($request->role);
-        $admin->syncRoles([$role->name]);
-
-        $admin->save();
+        $this->adminService->updateUser($id, $request->validated());
         toastr()->success('Admin User updated Successfully');
         return redirect()->route('admin.user.show');
     }
 
     public function delete($id)
     {
-        $admin = Admin::findOrFail($id);
-        $admin->delete();
+        Admin::findOrFail($id)->delete();
         toastr()->success('Admin User Deleted Successfully');
         return redirect()->route('admin.user.show');
     }
@@ -100,40 +62,16 @@ class AdminUserController extends Controller
     {
         $user = auth()->guard('admin')->user();
         return view('backend.adminuser.profile', compact('user'));
-
-        return view('backend.adminuser.profile');
     }
-    public function profile_update(Request $request, $id)
+
+    public function profile_update(AdminUserUpdateRequest $request, $id)
     {
-        // dd($request->all());
-        $request->validate([
-            'first_name' => 'required|max:30',
-            'last_name' => 'required|max:30',
-            'username' => 'required|max:30|unique:users,username,' . $id,
-            'email' => 'required|email|unique:users,email,' . $id,
-        ]);
-
-        $user = Admin::findOrFail($id);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->username = $request->username;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->gender = $request->gender;
-
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'required|min:8|confirmed',
-            ]);
-            $user->password = Hash::make($request->password);
-        }
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('profile', 'public');
-            $user->image = $imagePath;
-        }
-
-        $user->save();
+        $this->adminService->updateProfile(
+            $id, 
+            $request->validated(), 
+            $request->file('image')
+        );
+        
         toastr()->success('Profile updated successfully.');
         return redirect()->back();
     }
