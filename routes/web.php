@@ -101,10 +101,10 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
             Route::post('store', [BrandController::class, 'store'])->name('store');
         });
         Route::group(['middleware' => 'permission:edit_brands'], function () {
-            Route::get('edit/{id}', [BrandController::class, 'edit'])->name('edit');
-            Route::post('update/{id}', [BrandController::class, 'update'])->name('update');
+            Route::get('edit/{brand}', [BrandController::class, 'edit'])->name('edit');
+            Route::post('update/{brand}', [BrandController::class, 'update'])->name('update');
         });
-        Route::delete('delete/{id}', [BrandController::class, 'destroy'])->middleware('permission:delete_brands')->name('destroy');
+        Route::delete('delete/{brand}', [BrandController::class, 'destroy'])->middleware('permission:delete_brands')->name('destroy');
         Route::post('bulk-delete', [BrandController::class, 'bulkDelete'])->name('bulk-delete');
     });
 

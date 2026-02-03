@@ -10,7 +10,7 @@ class Brand extends Model
     use HasFactory;
 
     // The attributes that are mass assignable
-    protected $fillable = ['name', 'slug', 'website', 'image', 'description'];
+    protected $fillable = ['name', 'slug', 'website', 'image', 'description', 'status'];
 
     /**
      * Define the relationship with the categories (many-to-many).
