@@ -9,6 +9,11 @@ use App\Models\AttributeValue;
 class Attribute extends Model
 {
     use HasFactory;
+    protected $fillable =[
+        'name',
+        'slug',
+        'status',
+    ];
     public function attributevalue(){
         return $this->hasMany(AttributeValue::class, 'attribute_id');
     }

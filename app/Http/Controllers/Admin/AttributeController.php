@@ -7,6 +7,7 @@ use App\Models\RelationalCategory;
 use App\Models\Attribute;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AttributeStoreRequest;
 
 class AttributeController extends Controller
 {
@@ -32,15 +33,10 @@ class AttributeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AttributeStoreRequest $request)
     {
-        // Validate the request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:attributes,slug',
-        ]);
- 
-    
+        // Validate the request             
+        $request->validated();
         // Create the category
         $attribute = new Attribute();
         $attribute->name = $request->name;
