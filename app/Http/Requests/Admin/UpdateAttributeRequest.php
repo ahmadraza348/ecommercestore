@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AttributeStoreRequest extends FormRequest
+class UpdateAttributeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,11 +21,13 @@ class AttributeStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $attributeId = $this->route('attribute') ? $this->route('attribute')->id : null;
+
         return [
-             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:attributes,slug',
+           'name' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:attributes,slug,' . $attributeId,
             'website' => 'nullable|url',
-             'description' => 'nullable|string',
+            'description' => 'nullable|string',
             'status' => 'integer',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category'       => 'nullable|array',

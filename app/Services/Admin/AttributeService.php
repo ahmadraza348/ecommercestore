@@ -4,18 +4,50 @@ namespace App\Services\Admin;
 
 use App\Models\Attribute;
 use App\Models\RelationalCategory;
+use Illuminate\Support\Facades\DB;
 
 class AttributeService
 {
-    public function storeAttribute(array $data)
+    public function storeAttribute(array $data): Attribute
     {
-        $attribute = new Attribute;
-        $attribute->fill($data);
+        // Return the result of the transaction
+        return DB::transaction(function () use ($data) {
+            $attribute = new Attribute();
+            $attribute->fill($data);
+            $attribute->save();
+            $this->syncCategories($attribute, $data);
+            return $attribute;
+        });
+    }
 
-        $attribute->save();
-        $this->syncCategories($attribute, $data);
+    public function updateAttribute(Attribute $attribute, array $data): Attribute
+    {
+       return DB::transaction(
+            function () use ($attribute, $data) {
+                $attribute->update($data);
+                $attribute->save();
+                RelationalCategory::where('metaable_id', $attribute->id)
+                    ->where('metaable_type', Attribute::class)
+                    ->delete();
 
-        return $attribute;
+                $this->syncCategories($attribute, $data);
+
+                return $attribute;
+            }
+        );
+    }
+
+    public function destroyAttribute(Attribute $attribute): void
+    {
+        DB::transaction(
+            function () use ($attribute) {
+                RelationalCategory::where('metaable_id', $attribute->id)
+                    ->where('metaable_type', Attribute::class)
+                    ->delete();
+
+                $attribute->delete();
+            }
+        );
     }
 
     protected function syncCategories(Attribute $attribute, array $data): void

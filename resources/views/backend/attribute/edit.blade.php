@@ -11,9 +11,7 @@
             </div>
 
             <form method="post" class="" action="{{ route('attribute.update', $attribute->id) }}">
-                @csrf
-                @method('PUT') <!-- Use PUT method for updating -->
-                
+                @csrf                
                 <div class="card">
                     <div class="card-body">
                         <div class="row g-4">

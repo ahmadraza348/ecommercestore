@@ -109,9 +109,20 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     });
 
 
+    Route::prefix('attribute')->name('attribute.')->group(function () {
 
+        Route::get('/', [AttributeController::class, 'index'])->middleware('permission:view_varients')->name('index');
+        Route::group(['middleware' => 'permission:create_varients'], function () {
+            Route::get('create', [AttributeController::class, 'create'])->name('create');
+            Route::post('store', [AttributeController::class, 'store'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_varients'], function () {
+            Route::get('edit/{attribute}', [AttributeController::class, 'edit'])->name('edit');
+            Route::post('update/{attribute}', [AttributeController::class, 'update'])->name('update');
+        });
+        Route::delete('delete/{attribute}', [AttributeController::class, 'destroy'])->middleware('permission:delete_varients')->name('destroy');
+    });
 
-    Route::resource('attribute', AttributeController::class)->names('attribute');
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
     Route::resource('product', ProductController::class)->names('product');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
