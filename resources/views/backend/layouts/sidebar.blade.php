@@ -44,6 +44,7 @@
                                 <span> Colors</span>
                             </a>
                         </li>
+                        @can('view_varients')
                         <li class="{{ request()->routeIs('attribute.*') ? 'active' : '' }}">
                             <a href="{{ route('attribute.index') }}">
                                 <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
@@ -56,6 +57,7 @@
                                 <span> Attributes Values</span>
                             </a>
                         </li>
+                        @endcan
 
                     </ul>
                 </li>

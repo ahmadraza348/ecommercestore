@@ -3,11 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ColorRequest;
 use App\Models\Color;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StoreColorRequest;
+use App\Http\Requests\Admin\UpdateColorRequest;
+use App\Services\Admin\ColorService;
 
 class ProductColorsController extends Controller
 {
+ protected $service;
+
+public function __construct(ColorService $service){
+    $this->service = $service;  
+}
+
 public function index()
 {
     $colors = Color::latest()->get();
@@ -19,59 +29,28 @@ public function create()
     return view('backend.colors.create');
 }
 
-public function store(Request $request)
+public function store(ColorRequest $request)
 {
-    $request->validate([
-        'name' => 'required|string|unique:colors,name',
-        'slug' => 'required|string|unique:colors,slug',
-        'color_code' => 'required|string',
-        'status' => 'required|in:1,0',
-    ]);
-
-    Color::create([
-        'name' => $request->name,
-        'slug' => $request->slug,
-        'color_code' => $request->color_code,
-        'status' => $request->status,
-    ]);
-
+    $this->service->createColor($request->validated());
     toastr()->success('Color added successfully');
     return redirect()->route('colors.index');
 }
 
-public function edit($id)
+public function edit(Color $color)
 {
-    $color = Color::findOrFail($id);
     return view('backend.colors.edit', compact('color'));
 }
 
-public function update(Request $request, $id)
+public function update(ColorRequest $request, Color $color)
 {
-    $color = Color::findOrFail($id);
-
-    $request->validate([
-        'name' => 'required|string|unique:colors,name,' . $id,
-        'slug' => 'required|string|unique:colors,slug,' . $id,
-        'color_code' => 'required|string',
-        'status' => 'required|in:1,0',
-    ]);
-
-    $color->update([
-        'name' => $request->name,
-        'slug' => $request->slug,
-        'color_code' => $request->color_code,
-        'status' => $request->status,
-    ]);
-
+    $this->service->updateColor($color, $request->validated());
     toastr()->success('Color updated successfully');
     return redirect()->route('colors.index');
 }
 
-public function destroy($id)
+public function destroy(Color $color)
 {
-    $color = Color::findOrFail($id);
-    $color->delete();
-
+    $this->service->destroyColor($color);
     toastr()->success('Color deleted successfully');
     return back();
 }

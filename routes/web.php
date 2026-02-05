@@ -51,7 +51,7 @@ Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
 Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'download'])
     ->name('order.invoice.pdf');
 
-// Admin Panel Routes 
+// Admin Panel Routes
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
@@ -74,7 +74,6 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/profile', [AdminUserController::class, 'profile'])->name('profile');
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('profile.update');
     });
-
 
     Route::prefix('category')->name('category.')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->middleware('permission:view_categories')->name('index');
@@ -108,7 +107,6 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::post('bulk-delete', [BrandController::class, 'bulkDelete'])->name('bulk-delete');
     });
 
-
     Route::prefix('attribute')->name('attribute.')->group(function () {
 
         Route::get('/', [AttributeController::class, 'index'])->middleware('permission:view_varients')->name('index');
@@ -123,19 +121,20 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('delete/{attribute}', [AttributeController::class, 'destroy'])->middleware('permission:delete_varients')->name('destroy');
     });
 
+    Route::prefix('colors')->name('colors.')->group(function () {
+        Route::get('/', [ProductColorsController::class, 'index'])->name('index');
+        Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
+        Route::post('/store', [ProductColorsController::class, 'store'])->name('store');
+        Route::get('/edit/{color}', [ProductColorsController::class, 'edit'])->name('edit');
+        Route::post('/update/{color}', [ProductColorsController::class, 'update'])->name('update');
+        Route::delete('/destroy/{color}', [ProductColorsController::class, 'destroy'])->name('destroy');
+    });
+
     Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
     Route::resource('product', ProductController::class)->names('product');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
 
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
-    Route::prefix('colors')->name('colors.')->group(function () {
-        Route::get('/', [ProductColorsController::class, 'index'])->name('index');
-        Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
-        Route::post('/store', [ProductColorsController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [ProductColorsController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [ProductColorsController::class, 'update'])->name('update');
-        Route::delete('/destroy/{id}', [ProductColorsController::class, 'destroy'])->name('destroy');
-    });
 
     // Roles And Permissions Routes start here
     Route::prefix('roles')->name('admin.roles.')->group(function () {
@@ -232,4 +231,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

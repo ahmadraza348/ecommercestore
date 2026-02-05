@@ -41,7 +41,7 @@ class AttributeController extends Controller
 
     public function edit(Attribute $attribute)
     {
-        $data['attribute'] = Attribute::findOrFail($attribute->id);
+        $data['attribute'] = $attribute;
 
         $data['all_category_data'] = Category::where('status', '1')
             ->whereNull('parent_id')
