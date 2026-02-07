@@ -11,6 +11,13 @@ class AttributeValue extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'slug',
+        'status',
+        'attribute_id',
+    ];
+
     public function attribute()
     {
         return $this->belongsTo(Attribute::class, 'attribute_id');
