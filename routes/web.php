@@ -174,9 +174,9 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');
         Route::post('/store', [CouponController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [CouponController::class, 'update'])->name('edit');
-        Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
-        Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('delete');
+        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit');
+        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update');
+        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete');
     });
 
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');

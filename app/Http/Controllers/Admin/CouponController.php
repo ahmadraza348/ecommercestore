@@ -19,34 +19,41 @@ class CouponController extends Controller
 
     public function index()
     {
-        $data['coupons'] = Coupon::all();
-        return view('backend.coupons.index', $data);
+        $data['coupons'] = Coupon::latest()->get();
+        return view('backend.coupons.coupons', $data);
     }
 
     public function store(CouponRequest $request)
     {
         $this->service->create($request->validated());
         toastr()->success('Coupon created successfully.');
-        return redirect()->back();
+        return redirect()->route('coupons.index');
     }
 
-    public function update(Request $request, $id)
+    public function edit(Coupon $coupon)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->update($request->all());
-
-        toastr()->success('Coupon Updated successfully.');
-
-        return redirect()->back();
+        // We pass the same view as index, but with the specific coupon for editing
+        return view('backend.coupons.coupons', [
+            'coupons' => Coupon::latest()->get(),
+            'editingCoupon' => $coupon,
+        ]);
     }
 
-    public function destroy($id)
+    public function update(CouponRequest $request, Coupon $coupon)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->delete();
+        // Fixed: changed validate() to validated()
+        $this->service->update($coupon, $request->validated());
+        
+        toastr()->success('Coupon updated successfully.');
+        
+        // Redirecting to index clears the edit form and the URL ID
+        return redirect()->route('coupons.index');
+    }
 
-        toastr()->success('Coupon Deleted successfully.');
-
-        return redirect()->back();
+    public function destroy(Coupon $coupon)
+    {
+        $this->service->delete($coupon);
+        toastr()->success('Coupon deleted successfully.');
+        return redirect()->route('coupons.index');
     }
 }
