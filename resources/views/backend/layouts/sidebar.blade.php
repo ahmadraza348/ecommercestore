@@ -26,24 +26,31 @@
                     </a>
                 </li>
                 @endcan
+                @can('view_coupons')
                 <li class="{{ request()->routeIs('coupons.*') ? 'active' : '' }}">
                     <a href="{{ route('coupons.index') }}">
                         <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
                         <span>Coupons</span>
                     </a>
                 </li>
+                @endcan
+
+
+                @canany(['view_colors', 'view_varients'])
 
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/product.svg') }}"
                             alt="img"><span>
                             Product Attributes</span> <span class="menu-arrow"></span></a>
                     <ul>
+                        @can('view_colors')
                         <li class="{{ request()->routeIs('colors.*') ? 'active' : '' }}">
                             <a href="{{ route('colors.index') }}">
                                 <img src="{{ asset('backend/assets/img/icons/users1.svg') }}" alt="img">
                                 <span> Colors</span>
                             </a>
                         </li>
+                        @endcan
                         @can('view_varients')
                         <li class="{{ request()->routeIs('attribute.*') ? 'active' : '' }}">
                             <a href="{{ route('attribute.index') }}">
@@ -61,6 +68,7 @@
 
                     </ul>
                 </li>
+                @endcanany
 
                 <li class="submenu">
                     <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/product.svg') }}"
@@ -133,7 +141,7 @@
                 </ul>
             </li>
             @endcanany
-            
+
             </ul>
         </div>
     </div>

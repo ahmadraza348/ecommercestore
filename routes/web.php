@@ -122,18 +122,36 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     });
 
     Route::prefix('colors')->name('colors.')->group(function () {
-        Route::get('/', [ProductColorsController::class, 'index'])->name('index');
-        Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
-        Route::post('/store', [ProductColorsController::class, 'store'])->name('store');
-        Route::get('/edit/{color}', [ProductColorsController::class, 'edit'])->name('edit');
-        Route::post('/update/{color}', [ProductColorsController::class, 'update'])->name('update');
-        Route::delete('/destroy/{color}', [ProductColorsController::class, 'destroy'])->name('destroy');
+        Route::get('/', [ProductColorsController::class, 'index'])->middleware('permission:view_colors')->name('index');
+        Route::group(['middleware' => 'permission:create_colors'], function () {
+
+            Route::get('/create', [ProductColorsController::class, 'create'])->name('create');
+            Route::post('/store', [ProductColorsController::class, 'store'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_colors'], function () {
+            Route::get('/edit/{color}', [ProductColorsController::class, 'edit'])->name('edit');
+            Route::post('/update/{color}', [ProductColorsController::class, 'update'])->name('update');
+        });
+        Route::delete('/destroy/{color}', [ProductColorsController::class, 'destroy'])->middleware('permission:delete_colors')->name('destroy');
     });
 
-    Route::resource('attributevalue', AttributevalueController::class)->names('attributevalue');
+    Route::prefix('attributevalue')->name('attributevalue.')->group(function () {
+
+        Route::get('/', [AttributevalueController::class, 'index'])->middleware('permission:view_varients')->name('index');
+        Route::group(['middleware' => 'permission:create_varients'], function () {
+            Route::get('create', [AttributevalueController::class, 'create'])->name('create');
+            Route::post('store', [AttributevalueController::class, 'store'])->name('store');
+        });
+        Route::group(['middleware' => 'permission:edit_varients'], function () {
+            Route::get('edit/{value}', [AttributevalueController::class, 'edit'])->name('edit');
+            Route::put('update/{value}', [AttributevalueController::class, 'update'])->name('update');
+        });
+        Route::delete('delete/{value}', [AttributevalueController::class, 'destroy'])->middleware('permission:delete_varients')->name('destroy');
+    });
+
+
     Route::resource('product', ProductController::class)->names('product');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
-
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
 
     // Roles And Permissions Routes start here
@@ -172,11 +190,11 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
     // Roles And Permissions Routes end here
     Route::prefix('coupons')->name('coupons.')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('index');
-        Route::post('/store', [CouponController::class, 'store'])->name('store');
-        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit');
-        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update');
-        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete');
+        Route::get('/', [CouponController::class, 'index'])->name('index')->middleware('permission:view_coupons');
+        Route::post('/store', [CouponController::class, 'store'])->name('store')->middleware('permission:create_coupons');
+        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit')->middleware('permission:edit_coupons');
+        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update')->middleware('permission:edit_coupons');
+        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')->middleware('permission:delete_coupons');
     });
 
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
@@ -231,4 +249,4 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
