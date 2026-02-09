@@ -169,13 +169,14 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         });
         Route::delete('delete/{role_permission}', [RoleController::class, 'delete_roles_permissions'])->name('delete')->middleware('permission:delete_roles_permissions');
     });
-    // Roles And Permissions Routes end here
 
+    // Roles And Permissions Routes end here
     Route::prefix('coupons')->name('coupons.')->group(function () {
         Route::get('/', [CouponController::class, 'index'])->name('index');
         Route::post('/store', [CouponController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [CouponController::class, 'update'])->name('edit');
         Route::put('/update/{id}', [CouponController::class, 'update'])->name('update');
-        Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('destroy');
+        Route::delete('/destroy/{id}', [CouponController::class, 'destroy'])->name('delete');
     });
 
     Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
@@ -185,7 +186,6 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
     //    Product Attribute Routes
-    // Route::post('/store-product-attribute', [ProductAttrController::class, 'store_pro_attr'])->name('store.pro.attribute');
     Route::get('/add-product-attribute/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
     Route::post('products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
         ->name('admin.product.store-attributes');
@@ -210,6 +210,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
     Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
 });
+
 Route::prefix('admin')->group(function () {
     Route::get('login', [AuthController::class, 'login'])->name('admin.login');
     Route::post('login/submit', [AuthController::class, 'login_submit'])->name('admin.login.submit');
@@ -220,7 +221,6 @@ Route::prefix('admin')->group(function () {
 });
 
 // Route::get('/register', [HomePageController::class, 'index'])->name('front.register');
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

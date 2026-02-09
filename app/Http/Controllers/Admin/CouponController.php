@@ -3,37 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\CouponRequest;
 use App\Models\Coupon;
+use App\Services\Admin\CouponService;
+use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
+    protected $service;
+
+    public function __construct(CouponService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
         $data['coupons'] = Coupon::all();
         return view('backend.coupons.index', $data);
     }
-    public function store(Request $request)
-    {
-        $request->validate([
-            'label' => 'required|string',
-            'discount_type' => 'required',
-            'amount' => 'required|numeric',
-            'code' => 'required|string',
-            'starting_from' => 'required|date',
-            'ending_at' => 'required|date',
-            'status' => 'required|string',
-        ]);
 
-        Coupon::create([
-            'label' => $request->label,
-            'discount_type' => $request->discount_type,
-            'amount' => $request->amount,
-            'code' => $request->code,
-            'starting_from' => $request->starting_from,
-            'ending_at' => $request->ending_at,
-            'status' => $request->status,
-        ]);
+    public function store(CouponRequest $request)
+    {
+        $this->service->create($request->validated());
         toastr()->success('Coupon created successfully.');
         return redirect()->back();
     }
@@ -44,14 +36,17 @@ class CouponController extends Controller
         $coupon->update($request->all());
 
         toastr()->success('Coupon Updated successfully.');
+
         return redirect()->back();
     }
+
     public function destroy($id)
     {
         $coupon = Coupon::findOrFail($id);
         $coupon->delete();
 
         toastr()->success('Coupon Deleted successfully.');
+
         return redirect()->back();
     }
 }

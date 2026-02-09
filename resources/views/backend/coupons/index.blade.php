@@ -71,7 +71,7 @@
 
 
                                         <!-- Delete Form (hidden) -->
-                                        <form id="deleteCat-{{ $coupon->id }}" action="{{ route('coupons.destroy', $coupon->id) }}" method="POST" style="display: none;">
+                                        <form id="deleteCat-{{ $coupon->id }}" action="{{ route('coupons.delete', $coupon->id) }}" method="POST" style="display: none;">
                                             @csrf
                                             @method('DELETE')
                                         </form>
