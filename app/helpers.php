@@ -24,5 +24,11 @@ if (!function_exists('check_admin_auth')) {
             return $slug;
         }
     }
-    
+}
+
+if (!function_exists('activeStatus')) {
+    function activeStatus($query)
+    {
+        return $query->where('status', 1);
+    }
 }

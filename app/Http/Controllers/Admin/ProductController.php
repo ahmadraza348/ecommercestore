@@ -29,13 +29,13 @@ class ProductController extends Controller
 
     public function create()
     {
-        $data['categories'] = Category::where('status', '1')
+        $data['categories'] = Category::activeStatus()
             ->whereNull('parent_id')
             ->with('subcategories')
             ->get();
 
-        $data['attributes'] = Attribute::where('status', 1)->with('attributevalue')->get();
-        $data['brands'] = Brand::where('status', 1)->get();
+        $data['attributes'] = Attribute::activeStatus()->with('attributevalue')->get();
+        $data['brands'] = Brand::activeStatus()->get();
         return view('backend.product.create', $data);
     }
 

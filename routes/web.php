@@ -150,6 +150,29 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     });
 
 
+    Route::prefix('product')->name('product.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])
+        // ->middleware('permission:view_products')
+        ->name('index');
+        Route::group([
+            // 'middleware' => 'permission:create_products'
+            ], function () {
+            Route::get('create', [ProductController::class, 'create'])->name('create');
+            Route::post('store', [ProductController::class, 'store'])->name('store');
+        });
+        Route::group([
+            // 'middleware' => 'permission:edit_products'
+            ], function () {
+            Route::get('edit/{product}', [ProductController::class, 'edit'])->name('edit');
+            Route::put('update/{product}', [ProductController::class, 'update'])->name('update');
+        });
+        Route::delete('delete/{product}', [ProductController::class, 'destroy'])
+        // ->middleware('permission:delete_products')
+        ->name('destroy');
+    });
+
+
+
     Route::resource('product', ProductController::class)->names('product');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
