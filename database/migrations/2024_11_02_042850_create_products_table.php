@@ -13,7 +13,7 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('sku')->unique();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->boolean('status')->default(true); // 1 = active
             $table->enum('product_type', ['simple', 'color', 'color_variant'])->default('simple');
             $table->integer('sale_price');
             $table->integer('previous_price')->nullable();

@@ -14,13 +14,22 @@ use App\Models\RelationalCategory;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProductRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ProductsImport;
+use Stripe\Service\ProductService;
 
 class ProductController extends Controller
 {
+    protected ProductService $service;
+
+    public function __construct(ProductService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
         $data['products'] = Product::all();
@@ -40,31 +49,9 @@ class ProductController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         try {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:products,slug',
-                'sku' => 'required|string|max:255|unique:products,sku',
-                'sale_price' => 'required|numeric|max:99999',
-                'barcode' => 'required|string|max:255',
-                'stock' => 'required|integer|max:99999',
-                'video' => 'nullable|mimes:mp4,mov,avi|max:10240'
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-
-            if ($validator->fails()) {
-                foreach ($validator->errors()->all() as $error) {
-                    toastr()->error($error);
-                }
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-
-            // Store Product Basic Data
             $data = $request->only([
                 'name',
                 'slug',
