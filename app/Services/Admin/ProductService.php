@@ -2,49 +2,220 @@
 
 namespace App\Services\Admin;
 
-use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Attribute;
+use App\Models\Brand;
+use App\Models\MetaTag;
+use App\Models\ProImages;
 use App\Models\RelationalCategory;
+use App\Models\AttributeValue;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProductsImport;
 
 class ProductService
 {
-    public function store(array $data): Product
+    /* =========================
+       BASIC FETCH METHODS
+    ==========================*/
+
+    public function getAll()
     {
-        DB::transaction(function () use ($data) {
-            if (isset($data['video'])) {
-            }
-            $pro =   Product::create($data);
-            $pro->save();
-            if (isset($data['video'])) {
-                $pro->image = $this->uploadVideo($data['video']);
+        return Product::latest()->get();
+    }
+
+    public function getCreateData(): array
+    {
+        return [
+            'categories' => Category::where('status', 1)
+                ->whereNull('parent_id')
+                ->with('subcategories')
+                ->get(),
+
+            'attributes' => Attribute::where('status', 1)
+                ->with('attributevalue')
+                ->get(),
+
+            'brands' => Brand::where('status', 1)->get()
+        ];
+    }
+
+    public function getEditData(string $id): array
+    {
+        $product = Product::findOrFail($id);
+
+        return [
+            'pro_data' => $product,
+            'all_category_data' => Category::where('status', 1)
+                ->whereNull('parent_id')
+                ->with('subcategories.subcategories')
+                ->get(),
+            'selected_categories' => $product->categories->pluck('id')->toArray(),
+            'attributes' => Attribute::where('status', 1)->with('attributevalue')->get(),
+            'brands' => Brand::where('status', 1)->get(),
+        ];
+    }
+
+    public function getTrashed()
+    {
+        return Product::onlyTrashed()->get();
+    }
+
+    /* =========================
+       STORE / UPDATE
+    ==========================*/
+
+    public function store($request): Product
+    {
+        return DB::transaction(function () use ($request) {
+
+            $data = $request->validated();
+
+            if ($request->hasFile('video')) {
+                $data['video'] = $this->uploadVideo($request->file('video'));
             }
 
-            $this->syncCategories($pro, $data);
-            return $pro;
+            $product = Product::create($data);
+
+            $this->syncCategories($product, $request);
+            $this->storeMeta($product, $request);
+
+            return $product;
         });
     }
 
-    protected function uploadVideo($file)
+    public function update($request, string $id): Product
     {
-        $videoName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $data['video'] = $file->storeAs('videos/products', $videoName, 'public');
+        return DB::transaction(function () use ($request, $id) {
+
+            $product = Product::findOrFail($id);
+            $data = $request->validated();
+
+            if ($request->hasFile('video')) {
+                if ($product->video) {
+                    Storage::disk('public')->delete($product->video);
+                }
+
+                $data['video'] = $this->uploadVideo($request->file('video'));
+            }
+
+            $product->update($data);
+
+            RelationalCategory::where('product_id', $product->id)->delete();
+            $this->syncCategories($product, $request);
+            $this->storeMeta($product, $request);
+
+            return $product;
+        });
     }
 
-    protected function syncCategories(Product $attribute, array $data): void
+    /* =========================
+       DELETE / RESTORE
+    ==========================*/
+
+    public function delete(string $id): void
     {
-        $categories = $data['category'] ?? [];
-        $subcategories = $data['subcategory'] ?? [];
-        $childcategories = $data['childcategory'] ?? [];
-        $superchildcategory = $data['superchild'] ?? [];
-        $allCategories = array_merge($categories, $subcategories, $childcategories, $superchildcategory);
+        Product::findOrFail($id)->delete();
+    }
+
+    public function restore(string $id): void
+    {
+        Product::withTrashed()->findOrFail($id)->restore();
+    }
+
+    public function forceDelete(string $id): void
+    {
+        Product::withTrashed()->findOrFail($id)->forceDelete();
+    }
+
+    public function bulkDelete(string $ids): void
+    {
+        $prodIds = explode(',', $ids);
+        Product::whereIn('id', $prodIds)->delete();
+    }
+
+    /* =========================
+       GALLERY
+    ==========================*/
+
+    public function deleteGalleryImage($imageId): array
+    {
+        try {
+            $image = ProImages::findOrFail($imageId);
+            if ($image->image) {
+                Storage::disk('public')->delete($image->image);
+            }
+            $image->delete();
+
+            return ['success' => true, 'message' => 'Deleted'];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /* =========================
+       ATTRIBUTE VALUES
+    ==========================*/
+
+    public function getAttributeValues($id)
+    {
+        return AttributeValue::where('attribute_id', $id)
+            ->get(['id', 'name']);
+    }
+
+    /* =========================
+       IMPORT
+    ==========================*/
+
+    public function import($request): void
+    {
+        $request->validate([
+            'products_file' => 'required|mimes:xlsx,csv'
+        ]);
+
+        Excel::import(new ProductsImport, $request->file('products_file'));
+    }
+
+    /* =========================
+       HELPERS
+    ==========================*/
+
+    protected function uploadVideo($file): string
+    {
+        $videoName = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        return $file->storeAs('videos/products', $videoName, 'public');
+    }
+
+    protected function syncCategories(Product $product, $request): void
+    {
+        $allCategories = array_merge(
+            $request->category ?? [],
+            $request->subcategory ?? [],
+            $request->childcategory ?? [],
+            $request->superchild ?? []
+        );
 
         foreach ($allCategories as $categoryId) {
             RelationalCategory::create([
-                'attribute_id' => $attribute->id,
-                'category_id' => $categoryId,
-                'metaable_id' => $attribute->id,
-                'metaable_type' => Product::class,
+                'product_id'   => $product->id,
+                'category_id'  => $categoryId,
+                'metaable_id'  => $product->id,
+                'metaable_type'=> Product::class,
             ]);
         }
+    }
+
+    protected function storeMeta(Product $product, $request): void
+    {
+        $product->metaTag()->updateOrCreate(
+            [],
+            [
+                'meta_title'       => $request->meta_title,
+                'meta_keywords'    => $request->meta_keywords,
+                'meta_description' => $request->meta_description,
+            ]
+        );
     }
 }
