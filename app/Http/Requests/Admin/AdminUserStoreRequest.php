@@ -22,12 +22,13 @@ class AdminUserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'first_name' => 'required|max:30',
+            'first_name' => 'required|max:30',
             'last_name' => 'required|max:30',
             'username' => 'required|unique:admins|max:30',
             'email' => 'required|email|unique:admins',
             'password' => 'required|min:8|confirmed',
             'password_confirmation' => 'required',
+            'status'   => 'required',
             'role' => 'required|exists:roles,id',
         ];
     }

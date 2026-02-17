@@ -32,6 +32,7 @@ public function rules()
         'phone'      => 'nullable|max:20',
         'gender'     => 'nullable|in:male,female,other',
         'password'   => 'nullable|min:8|confirmed',
+        'status'   => 'required',
         'image'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
     ];
 }
