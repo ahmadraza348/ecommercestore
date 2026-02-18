@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Models\AttributeValue;
 
 class AttributeValueRequest extends FormRequest
 {
@@ -22,8 +23,9 @@ class AttributeValueRequest extends FormRequest
      */
     public function rules(): array
     {
-        $value = $this->route('attributevalue')?->id;
-        return [
+        $param = $this->route('attributevalue');
+        $id = ($param instanceof AttributeValue) ? $param->id : $param; 
+               return [
             'name' => [
                 'required',
                 'string',
@@ -33,9 +35,9 @@ class AttributeValueRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('attribute_values', 'slug')->ignore($value),
+                Rule::unique('attribute_values', 'slug')->ignore($id),
             ],
-             'status' => 'required|in:1,0',
+             'status' => 'required',
              'attribute_id' => 'required|exists:attributes,id',              
         ];
     }       

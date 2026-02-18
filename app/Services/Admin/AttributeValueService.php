@@ -2,22 +2,18 @@
 
 namespace App\Services\Admin;
 
-use app\Models\AttributeValue;
-use illuminate\support\facades\DB;
+use App\Models\AttributeValue;
+use Illuminate\Support\Facades\DB;
+
+
 
 class AttributeValueService
 {
     public function create(array $data): AttributeValue
     {
-        return DB::transaction(function () use ($data) {
-            $value = new AttributeValue;
-            $value->fill($data);
-            $value->save();
-
-            return $value;
-
-        });
+        return DB::transaction(fn() => AttributeValue::create($data));
     }
+
     public function update(AttributeValue $value, array $data): AttributeValue
     {
         return DB::transaction(function () use ($value, $data) {
@@ -26,12 +22,8 @@ class AttributeValueService
             return $value;
         });
     }
-    public function destroy(AttributeValue $value): void
+    public function destroy(AttributeValue $attributeValue): bool
     {
-        DB::transaction(
-            function () use ($value) {
-                 $value->delete();                 
-            });
-
+        return DB::transaction(fn() => $attributeValue->delete());
     }
 }

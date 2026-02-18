@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
@@ -21,16 +22,21 @@ class ProductRequest extends FormRequest
      */
 public function rules(): array
 {
+
+        $param = $this->route('product');
+        $id = ($param instanceof Product) ? $param->id : $param; 
+
     return [
         'name' => 'required|string|max:255',
-        'slug' => 'required|string|max:255|unique:products,slug,' . $this->id,
-        'sku' => 'required|string|max:255|unique:products,sku,' . $this->id,
+        'slug' => 'required|string|max:255|unique:products,slug,' . $id,
+        'sku' => 'required|string|max:255|unique:products,sku,' . $id,
         'sale_price' => 'required|numeric|max:99999',
         'previous_price' => 'nullable|numeric|max:99999',
         'purchase_price' => 'nullable|numeric|max:99999',
         'barcode' => 'required|string|max:255',
         'stock' => 'required|integer|max:99999',
         'tags' => 'nullable|string',
+        'product_variation_type' => 'nullable|string',
         'label' => 'nullable|string',
         'short_description' => 'nullable',
         'long_description' => 'nullable',

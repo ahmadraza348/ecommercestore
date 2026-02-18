@@ -143,10 +143,10 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
             Route::post('store', [AttributevalueController::class, 'store'])->name('store');
         });
         Route::group(['middleware' => 'permission:edit_varients'], function () {
-            Route::get('edit/{value}', [AttributevalueController::class, 'edit'])->name('edit');
-            Route::put('update/{value}', [AttributevalueController::class, 'update'])->name('update');
+            Route::get('edit/{attributevalue}', [AttributevalueController::class, 'edit'])->name('edit');
+            Route::put('update/{attributevalue}', [AttributevalueController::class, 'update'])->name('update');
         });
-        Route::delete('delete/{value}', [AttributevalueController::class, 'destroy'])->middleware('permission:delete_varients')->name('destroy');
+        Route::delete('delete/{attributevalue}', [AttributevalueController::class, 'destroy'])->middleware('permission:delete_varients')->name('destroy');
     });
 
 

@@ -46,16 +46,16 @@ class AttributevalueController extends Controller
         return view('backend.attributevalue.edit', compact('attributevalue', 'attributes'));
     }
 
-    public function update(AttributeValueRequest $request, AttributeValue $value)
+    public function update(AttributeValueRequest $request, AttributeValue $attributevalue)
     {
-        $this->service->update($value, $request->validated());
+        $this->service->update($attributevalue, $request->validated());
         toastr()->success('Attribute Value updated successfully');
         return redirect()->route('attributevalue.index');
     }
 
-    public function destroy(AttributeValue $value)
+    public function destroy(AttributeValue $attributevalue)
     {
-        $this->service->destroy($value);
+        $this->service->destroy($attributevalue);
         toastr()->success('Attribute Value  Deleted Successfully');
 
         return redirect()->back();

@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AttributeValue extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+       'attribute_id',
         'name',
         'slug',
         'status',
-        'attribute_id',
     ];
 
     public function attribute()
