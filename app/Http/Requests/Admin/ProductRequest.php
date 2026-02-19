@@ -42,6 +42,7 @@ public function rules(): array
         'long_description' => 'nullable',
         'video' => 'nullable|mimes:mp4,mov,avi|max:10240',
         'brand_id' => 'nullable|integer',
+        'is_featured' => 'nullable',
         'attribute_id' => 'nullable|integer',
         'meta_title' => 'nullable|string',
         'meta_keywords' => 'nullable|string',

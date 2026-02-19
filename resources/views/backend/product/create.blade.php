@@ -227,7 +227,7 @@
                                                     <option value="">Select</option>
                                                     @foreach ($brands as $item)
                                                     <option
-                                                        value="{{ $item->id }}" {{ old('brand') == $item->id ? 'selected' : '' }}>
+                                                        value="{{ $item->id }}" {{ old('brand_id') == $item->id ? 'selected' : '' }}>
                                                         {{ $item->name }}
                                                     </option>
                                                     @endforeach
