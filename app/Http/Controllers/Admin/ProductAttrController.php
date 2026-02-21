@@ -8,9 +8,16 @@ use App\Models\Attribute;
 use App\Models\Color;
 use App\Models\ProAttributeValue;
 use App\Models\Product;
+use App\Services\Admin\ProAttributeService;
 
 class ProductAttrController extends Controller
 {
+    protected $service;
+    public function __construct(ProAttributeService $service)
+    {
+        $this->service = $service;
+    }
+    
     public function add_pro_attr($product_id)
     {
         $data['colors'] = Color::where('status', 1)->get();
