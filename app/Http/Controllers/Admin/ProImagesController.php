@@ -4,22 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Color;
 use App\Models\ProductImages;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Admin\ProImagesService;
 
 class ProImagesController extends Controller
 {
+    protected $service;
+    public function __construct(ProImagesService $service){
+        $this->service = $service;
+     }
+
     public function add_pro_images($product_id)
     {
-        $product = Product::findOrFail($product_id);
-        $colors = Color::where('status', 1)->get();
-        $images = ProductImages::where('product_id', $product_id)
-                              ->orderBy('sort_order', 'asc')
-                              ->get();
-
-        return view('backend.product.images', compact('product', 'colors', 'images'));
+        $data = $this->service->add($product_id);
+        return view('backend.product.images', $data);
     }
 
 
