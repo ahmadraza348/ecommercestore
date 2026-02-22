@@ -57,7 +57,7 @@
 
                                     @if (!empty($attribute_data))
                                         <td>
-                                            <select name="varient_id" class="form-select" style="width:150px" required>
+                                            <select name="attribute_value_id" class="form-select" style="width:150px" required>
                                                 <option value="">Select {{ $attribute_data->name }}</option>
                                                 @foreach ($attribute_data->attributevalue as $attr)
                                                     <option value="{{ $attr->id }}">{{ $attr->name }}</option>
@@ -199,7 +199,7 @@ $(document).ready(function () {
 
         $('input[name="itemcode"]').val($(this).data('itemcode'));
         $('select[name="color_id"]').val($(this).data('color_id'));
-        $('select[name="varient_id"]').val($(this).data('varient_id'));
+        $('select[name="attribute_value_id"]').val($(this).data('varient_id'));
         $('input[name="stock"]').val($(this).data('stock'));
         $('input[name="price"]').val($(this).data('price'));
 
@@ -215,7 +215,7 @@ $(document).ready(function () {
         let formData = new FormData(this);
         let editId = $('#edit_id').val();
         let url = editId
-            ? "{{ route('admin.product.updateAttribute') }}"
+            ? "{{ route('admin.product.updateAttribute', ':id') }}".replace(':id', editId)
             : "{{ route('admin.product.store-attributes') }}";
 
         $.ajax({

@@ -226,18 +226,29 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
-    //    Product Attribute Routes
-    Route::get('/add-product-attribute/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('add.pro.attribute');
-    Route::post('products/store-attributes', [ProductAttrController::class, 'store_pro_attr'])
-        ->name('admin.product.store-attributes');
-    Route::get('products/{id}/attributes', [ProductAttrController::class, 'fetch_pro_attr'])
-        ->name('admin.product.fetchAttributes');
-    Route::post('products/update-attribute', [ProductAttrController::class, 'update_pro_attr'])
-        ->name('admin.product.updateAttribute');
-    Route::delete('/products/delete-attribute/{id}', [ProductAttrController::class, 'delete_pro_attr'])
-        ->name('admin.product.delete-attribute');
-    //    Product Attribute Routes
+// Product Attribute Routes
 
+Route::get('/add-product-attribute/{id}', 
+    [ProductAttrController::class, 'add_pro_attr']
+)->name('add.pro.attribute');
+
+Route::post('products/store-attributes', 
+    [ProductAttrController::class, 'store_pro_attr']
+)->name('admin.product.store-attributes');
+
+Route::get('products/{id}/attributes', 
+    [ProductAttrController::class, 'fetch_pro_attr']
+)->name('admin.product.fetchAttributes');
+
+Route::post('products/update-attribute/{id}',   // ← added {id}
+    [ProductAttrController::class, 'update_pro_attr']
+)->name('admin.product.updateAttribute');
+
+Route::delete('/products/delete-attribute/{id}', 
+    [ProductAttrController::class, 'delete_pro_attr']
+)->name('admin.product.delete-attribute');
+
+// Product Attribute Routes
     //    Product images Routes
     Route::prefix('products')->group(function () {
         Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');

@@ -3,121 +3,60 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Attribute;
-use App\Models\Color;
-use App\Models\ProAttributeValue;
-use App\Models\Product;
+use App\Http\Requests\Admin\ProAttrRequest;
 use App\Services\Admin\ProAttributeService;
+use Illuminate\Http\JsonResponse;
 
 class ProductAttrController extends Controller
 {
-    protected $service;
-    public function __construct(ProAttributeService $service)
-    {
-        $this->service = $service;
-    }
-    
-    public function add_pro_attr($product_id)
-    {
-        $data['colors'] = Color::where('status', 1)->get();
-        $data['product'] = Product::findOrFail($product_id);
-        if ($data['product']->product_variation_type == 'color_attribute_varient') {
+    public function __construct(
+        protected ProAttributeService $service
+    ) {}
 
-            $data['attribute_data'] = Attribute::where('id',   $data['product']->attribute_id)->with('attributevalue')->first();
-        }
+    public function add_pro_attr(int $product_id)
+    {
+        $data = $this->service->getAttributesData($product_id);
         return view('backend.pro_attr.add', $data);
     }
 
-    public function fetch_pro_attr($product_id)
+    public function fetch_pro_attr(int $product_id): JsonResponse
     {
-        try {
-            $data = ProAttributeValue::with(['color', 'attribute_value'])
-                ->where('product_id', $product_id)
-                ->get();
-
-            return response()->json([
-                'status' => 'success',
-                'data' => $data
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ]);
-        }
+        return response()->json([
+            'status' => 'success',
+            'data'   => $this->service->fetchAttributes($product_id)
+        ]);
     }
 
-
-    public function store_pro_attr(Request $request)
+    public function store_pro_attr(ProAttrRequest $request): JsonResponse
     {
-        // dd($request->all());
-        try {
+        $this->service->storeAttributeData($request->validated());
 
-            ProAttributeValue::create([
-                'product_id' => $request->product_id,
-                'attribute_id' => $request->attribute_id ?? null,
-                'color_id' => $request->color_id,
-                'attribute_value_id' =>  $request->varient_id ?? null,
-                'itemcode' => $request->itemcode,
-                'stock' => $request->stock,
-                'price' => $request->price,
-            ]);
-
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Product attributes saved successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product attribute created successfully!'
+        ]);
     }
 
-
-    public function update_pro_attr(Request $request)
+    public function update_pro_attr(ProAttrRequest $request, int $id): JsonResponse
     {
-        try {
-            $attr = ProAttributeValue::findOrFail($request->id);
+        $this->service->updateAttributeData(
+            $request->validated(),
+            $id
+        );
 
-            $attr->update([
-                'color_id' => $request->color_id,
-                'attribute_value_id' => $request->varient_id ?? null,
-                'attribute_id' => $request->attribute_id ?? null,
-                'itemcode' => $request->itemcode,
-                'stock' => $request->stock,
-                'price' => $request->price,
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Product attribute updated successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product attribute updated successfully!'
+        ]);
     }
-    public function delete_pro_attr($id)
-    {
-        try {
-            $attr = ProAttributeValue::findOrFail($id);
-            $attr->delete();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Product attribute deleted successfully!'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
+    public function delete_pro_attr(int $id): JsonResponse
+    {
+        $this->service->deleteAttribute($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Attribute deleted successfully!'
+        ]);
     }
 }
