@@ -1,85 +1,53 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProImagesRequest;
 use Illuminate\Http\Request;
-use App\Models\ProductImages;
-use Illuminate\Support\Facades\Storage;
 use App\Services\Admin\ProImagesService;
 
 class ProImagesController extends Controller
 {
-    protected $service;
-    public function __construct(ProImagesService $service){
-        $this->service = $service;
-     }
+    protected ProImagesService $service;
 
-    public function add_pro_images($product_id)
+    public function __construct(ProImagesService $service)
     {
-        $data = $this->service->add($product_id);
-        return view('backend.product.images', $data);
+        $this->service = $service;
     }
 
-
-    // UPLOAD MULTIPLE IMAGES
-    public function store_pro_images(Request $request)
+    public function add_pro_images(int $product_id)
     {
-        $request->validate([
-            'product_id' => 'required',
-            'images.*'   => 'image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+        return view(
+            'backend.product.images',
+            $this->service->allImages($product_id)
+        );
+    }
 
-        foreach ($request->file('images') as $file) {
-
-            $path = $file->store('product-images', 'public'); // FIXED
-
-            ProductImages::create([
-                'product_id' => $request->product_id,
-                'color_id'   => $request->color_id,
-                'image'      => $path,
-                'is_featured' => 0,
-                'is_back'     => 0,
-                'sort_order'  => 1,
-            ]);
-        }
+    public function store_pro_images(ProImagesRequest $request)
+    {
+        $this->service->storeImages($request->validated());
 
         return back()->with('success', 'Images uploaded successfully');
     }
 
-
-    // UPDATE ALL IMAGES AT ONCE
     public function update_pro_images(Request $request)
     {
-        foreach ($request->images as $id => $data) {
+        $request->validate([
+            'images' => 'required|array'
+        ]);
 
-            ProductImages::where('id', $id)->update([
-                'color_id'    => $data['color_id'],
-                'is_featured' => isset($data['is_featured']) ? 1 : 0,
-                'is_back'     => isset($data['is_back']) ? 1 : 0,
-                'sort_order'  => $data['sort_order'],
-            ]);
-        }
+        $this->service->updateImages($request->input('images'));
 
         return back()->with('success', 'Images updated successfully');
     }
 
-
-    // BULK DELETE
     public function bulk_delete_images(Request $request)
     {
-        if (!$request->delete_ids) {
-            return back()->with('error', 'No images selected');
-        }
+        $request->validate([
+            'delete_ids' => 'required|array'
+        ]);
 
-        $ids = explode(',', $request->delete_ids);
-
-        $images = ProductImages::whereIn('id', $ids)->get();
-
-        foreach ($images as $img) {
-            Storage::disk('public')->delete($img->image);
-            $img->delete();
-        }
+        $this->service->bulkDelete($request->input('delete_ids'));
 
         return back()->with('success', 'Selected images deleted');
     }
