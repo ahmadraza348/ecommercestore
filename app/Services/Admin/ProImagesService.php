@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Admin;
 
 use App\Models\ProductImages;
@@ -17,8 +18,8 @@ class ProImagesService
             'product' => $product,
             'colors'  => Color::where('status', 1)->get(),
             'images'  => ProductImages::where('product_id', $product_id)
-                            ->orderBy('sort_order')
-                            ->get(),
+                ->orderBy('sort_order')
+                ->get(),
         ];
     }
 
@@ -46,54 +47,43 @@ class ProImagesService
         });
     }
 
-    public function updateImages(array $images): void
+    public function updateImages(int $productId, array $data): void
     {
-        DB::transaction(function () use ($images) {
+        DB::transaction(function () use ($productId, $data) {
+            $imagesData = $data['images'] ?? [];
+            $featuredId = $data['featured_id'] ?? null;
+            $backId     = $data['back_id'] ?? null;
 
-            foreach ($images as $id => $value) {
+            // 1. Reset all featured/back flags for this product first
+            ProductImages::where('product_id', $productId)->update([
+                'is_featured' => 0,
+                'is_back'     => 0
+            ]);
 
-                $image = ProductImages::find($id);
-
-                if (!$image) {
-                    continue; // skip invalid id
-                }
-
-                $image->update([
-                    'color_id'    => $value['color_id'] ?? null,
-                    'is_featured' => isset($value['is_featured']) ? 1 : 0,
-                    'is_back'     => isset($value['is_back']) ? 1 : 0,
-                    'sort_order'  => $value['sort_order'] ?? $image->sort_order,
+            // 2. Loop through and update individual row data (color and sort)
+            foreach ($imagesData as $id => $value) {
+                ProductImages::where('id', $id)->update([
+                    'color_id'   => $value['color_id'] ?? null,
+                    'sort_order' => $value['sort_order'] ?? 0,
                 ]);
+            }
+
+            // 3. Set the single featured and back image
+            if ($featuredId) {
+                ProductImages::where('id', $featuredId)->update(['is_featured' => 1]);
+            }
+            if ($backId) {
+                ProductImages::where('id', $backId)->update(['is_back' => 1]);
             }
         });
     }
 
- public function bulkDelete( $delete_ids): void
-{
-    DB::transaction(function () use ($delete_ids) {
-
-            $ids = explode(',', $delete_ids);
-
-         $images = ProductImages::whereIn('id', $ids)->get();
-
-        foreach ($images as $img) {
-
-            if (!empty($img->image) && Storage::disk('public')->exists($img->image)) {
-                Storage::disk('public')->delete($img->image);
-            }
-
-            $img->delete();
-        }
-    });
-}
-    
-    public function bulk_delete($ids_string)
+    public function bulkDelete(array $ids): void
     {
-        $ids = explode(',', $ids_string);
         $images = ProductImages::whereIn('id', $ids)->get();
 
         foreach ($images as $img) {
-            if (Storage::disk('public')->exists($img->image)) {
+            if ($img->image && Storage::disk('public')->exists($img->image)) {
                 Storage::disk('public')->delete($img->image);
             }
             $img->delete();

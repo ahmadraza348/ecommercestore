@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -33,10 +34,13 @@ class ProImagesController extends Controller
     public function update_pro_images(Request $request)
     {
         $request->validate([
-            'images' => 'required|array'
+            'product_id' => 'required|exists:products,id',
+            'images'     => 'required|array',
+            'featured_id' => 'nullable|exists:product_images,id',
+            'back_id'    => 'nullable|exists:product_images,id',
         ]);
 
-        $this->service->updateImages($request->input('images'));
+        $this->service->updateImages($request->input('product_id'), $request->all());
 
         return back()->with('success', 'Images updated successfully');
     }
@@ -44,7 +48,8 @@ class ProImagesController extends Controller
     public function bulk_delete_images(Request $request)
     {
         $request->validate([
-            'delete_ids' => 'required|array'
+            'delete_ids' => 'required|array',
+            'delete_ids.*' => 'exists:product_images,id'
         ]);
 
         $this->service->bulkDelete($request->input('delete_ids'));

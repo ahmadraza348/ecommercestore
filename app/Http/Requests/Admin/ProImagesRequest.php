@@ -19,11 +19,13 @@ class ProImagesRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-           'product_id' => 'required',
-            'images.*'   => 'image|mimes:jpg,jpeg,png|max:2048',
-        ];
-    }
+   public function rules(): array
+{
+    return [
+        'product_id' => 'required|exists:products,id',
+        'color_id'   => 'nullable',
+        'images'     => 'required|array',
+        'images.*'   => 'image|mimes:jpg,jpeg,png|max:2048',
+    ];
+}
 }
