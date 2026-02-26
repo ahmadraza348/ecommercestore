@@ -152,23 +152,23 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
     Route::prefix('product')->name('product.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])
-        // ->middleware('permission:view_products')
-        ->name('index');
+            // ->middleware('permission:view_products')
+            ->name('index');
         Route::group([
             // 'middleware' => 'permission:create_products'
-            ], function () {
+        ], function () {
             Route::get('create', [ProductController::class, 'create'])->name('create');
             Route::post('store', [ProductController::class, 'store'])->name('store');
         });
         Route::group([
             // 'middleware' => 'permission:edit_products'
-            ], function () {
+        ], function () {
             Route::get('edit/{product}', [ProductController::class, 'edit'])->name('edit');
             Route::put('update/{product}', [ProductController::class, 'update'])->name('update');
         });
         Route::delete('delete/{product}', [ProductController::class, 'destroy'])
-        // ->middleware('permission:delete_products')
-        ->name('destroy');
+            // ->middleware('permission:delete_products')
+            ->name('destroy');
     });
 
 
@@ -226,39 +226,40 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
     Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 
-// Product Attribute Routes
+    // Product Attribute and images Routes
 
-Route::get('/add-product-attribute/{id}', 
-    [ProductAttrController::class, 'add_pro_attr']
-)->name('add.pro.attribute');
+    Route::get(
+        '/add-product-attribute/{id}',
+        [ProductAttrController::class, 'add_pro_attr']
+    )->name('add.pro.attribute');
 
-Route::post('products/store-attributes', 
-    [ProductAttrController::class, 'store_pro_attr']
-)->name('admin.product.store-attributes');
+    Route::post(
+        'products/store-attributes',
+        [ProductAttrController::class, 'store_pro_attr']
+    )->name('admin.product.store-attributes');
 
-Route::get('products/{id}/attributes', 
-    [ProductAttrController::class, 'fetch_pro_attr']
-)->name('admin.product.fetchAttributes');
+    Route::get(
+        'products/{id}/attributes',
+        [ProductAttrController::class, 'fetch_pro_attr']
+    )->name('admin.product.fetchAttributes');
 
-Route::post('products/update-attribute/{id}',   // ← added {id}
-    [ProductAttrController::class, 'update_pro_attr']
-)->name('admin.product.updateAttribute');
+    Route::post(
+        'products/update-attribute/{id}',
+        [ProductAttrController::class, 'update_pro_attr']
+    )->name('admin.product.updateAttribute');
 
-Route::delete('/products/delete-attribute/{id}', 
-    [ProductAttrController::class, 'delete_pro_attr']
-)->name('admin.product.delete-attribute');
+    Route::delete(
+        '/products/delete-attribute/{id}',
+        [ProductAttrController::class, 'delete_pro_attr']
+    )->name('admin.product.delete-attribute');
 
-// Product Attribute Routes
-    //    Product images Routes
     Route::prefix('products')->group(function () {
         Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
         Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
         Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
         Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
     });
-    //    Product images Routes
 
-    // Separate routes for profile functionality
     Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
     Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
 });
