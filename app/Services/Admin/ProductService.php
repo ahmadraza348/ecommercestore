@@ -6,8 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Attribute;
 use App\Models\Brand;
-use App\Models\MetaTag;
-use App\Models\ProImages;
+use App\Models\ProductImages;
 use App\Models\RelationalCategory;
 use App\Models\AttributeValue;
 use Illuminate\Support\Facades\DB;
@@ -143,7 +142,7 @@ class ProductService
     public function deleteGalleryImage($imageId): array
     {
         try {
-            $image = ProImages::findOrFail($imageId);
+            $image = ProductImages::findOrFail($imageId);
             if ($image->image) {
                 Storage::disk('public')->delete($image->image);
             }

@@ -75,6 +75,9 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('profile.update');
     });
 
+    // Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
+    // Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
+
     Route::prefix('category')->name('category.')->group(function () {
         Route::get('/', [CategoryController::class, 'index'])->middleware('permission:view_categories')->name('index');
         Route::group(['middleware' => 'permission:create_categories'], function () {
@@ -171,11 +174,33 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
             ->name('destroy');
     });
 
-
-
-    Route::resource('product', ProductController::class)->names('product');
+    // Route::resource('product', ProductController::class)->names('product');
     Route::post('/product/bulk-delete', [ProductController::class, 'bulkDelete'])->name('product.bulk-delete');
     Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+
+    // Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
+    // Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');
+    Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
+    Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+
+    // Product Attribute and images Routes
+
+
+    Route::prefix('pro-attributes')->name('admin.pro.attribute.')->group(function () {
+        Route::get('/add/{id}', [ProductAttrController::class, 'add_pro_attr'])->name('index');
+        Route::post('/store', [ProductAttrController::class, 'store_pro_attr'])->name('store');
+        Route::get('/fetch/{id}', [ProductAttrController::class, 'fetch_pro_attr'])->name('fetch');
+        Route::post('/update/{id}', [ProductAttrController::class, 'update_pro_attr'])->name('update');
+        Route::delete('/delete/{id}', [ProductAttrController::class, 'delete_pro_attr'])->name('delete');
+    });
+
+    Route::prefix('products')->group(function () {
+        Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
+        Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
+        Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
+        Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
+    });
 
     // Roles And Permissions Routes start here
     Route::prefix('roles')->name('admin.roles.')->group(function () {
@@ -220,58 +245,17 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')->middleware('permission:delete_coupons');
     });
 
-    Route::get('/restore-products', [ProductController::class, 'restore_product'])->name('product.restore');
-    Route::get('/get-attribute-values/{id}', [ProductController::class, 'getAttributeValues'])->name('getAttributeValues');
-    Route::delete('/gallery-image/delete', [ProductController::class, 'deleteGalleryImage'])->name('galleryimg.delete');
-    Route::patch('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-    Route::delete('/products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
-
-    // Product Attribute and images Routes
-
-    Route::get(
-        '/add-product-attribute/{id}',
-        [ProductAttrController::class, 'add_pro_attr']
-    )->name('add.pro.attribute');
-
-    Route::post(
-        'products/store-attributes',
-        [ProductAttrController::class, 'store_pro_attr']
-    )->name('admin.pro.attribute.store');
-
-    Route::get(
-        'products/{id}/attributes',
-        [ProductAttrController::class, 'fetch_pro_attr']
-    )->name('admin.pro.attributes.fetch');
-
-    Route::post(
-        'products/update-attribute/{id}',
-        [ProductAttrController::class, 'update_pro_attr']
-    )->name('admin.pro.attribute.update');
-
-    Route::delete(
-        '/products/delete-attribute/{id}',
-        [ProductAttrController::class, 'delete_pro_attr']
-    )->name('admin.pro.attribute.delete');
-
-    Route::prefix('products')->group(function () {
-        Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
-        Route::post('/store-images', [ProImagesController::class, 'store_pro_images'])->name('admin.product.store-images');
-        Route::post('/update-images', [ProImagesController::class, 'update_pro_images'])->name('admin.product.update-images');
-        Route::delete('/delete-images', [ProImagesController::class, 'bulk_delete_images'])->name('admin.product.delete-images');
+    Route::prefix('user')->group(function () {
+        Route::get('login', [AuthController::class, 'login'])->name('admin.login');
+        Route::post('login/submit', [AuthController::class, 'login_submit'])->name('admin.login.submit');
+        Route::get('login/forget-password', [AuthController::class, 'forgetpass'])->name('admin.forgetpass');
+        Route::post('login/forget-password/submit', [AuthController::class, 'submitforgetpass'])->name('admin.forgetpass.submit');
+        Route::get('login/reset-password/{token}', [AuthController::class, 'show_reset_pass_form'])->name('reset.password.get');
+        Route::post('login/reset-password/{token}', [AuthController::class, 'submit_reset_pass_form'])->name('reset.password.post');
     });
-
-    Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
-    Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
 });
 
-Route::prefix('admin')->group(function () {
-    Route::get('login', [AuthController::class, 'login'])->name('admin.login');
-    Route::post('login/submit', [AuthController::class, 'login_submit'])->name('admin.login.submit');
-    Route::get('login/forget-password', [AuthController::class, 'forgetpass'])->name('admin.forgetpass');
-    Route::post('login/forget-password/submit', [AuthController::class, 'submitforgetpass'])->name('admin.forgetpass.submit');
-    Route::get('login/reset-password/{token}', [AuthController::class, 'show_reset_pass_form'])->name('reset.password.get');
-    Route::post('login/reset-password/{token}', [AuthController::class, 'submit_reset_pass_form'])->name('reset.password.post');
-});
+
 
 // Route::get('/register', [HomePageController::class, 'index'])->name('front.register');
 Route::get('/dashboard', function () {

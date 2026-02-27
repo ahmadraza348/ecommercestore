@@ -79,7 +79,7 @@
                                 </td>
                                 @if ($item->product_variation_type === 'color_attribute_varient'|| $item->product_variation_type === 'color_varient')
                                 <td>
-                                    <a href="{{ route('add.pro.attribute', $item->id) }}">Add</a>
+                                    <a href="{{ route('admin.pro.attribute.index', $item->id) }}">Add</a>
                                 </td>
                                 @else
                                 <td> N/A </td>

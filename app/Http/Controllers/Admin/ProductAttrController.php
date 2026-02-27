@@ -16,7 +16,7 @@ class ProductAttrController extends Controller
     public function add_pro_attr(int $product_id)
     {
         $data = $this->service->getAttributesData($product_id);
-        return view('backend.pro_attr.add2', $data);
+        return view('backend.pro_attr.add', $data);
     }
 
     public function fetch_pro_attr(int $product_id): JsonResponse
