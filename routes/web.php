@@ -236,22 +236,22 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::post(
         'products/store-attributes',
         [ProductAttrController::class, 'store_pro_attr']
-    )->name('admin.product.store-attributes');
+    )->name('admin.pro.attribute.store');
 
     Route::get(
         'products/{id}/attributes',
         [ProductAttrController::class, 'fetch_pro_attr']
-    )->name('admin.product.fetchAttributes');
+    )->name('admin.pro.attributes.fetch');
 
     Route::post(
         'products/update-attribute/{id}',
         [ProductAttrController::class, 'update_pro_attr']
-    )->name('admin.product.updateAttribute');
+    )->name('admin.pro.attribute.update');
 
     Route::delete(
         '/products/delete-attribute/{id}',
         [ProductAttrController::class, 'delete_pro_attr']
-    )->name('admin.product.delete-attribute');
+    )->name('admin.pro.attribute.delete');
 
     Route::prefix('products')->group(function () {
         Route::get('/add-images/{id}', [ProImagesController::class, 'add_pro_images'])->name('add.pro.images');
