@@ -52,6 +52,14 @@ Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'downlo
     ->name('order.invoice.pdf');
 
 // Admin Panel Routes
+ Route::prefix('admin')->group(function () {
+        Route::get('login', [AuthController::class, 'login'])->name('admin.login');
+        Route::post('login/submit', [AuthController::class, 'login_submit'])->name('admin.login.submit');
+        Route::get('login/forget-password', [AuthController::class, 'forgetpass'])->name('admin.forgetpass');
+        Route::post('login/forget-password/submit', [AuthController::class, 'submitforgetpass'])->name('admin.forgetpass.submit');
+        Route::get('login/reset-password/{token}', [AuthController::class, 'show_reset_pass_form'])->name('reset.password.get');
+        Route::post('login/reset-password/{token}', [AuthController::class, 'submit_reset_pass_form'])->name('reset.password.post');
+    });
 
 Route::prefix('admin')->middleware('adminauth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
@@ -74,6 +82,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::get('/profile', [AdminUserController::class, 'profile'])->name('profile');
         Route::post('/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('profile.update');
     });
+    
 
     // Route::get('users/profile', [AdminUserController::class, 'profile'])->name('admin.user.profile');
     // Route::post('users/profile/save/{id}', [AdminUserController::class, 'profile_update'])->name('admin.user.profile.update');
@@ -245,14 +254,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')->middleware('permission:delete_coupons');
     });
 
-    Route::prefix('user')->group(function () {
-        Route::get('login', [AuthController::class, 'login'])->name('admin.login');
-        Route::post('login/submit', [AuthController::class, 'login_submit'])->name('admin.login.submit');
-        Route::get('login/forget-password', [AuthController::class, 'forgetpass'])->name('admin.forgetpass');
-        Route::post('login/forget-password/submit', [AuthController::class, 'submitforgetpass'])->name('admin.forgetpass.submit');
-        Route::get('login/reset-password/{token}', [AuthController::class, 'show_reset_pass_form'])->name('reset.password.get');
-        Route::post('login/reset-password/{token}', [AuthController::class, 'submit_reset_pass_form'])->name('reset.password.post');
-    });
+   
 });
 
 
