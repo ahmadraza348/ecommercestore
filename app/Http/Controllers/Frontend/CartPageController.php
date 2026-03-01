@@ -9,7 +9,6 @@ use App\Models\ProAttributeValue;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
-use Illuminate\Support\Facades\Session;
 
 class CartPageController extends Controller
 {

@@ -3,45 +3,30 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use Illuminate\Http\Request;
-use App\Models\ProAttributeValue;
+use App\Http\Requests\Frontend\ProductCartRequest;
 use App\Services\CartService;
+use App\Services\ProductPageService;
 
 
 class ProductPageController extends Controller
 {
+    protected $productPageService;
+
+    public function __construct(ProductPageService $productPageService)
+    {
+        $this->productPageService = $productPageService;
+    }
 
     public function index($slug)
     {
-
-        $product = Product::where('slug', $slug)
-            ->with([
-                'gallery_images',
-                'proAttributeValuesRecords',
-            ])->firstOrFail();
-
-        $variants = ProAttributeValue::where('product_id', $product->id)
-            ->with(['attribute_value.attribute', 'color'])
-            ->get()
-            ->groupBy('color_id');
-
-        return view('frontend.pro-detail', compact('product', 'variants'));
+        $data = $this->productPageService->get_data($slug);
+        return view('frontend.pro-detail', $data);
     }
 
-
-
-    public function addToCart(Request $request, CartService $cartService)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'pro_qty' => 'required|integer|min:1',
-            'color' => 'nullable|exists:colors,id',
-            'attribute_value_id' => 'nullable|exists:attribute_values,id',
-        ]);
-
+    public function addToCart(ProductCartRequest $request, CartService $cartService)
+    {       
         try {
-            $cartService->add($request->all());
+            $cartService->add($request->validated());
             session()->forget(['coupon_code', 'coupon_discount', 'coupon_subtotal', 'coupon_total']);
             toastr()->success('Product added to cart successfully');
         } catch (\Exception $e) {
