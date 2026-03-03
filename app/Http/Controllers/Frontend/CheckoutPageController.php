@@ -136,7 +136,6 @@ class CheckoutPageController extends Controller
 
 
             // --- BRANCHING LOGIC ---
-
             if ($request->payment_method === 'stripe') {
                 Stripe::setApiKey(config('services.stripe.secret'));
                 $checkout_session = StripeSession::create([
