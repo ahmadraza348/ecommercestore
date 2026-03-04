@@ -1,0 +1,138 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Jobs\SendOrderEmailJob;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
+
+class OrderService
+{
+    public function getCart()
+    {
+        if (Auth::check()) {
+            return Cart::with(['items.product', 'items.proColor', 'items.proAttribute.attribute'])
+                ->where('user_id', Auth::id())
+                ->first();
+        }
+
+        return Cart::with(['items.product', 'items.proColor', 'items.proAttribute.attribute'])
+            ->where('session_id', Session::getId())
+            ->first();
+    }
+
+    public function createOrder($request, $cart)
+    {
+        $subtotal = $cart->items->sum('line_total');
+        $shipping = 250;
+        $discount = session('coupon_discount', 0);
+        $total = max(0, ($subtotal + $shipping) - $discount);
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'session_id' => Session::getId(),
+
+            // Billing
+            'billing_first_name' => $request->billing['first_name'],
+            'billing_last_name'  => $request->billing['last_name'],
+            'billing_email'      => $request->billing['email'],
+            'billing_company'    => $request->billing['company'] ?? null,
+            'billing_country'    => $request->billing['country'],
+            'billing_address_1'  => $request->billing['address_1'],
+            'billing_address_2'  => $request->billing['address_2'] ?? null,
+            'billing_city'       => $request->billing['city'],
+            'billing_state'      => $request->billing['state'] ?? null,
+            'billing_postcode'   => $request->billing['postcode'],
+            'billing_phone'      => $request->billing['phone'] ?? null,
+
+            // Shipping
+            'different_shipping' => $request->has('different_shipping'),
+            'shipping_first_name'=> $request->shipping['first_name'] ?? null,
+            'shipping_last_name' => $request->shipping['last_name'] ?? null,
+            'shipping_email'     => $request->shipping['email'] ?? null,
+            'shipping_country'   => $request->shipping['country'] ?? null,
+            'shipping_address_1' => $request->shipping['address_1'] ?? null,
+            'shipping_address_2' => $request->shipping['address_2'] ?? null,
+            'shipping_city'      => $request->shipping['city'] ?? null,
+            'shipping_state'     => $request->shipping['state'] ?? null,
+            'shipping_postcode'  => $request->shipping['postcode'] ?? null,
+
+            'subtotal'        => $subtotal,
+            'shipping_charge' => $shipping,
+            'discount'        => $discount,
+            'total_amount'    => $total,
+
+            'order_note'     => $request->order_note ?? null,
+            'payment_method' => $request->payment_method,
+            'payment_status' => 'pending',
+            'order_status'   => 'pending',
+        ]);
+
+        foreach ($cart->items as $item) {
+
+            if ($item->product->stock < $item->quantity) {
+                throw new \Exception("Insufficient stock for {$item->product->name}");
+            }
+
+            OrderItem::create([
+                'order_id'   => $order->id,
+                'product_id' => $item->product_id,
+                'product_name' => $item->product_name,
+                'price'      => $item->price,
+                'quantity'   => $item->quantity,
+                'line_total' => $item->line_total,
+                'color_id'   => $item->color_id,
+                'color_name' => $item->proColor->name ?? null,
+                'attribute_id'   => $item->proAttribute->attribute->id ?? null,
+                'attribute_name' => $item->proAttribute->attribute->name ?? null,
+                'attribute_value'=> $item->proAttribute->name ?? null,
+            ]);
+
+            // Decrement stock safely
+            $item->product->decrement('stock', $item->quantity);
+        }
+
+        // Clear cart
+        $cart->items()->delete();
+        $cart->delete();
+        session()->forget('coupon_discount');
+
+        SendOrderEmailJob::dispatch($order->id)->afterCommit();
+
+        return $order;
+    }
+
+    public function redirectToStripe($order)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => 'Order #' . $order->order_number
+                    ],
+                    'unit_amount' => $order->total_amount * 100,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => route('order.thankyou', $order->order_number),
+            'cancel_url'  => route('checkout.index'),
+            'metadata' => [
+                'order_id' => $order->id
+            ]
+        ]);
+
+        $order->update(['stripe_session_id' => $session->id]);
+
+        return redirect($session->url);
+    }
+}
