@@ -53,27 +53,28 @@ class CartPageController extends Controller
         }
     }
 
-    public function applyCoupon(Request $request)
-    {
-        $request->validate([
-            'coupon_code' => 'required|string'
-        ]);
+  public function applyCoupon(Request $request)
+{
+    $request->validate([
+        'coupon_code' => 'required|string'
+    ]);
 
-        try {
+    try {
 
-            DB::transaction(function () use ($request) {
-                $this->cartUpdateService->applyCoupon(
-                    $request->coupon_code,
-                    session()->getId()
-                );
-            });
+        DB::transaction(function () use ($request) {
+            $this->cartUpdateService->applyCoupon(
+                $request->coupon_code,
+                session()->getId()
+            );
+        });
 
-            toastr()->success("Coupon applied successfully.");
-            return back();
-        } catch (\Exception $e) {
+        toastr()->success("Coupon applied successfully.");
+        return back();
 
-            toastr()->error($e->getMessage());
-            return back();
-        }
+    } catch (\Exception $e) {
+
+        toastr()->error($e->getMessage());
+        return back();
     }
+}
 }

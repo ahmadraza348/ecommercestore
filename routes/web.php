@@ -247,11 +247,16 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
     // Roles And Permissions Routes end here
     Route::prefix('coupons')->name('coupons.')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('index')->middleware('permission:view_coupons');
-        Route::post('/store', [CouponController::class, 'store'])->name('store')->middleware('permission:create_coupons');
-        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit')->middleware('permission:edit_coupons');
-        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update')->middleware('permission:edit_coupons');
-        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')->middleware('permission:delete_coupons');
+        Route::get('/', [CouponController::class, 'index'])->name('index');
+        // ->middleware('permission:view_coupons');
+        Route::post('/store', [CouponController::class, 'store'])->name('store');
+        // ->middleware('permission:create_coupons');
+        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit');
+        // ->middleware('permission:edit_coupons');
+        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update');
+        // ->middleware('permission:edit_coupons');
+        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete');
+        // ->middleware('permission:delete_coupons');
     });
 
    

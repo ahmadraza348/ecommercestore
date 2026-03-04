@@ -69,7 +69,7 @@ class CartUpdateService
     public function removeItem(int $id): void
     {
         $cartItem = CartItem::findOrFail($id);
-        $cartId = $cartItem->cart_id;
+        $cartId   = $cartItem->cart_id;
 
         $cartItem->delete();
 
@@ -88,21 +88,23 @@ class CartUpdateService
             throw new \Exception("Coupon is not active.");
         }
 
-        if (now()->greaterThan($coupon->ending_at->endOfDay())) {
+        if (now()->greaterThan($coupon->ending_at)) {
             throw new \Exception("Coupon has expired.");
         }
 
-        $cart = Cart::where('session_id', $sessionId)->first();
+        $cart = Cart::with('items')
+            ->where('session_id', $sessionId)
+            ->first();
 
-        if (!$cart || $cart->items()->count() === 0) {
+        if (!$cart || $cart->items->isEmpty()) {
             throw new \Exception("Cart is empty.");
         }
 
-        if ($cart->discount > 0) {
+        if ($cart->coupon_id) {
             throw new \Exception("Coupon already applied.");
         }
 
-        $subtotal = $cart->items()->sum('line_total');
+        $subtotal = $cart->items->sum('line_total');
 
         if ($subtotal <= 0) {
             throw new \Exception("Invalid cart total.");
@@ -114,10 +116,13 @@ class CartUpdateService
             $discount = round(($subtotal * $coupon->amount) / 100, 2);
         }
 
+        $total = max(0, $subtotal - $discount);
+
         $cart->update([
-            'discount' => $discount,
-            'subtotal' => $subtotal,
-            'total'    => $subtotal - $discount,
+            'subtotal'  => $subtotal,
+            'discount'  => $discount,
+            'total'     => $total,
+            'coupon_id' => $coupon->id,
         ]);
     }
 
@@ -141,16 +146,22 @@ class CartUpdateService
         return (int) $cartItem->product->stock;
     }
 
+    /**
+     * 🔥 IMPORTANT:
+     * Any cart change invalidates coupon completely.
+     */
     private function recalculateCart(int $cartId): void
     {
-        $cart = Cart::findOrFail($cartId);
+        $cart = Cart::with('items')->findOrFail($cartId);
 
-        $subtotal = $cart->items()->sum('line_total');
-        $discount = min($cart->discount ?? 0, $subtotal);
+        $subtotal = $cart->items->sum('line_total');
 
+        // Invalidate coupon on ANY cart change
         $cart->update([
-            'subtotal' => $subtotal,
-            'total'    => $subtotal - $discount,
+            'subtotal'  => $subtotal,
+            'discount'  => 0,
+            'coupon_id' => null,
+            'total'     => $subtotal,
         ]);
     }
 }
