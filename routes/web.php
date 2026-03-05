@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProImagesController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Frontend\CartPageController;
-use App\Http\Controllers\Frontend\CheckoutPageController;
+use App\Http\Controllers\Frontend\OrderPageController;
 use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\OrderInvoiceController;
 use App\Http\Controllers\Frontend\ProductPageController;
@@ -40,10 +40,10 @@ Route::prefix('cart')->group(function () {
     Route::post('/apply-coupon', [CartPageController::class, 'applyCoupon'])->name('coupon.apply');
 });
 Route::prefix('checkout')->group(function () {
-    Route::get('/', [CheckoutPageController::class, 'index'])->name('checkoutPage');
+    Route::get('/', [OrderPageController::class, 'index'])->name('checkoutPage');
 });
-Route::post('/place-order', [CheckoutPageController::class, 'placeOrder'])->name('order.place');
-Route::get('/order-thankyou/{order_number}', [CheckoutPageController::class, 'order_thankyou'])->name('order.thankyou');
+Route::post('/place-order', [OrderPageController::class, 'placeOrder'])->name('order.place');
+Route::get('/order-thankyou/{order_number}', [OrderPageController::class, 'order_thankyou'])->name('order.thankyou');
 
 Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
     ->name('order.invoice');

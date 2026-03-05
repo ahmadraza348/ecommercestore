@@ -7,7 +7,7 @@ use App\Http\Requests\Frontend\PlaceOrderRequest;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\DB;
 
-class CheckoutPageController extends Controller
+class OrderPageController extends Controller
 {
     protected OrderService $orderService;
 
