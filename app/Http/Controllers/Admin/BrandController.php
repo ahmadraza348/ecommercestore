@@ -48,7 +48,7 @@ class BrandController extends Controller
             ->with('subcategories.subcategories') 
             ->get();
         $data['selected_categories'] = $brand->categories->pluck('id')->toArray();
-        return view('backend.brand.edit', $data);
+        return view('backend.brand.edit', $data, compact('brand'));
     }
 
  public function update(UpdateBrandRequest $request, Brand $brand)

@@ -248,10 +248,7 @@
 
                     <!-- Meta Tab -->
                     <div class="tab-pane" id="meta-tab">
-                        @include('backend.partials.editmetatags', ['item' => $pro_data])
-                        <div class="form-group mt-3">
-                            <button type="button" class="btn btn-secondary" onclick="resetMetaFields()">Reset Meta</button>
-                        </div>
+                        @include('backend.partials.editmetatags', ['item' => $pro_data])                      
                     </div>
                 </div>
 
@@ -281,13 +278,5 @@
         toggleAttributeSelect(); // Initialize on load
     });
 
-    function resetMetaFields() {
-        // Add your meta fields reset logic here
-        document.querySelectorAll('#meta-tab input, #meta-tab textarea').forEach(input => {
-            if (input.type !== 'submit' && input.type !== 'button') {
-                input.value = '';
-            }
-        });
-    }
 </script>
 @endsection
