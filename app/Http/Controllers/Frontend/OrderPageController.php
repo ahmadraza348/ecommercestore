@@ -30,6 +30,7 @@ class OrderPageController extends Controller
 
     public function placeOrder(PlaceOrderRequest $request)
     {
+        dd($request->all());
         $cart = $this->orderService->getCart();
 
         if (!$cart || $cart->items->isEmpty()) {
