@@ -396,8 +396,9 @@
                                             <p>Card Payment</p>
                                         </div>
                                     </div>
-                                    <div id="payment-element"class=" form-control" style="display:none; margin-top:10px">
-                                    </div>
+                 
+                                    <div id="payment-element" class="form-control" style="display:none; margin-top:10px; height: 40px; padding: 10px;">
+    </div>
                                     <div class="summary-footer-area">
                                         <button type="submit" class="check-btn sqr-btn mt-3">Place Order</button>
                                     </div>
@@ -415,40 +416,52 @@
 document.addEventListener("DOMContentLoaded", function() {
     var stripe = Stripe('{{ env('STRIPE_KEY') }}');
     var elements = stripe.elements();
-    var card = elements.create('card');
+
+    // Custom styling for the element to make it look like your other inputs
+    var style = {
+        base: {
+            fontSize: '16px',
+            color: '#32325d',
+        }
+    };
+var card = elements.create('card', {style: style});
     card.mount('#payment-element');
 
-    var form = document.getElementById("orderForm"); // Removed the #
+var form = document.getElementById("orderForm");
 
-    // Handle Payment Method Toggle
+ // 1. Handle Payment Method Toggle
     document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
         radio.addEventListener("change", function() {
+            const paymentElement = document.getElementById("payment-element");
             if (this.value === "stripe") {
-                document.getElementById("payment-element").style.display = "block";
+                paymentElement.style.display = "block";
             } else {
-                document.getElementById("payment-element").style.display = "none";
+                paymentElement.style.display = "none";
             }
         });
     });
 
-    // Handle Form Submission
+   // 2. Handle Form Submission
     form.addEventListener("submit", async function(e) {
         var paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
         
         if (paymentMethod === "stripe") {
-            e.preventDefault(); // Stop form to get token
+            e.preventDefault(); // Stop form submission
 
+            // Use stripe.createToken to validate the card
             const {token, error} = await stripe.createToken(card);
 
             if (error) {
-                alert(error.message);
+                // If the card is empty or invalid, show the error
+                alert("Payment Error: " + error.message);
+                return; // Stop the process here
             } else {
-                // Insert the token into the hidden input
+                // Success! Inject the token and submit
                 document.getElementById("stripeToken").value = token.id;
-                // Submit the form programmatically
                 form.submit();
             }
         }
+        // If "cash", the form submits normally as there's no e.preventDefault()
     });
 });
 </script>

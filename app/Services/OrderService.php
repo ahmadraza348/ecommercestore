@@ -8,8 +8,9 @@ use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Jobs\SendOrderEmailJob;
+use Stripe\Charge;
 use Stripe\Stripe;
-use Stripe\Checkout\Session as StripeSession;
+
 
 class OrderService
 {
@@ -107,32 +108,32 @@ class OrderService
         return $order;
     }
 
-    public function redirectToStripe($order)
-    {
-        Stripe::setApiKey(config('services.stripe.secret'));
+public function processStripePayment($order, $token)
+{
+    Stripe::setApiKey(config('services.stripe.secret'));
 
-        $session = StripeSession::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'usd',
-                    'product_data' => [
-                        'name' => 'Order #' . $order->order_number
-                    ],
-                    'unit_amount' => $order->total_amount * 100,
-                ],
-                'quantity' => 1,
-            ]],
-            'mode' => 'payment',
-            'success_url' => route('order.thankyou', $order->order_number),
-            'cancel_url'  => route('checkout.index'),
-            'metadata' => [
-                'order_id' => $order->id
-            ]
+    try {
+        $charge = Charge::create([
+            'amount' => $order->total_amount * 100, // Amount in cents (PKR 252 = 25200)
+            'currency' => 'pkr', // Use 'pkr' or 'usd' depending on your Stripe account region
+            'description' => 'Order #' . $order->order_number,
+            'source' => $token,
+            'metadata' => ['order_id' => $order->id],
         ]);
 
-        $order->update(['stripe_session_id' => $session->id]);
+        if ($charge->status === 'succeeded') {
+            $order->update([
+                'payment_status' => 'paid',
+                'transaction_id' => $charge->id // Good practice to store this
+            ]);
+            return true;
+        }
+        
+        return false;
 
-        return redirect($session->url);
+    } catch (\Exception $e) {
+        // If payment fails, we throw an exception so the Controller can roll back the DB
+        throw new \Exception("Stripe Payment Failed: " . $e->getMessage());
     }
+}
 }

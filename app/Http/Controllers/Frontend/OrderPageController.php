@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\PlaceOrderRequest;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderPageController extends Controller
 {
@@ -28,42 +29,44 @@ class OrderPageController extends Controller
         return view('frontend.checkout', compact('cartData'));
     }
 
-    public function placeOrder(PlaceOrderRequest $request)
-    {
-        dd($request->all());
-        $cart = $this->orderService->getCart();
+public function placeOrder(PlaceOrderRequest $request)
+{
+    $cart = $this->orderService->getCart();
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('cartPage')
-                ->with('error', 'Your cart is empty!');
-        }
-
-        DB::beginTransaction();
-
-        try {
-
-            $order = $this->orderService->createOrder($request, $cart);
-
-            DB::commit();
-
-            // If Stripe → redirect to Stripe
-            if ($order->payment_method === 'stripe') {
-                return $this->orderService->redirectToStripe($order);
-            }
-
-            toastr()->success('Order placed successfully!');
-            return redirect()
-                ->route('order.thankyou', $order->order_number);
-
-        } catch (\Throwable $e) {
-
-            DB::rollBack();
-            report($e);
-
-            toastr('Order failed. Try again.', 'error');
-            return back()->withInput();
-        }
+    if (!$cart || $cart->items->isEmpty()) {
+        return redirect()->route('cartPage')->with('error', 'Your cart is empty!');
     }
+
+    DB::beginTransaction(); 
+
+    try {
+        // 1. Create the Order and reduce stock
+        $order = $this->orderService->createOrder($request, $cart);
+
+        // 2. If Stripe, charge the card immediately
+        if ($request->payment_method === 'stripe') {
+            if (!$request->stripeToken) {
+                throw new \Exception("Payment token is missing.");
+            }
+            
+            $this->orderService->processStripePayment($order, $request->stripeToken);
+        }
+
+        DB::commit();
+
+        toastr()->success('Order placed successfully!');
+        return redirect()->route('order.thankyou', $order->order_number);
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        
+        // Log the actual error for debugging
+        Log::error('Order Placement Error: ' . $e->getMessage());
+
+        toastr($e->getMessage(), 'error');
+        return back()->withInput();
+    }
+}
 
     public function order_thankyou($order_number)
     {
