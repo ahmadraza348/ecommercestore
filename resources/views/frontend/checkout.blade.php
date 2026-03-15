@@ -269,6 +269,12 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
+                                            <div class="single-input-item mb-3">
+                                                <label for="shipping_phone">Phone</label>
+                                                <input type="text" id="shipping_phone" name="shipping[phone]"
+                                                    value="{{ old('shipping.phone', Auth::check() ? $user->phone : '') }}"
+                                                    placeholder="Phone" />
+                                            </div>
 
                                             <div class="single-input-item mb-3">
                                                 <label for="shipping_state">State / Division</label>
@@ -396,9 +402,10 @@
                                             <p>Card Payment</p>
                                         </div>
                                     </div>
-                 
-                                    <div id="payment-element" class="form-control" style="display:none; margin-top:10px; height: 40px; padding: 10px;">
-    </div>
+
+                                    <div id="payment-element" class="form-control"
+                                        style="display:none; margin-top:10px; height: 40px; padding: 10px;">
+                                    </div>
                                     <div class="summary-footer-area">
                                         <button type="submit" class="check-btn sqr-btn mt-3">Place Order</button>
                                     </div>
@@ -410,59 +417,65 @@
             </form>
         </div>
     </div>
-   <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var stripe = Stripe('{{ env('STRIPE_KEY') }}');
-    var elements = stripe.elements();
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+            var elements = stripe.elements();
 
-    // Custom styling for the element to make it look like your other inputs
-    var style = {
-        base: {
-            fontSize: '16px',
-            color: '#32325d',
-        }
-    };
-var card = elements.create('card', {style: style});
-    card.mount('#payment-element');
+            // Custom styling for the element to make it look like your other inputs
+            var style = {
+                base: {
+                    fontSize: '16px',
+                    color: '#32325d',
+                }
+            };
+            var card = elements.create('card', {
+                style: style
+            });
+            card.mount('#payment-element');
 
-var form = document.getElementById("orderForm");
+            var form = document.getElementById("orderForm");
 
- // 1. Handle Payment Method Toggle
-    document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
-        radio.addEventListener("change", function() {
-            const paymentElement = document.getElementById("payment-element");
-            if (this.value === "stripe") {
-                paymentElement.style.display = "block";
-            } else {
-                paymentElement.style.display = "none";
-            }
+            // 1. Handle Payment Method Toggle
+            document.querySelectorAll('input[name="payment_method"]').forEach(function(radio) {
+                radio.addEventListener("change", function() {
+                    const paymentElement = document.getElementById("payment-element");
+                    if (this.value === "stripe") {
+                        paymentElement.style.display = "block";
+                    } else {
+                        paymentElement.style.display = "none";
+                    }
+                });
+            });
+
+            // 2. Handle Form Submission
+            form.addEventListener("submit", async function(e) {
+                var paymentMethod = document.querySelector('input[name="payment_method"]:checked')
+                .value;
+
+                if (paymentMethod === "stripe") {
+                    e.preventDefault(); // Stop form submission
+
+                    // Use stripe.createToken to validate the card
+                    const {
+                        token,
+                        error
+                    } = await stripe.createToken(card);
+
+                    if (error) {
+                        // If the card is empty or invalid, show the error
+                        alert("Payment Error: " + error.message);
+                        return; // Stop the process here
+                    } else {
+                        // Success! Inject the token and submit
+                        document.getElementById("stripeToken").value = token.id;
+                        form.submit();
+                    }
+                }
+                // If "cash", the form submits normally as there's no e.preventDefault()
+            });
         });
-    });
-
-   // 2. Handle Form Submission
-    form.addEventListener("submit", async function(e) {
-        var paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
-        
-        if (paymentMethod === "stripe") {
-            e.preventDefault(); // Stop form submission
-
-            // Use stripe.createToken to validate the card
-            const {token, error} = await stripe.createToken(card);
-
-            if (error) {
-                // If the card is empty or invalid, show the error
-                alert("Payment Error: " + error.message);
-                return; // Stop the process here
-            } else {
-                // Success! Inject the token and submit
-                document.getElementById("stripeToken").value = token.id;
-                form.submit();
-            }
-        }
-        // If "cash", the form submits normally as there's no e.preventDefault()
-    });
-});
-</script>
+    </script>
 @endsection
