@@ -1,0 +1,198 @@
+@extends('frontend.layouts.layout')
+@section('content')
+    <div class="cart-main-wrapper">
+        <div class="container">
+            <div class="row">
+                @if ($cartData && $cartData->items->count() > 0)
+                    <div class="col-lg-12">
+                        <!-- Cart Table Area -->
+
+
+                        <form action="{{ route('cart.update') }}" method="post">
+                            @csrf
+                            <div class="cart-table table-responsive">
+
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th class="pro-thumbnail">Id</th>
+                                            <th class="pro-thumbnail">Image</th>
+                                            <th class="pro-title">Product</th>
+                                            <th class="pro-price">Item Price</th>
+                                            <th class="pro-quantity">Quantity</th>
+                                            <th class="pro-subtotal">Item Total</th>
+                                            <th class="pro-remove">Remove</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @if ($cartData && $cartData->items->count() > 0)
+                                            @foreach ($cartData->items as $item)
+                                                @php
+                                                    $images = $item->product?->gallery_images;
+                                                    $featuredImage =
+                                                        $images
+                                                            ?->where('color_id', $item->color_id)
+                                                            ->where('is_featured', 1)
+                                                            ->first() ??
+                                                        $images?->where('color_id', $item->color_id)->first();
+                                                @endphp
+
+                                                <tr>
+                                                    <td class="">{{ $item->id }}</td>
+                                                    <td class="pro-thumbnail"><a
+                                                            href="{{ route('pro.details', $item->product->slug) }}"><img
+                                                                class="img-fluid"
+                                                                src="{{ $featuredImage ? asset('storage/' . $featuredImage->image) : asset('backend/assets/img/noimage.png') }}"
+                                                                alt="Product" /></a></td>
+                                                    <td class="pro-title"><a href="#">{{ $item->product_name }}
+                                                            <br />Color: {{ $item->proColor?->name ?? null }} <br />
+                                                            @if ($item->proAttribute)
+                                                                {{ $item->proAttribute?->attribute?->name ?? null }}:
+                                                                {{ $item->proAttribute?->name ?? null }}
+                                                            @endif
+                                                        </a></td>
+                                                    <td class="pro-price"><span>{{ $item->price }}</span></td>
+
+                                                    <td class="pro-quantity">
+                                                        <input type="hidden" name="ItemId[{{ $item->id }}]"
+                                                            value="{{ $item->id }}">
+                                                        <div class="pro-qty"><input type="text"
+                                                                name="quantity[{{ $item->id }}]"
+                                                                value="{{ $item->quantity }}"></div>
+                                                    </td>
+                                                    <td class="pro-subtotal"><span>{{ $item->line_total }}</span></td>
+                                                    <td class="pro-remove">
+                                                        <a href="javascript:void(0);" class="remove-item"
+                                                            data-id="{{ $item->id }}">
+                                                            <i class="fa fa-trash-o"></i>
+                                                        </a>
+                                                    </td>
+
+
+
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="sqr-btn  mt-3">Update Cart</button>
+                            </div>
+                        </form>
+
+
+                        @foreach ($cartData->items as $item)
+                            <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}"
+                                method="POST" class="d-none">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                        @endforeach
+
+
+
+                        <!-- Cart Update Option -->
+                        <div class="cart-update-option d-block d-md-flex justify-content-between">
+                            <div class="apply-coupon-wrapper">
+                                <form action="{{ route('coupon.apply') }}" method="post" class=" d-block d-md-flex">
+                                    @csrf
+                                    <input type="text" name="coupon_code" placeholder="Enter Your Coupon Code"
+                                        required />
+                                    <button class="sqr-btn">Apply Coupon</button>
+                                </form>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+            </div>
+            @php
+                $subtotal = $cartData->subtotal ?? $cartData->items->sum('line_total');
+                $shipping = 250;
+
+                $discount = $cartData->discount ?? 0;
+
+                $total = max(0, $subtotal - $discount + $shipping);
+            @endphp
+            <div class="row">
+                <div class="col-lg-5 ml-auto">
+                    <div class="cart-calculator-wrapper">
+                        <div class="cart-calculate-items">
+                            <h3>Cart Totals</h3>
+
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tr>
+                                        <td>Sub Total</td>
+                                        <td>{{ number_format($subtotal, 2) }} PKR</td>
+                                    </tr>
+
+                                    @if ($discount > 0)
+                                        <tr>
+                                            <td>Coupon</td>
+                                            <td class="text-success">
+                                                -{{ number_format($discount, 2) }} PKR
+                                            </td>
+                                        </tr>
+                                    @endif
+
+                                    <tr>
+                                        <td>Shipping</td>
+                                        <td>{{ number_format($shipping, 2) }} PKR</td>
+                                    </tr>
+
+                                    <tr class="total">
+                                        <td>Total</td>
+                                        <td class="total-amount">
+                                            {{ number_format($total, 2) }} PKR
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('checkoutPage') }}" class="sqr-btn d-block">
+                            Proceed To Checkout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="col-lg-12">
+                <div class="text-center py-5">
+                    <h4>Your cart is empty</h4>
+                    <p class="text-muted">Looks like you haven’t added anything yet.</p>
+                    <a href="{{ route('home') }}" class="sqr-btn mt-3">Continue Shopping</a>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.remove-item');
+            if (!btn) return;
+
+            e.preventDefault();
+
+            if (!confirm('Remove this item from cart?')) return;
+
+            const id = btn.dataset.id;
+            const form = document.getElementById(`remove-form-${id}`);
+
+            if (!form) {
+                console.error('Remove form not found');
+                return;
+            }
+
+            form.submit();
+        });
+    </script>
+
+
+@endsection
