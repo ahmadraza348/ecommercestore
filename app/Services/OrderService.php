@@ -10,10 +10,7 @@ use Illuminate\Support\Facades\Session;
 use App\Jobs\SendOrderEmailJob;
 use Stripe\Charge;
 use Stripe\Stripe;
-<<<<<<< HEAD
-=======
 use App\Models\ProAttributeValue;
->>>>>>> 7882bd1f54551465d1dd02138e1e062e8f58751e
 
 
 class OrderService
@@ -57,11 +54,7 @@ class OrderService
 
             // Shipping
             'different_shipping' => $request->has('different_shipping'),
-<<<<<<< HEAD
-            'shipping_first_name'=> $request->shipping['first_name'] ?? null,
-=======
             'shipping_first_name' => $request->shipping['first_name'] ?? null,
->>>>>>> 7882bd1f54551465d1dd02138e1e062e8f58751e
             'shipping_last_name' => $request->shipping['last_name'] ?? null,
             'shipping_email'     => $request->shipping['email'] ?? null,
             'shipping_country'   => $request->shipping['country'] ?? null,
@@ -84,12 +77,8 @@ class OrderService
 
         foreach ($cart->items as $item) {
 
-<<<<<<< HEAD
-            if ($item->product->stock < $item->quantity) {
-                throw new \Exception("Insufficient stock for {$item->product->name}");
-=======
             // Variant Product
-            if ($item->attribute_value_id) {
+            if ($item->color_id || $item->attribute_value_id) {
 
                 $variant = ProAttributeValue::where('product_id', $item->product_id)
                     ->where('color_id', $item->color_id)
@@ -115,7 +104,6 @@ class OrderService
                 }
 
                 $item->product->decrement('stock', $item->quantity);
->>>>>>> 7882bd1f54551465d1dd02138e1e062e8f58751e
             }
 
             OrderItem::create([
@@ -129,19 +117,9 @@ class OrderService
                 'color_name' => $item->proColor->name ?? null,
                 'attribute_id'   => $item->proAttribute->attribute->id ?? null,
                 'attribute_name' => $item->proAttribute->attribute->name ?? null,
-<<<<<<< HEAD
-                'attribute_value'=> $item->proAttribute->name ?? null,
-            ]);
-
-            // Decrement stock safely
-            $item->product->decrement('stock', $item->quantity);
-        }
-
-=======
                 'attribute_value' => $item->proAttribute->name ?? null,
             ]);
         }
->>>>>>> 7882bd1f54551465d1dd02138e1e062e8f58751e
         // Clear cart
         $cart->items()->delete();
         $cart->delete();
@@ -152,37 +130,6 @@ class OrderService
         return $order;
     }
 
-<<<<<<< HEAD
-public function processStripePayment($order, $token)
-{
-    Stripe::setApiKey(config('services.stripe.secret'));
-
-    try {
-        $charge = Charge::create([
-            'amount' => $order->total_amount * 100, // Amount in cents (PKR 252 = 25200)
-            'currency' => 'pkr', // Use 'pkr' or 'usd' depending on your Stripe account region
-            'description' => 'Order #' . $order->order_number,
-            'source' => $token,
-            'metadata' => ['order_id' => $order->id],
-        ]);
-
-        if ($charge->status === 'succeeded') {
-            $order->update([
-                'payment_status' => 'paid',
-                'transaction_id' => $charge->id // Good practice to store this
-            ]);
-            return true;
-        }
-        
-        return false;
-
-    } catch (\Exception $e) {
-        // If payment fails, we throw an exception so the Controller can roll back the DB
-        throw new \Exception("Stripe Payment Failed: " . $e->getMessage());
-    }
-}
-}
-=======
     public function processStripePayment($order, $token)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -211,4 +158,3 @@ public function processStripePayment($order, $token)
         }
     }
 }
->>>>>>> 7882bd1f54551465d1dd02138e1e062e8f58751e
