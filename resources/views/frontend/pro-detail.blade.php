@@ -98,16 +98,19 @@
                                                             $variantSet->first()->price ?? $product->sale_price;
                                                         $stock = $variantSet->first()->stock ?? $product->stock;
                                                     @endphp
+                                                    @if ($stock > 0)
+                                                        <input type="radio" name="color" id="color_{{ $colorId }}"
+                                                            value="{{ $colorId }}" data-name="{{ $colorName }}"
+                                                            data-price="{{ $colorPrice }}"
+                                                            data-stock="{{ $stock }}"
+                                                            data-variants='@json($variantSet)'
+                                                            {{ $loop->first ? 'checked' : '' }}>
 
-                                                    <input type="radio" name="color" id="color_{{ $colorId }}"
-                                                        value="{{ $colorId }}" data-name="{{ $colorName }}"
-                                                        data-price="{{ $colorPrice }}" data-stock="{{ $stock }}"
-                                                        data-variants='@json($variantSet)'
-                                                        {{ $loop->first ? 'checked' : '' }}>
 
-                                                    <label for="color_{{ $colorId }}" class="color-box"
-                                                        style="background-color: {{ $color }};">
-                                                    </label>
+                                                        <label for="color_{{ $colorId }}" class="color-box"
+                                                            style="background-color: {{ $color }};">
+                                                        </label>
+                                                    @endif
                                                 @endforeach
 
                                             </div>
@@ -121,7 +124,7 @@
                                             <div class="quantity">
                                                 <div class="pro-qty">
                                                     <input type="number" name="pro_qty" value="1" min="1"
-                                                        max="{{$stock ?? $product->stock}}">
+                                                        max="{{ $stock ?? $product->stock }}">
                                                 </div>
                                             </div>
 
@@ -495,10 +498,10 @@
         let originalThumbSlides = $('#thumb-slider').html();
 
         function loadColorImages(colorId) {
-                        if (!$.fn || !$.fn.slick) {
-        console.warn('Slick not available — skipping slider update');
-        return;
-    }
+            if (!$.fn || !$.fn.slick) {
+                console.warn('Slick not available — skipping slider update');
+                return;
+            }
             let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
             let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
 
