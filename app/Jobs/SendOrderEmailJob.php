@@ -19,18 +19,18 @@ class SendOrderEmailJob implements ShouldQueue
 
     public function __construct(public int $orderId) {}
 
-    public function handle()
-    {
-        $order = Order::findOrFail($this->orderId);
+   public function handle()
+{
+    // Eager load items to prevent N+1 issues during PDF generation
+    $order = Order::with('items')->find($this->orderId);
 
-        // Safety Check: If order is still null for some reason, don't crash.
-        if (!$order) {
-            Log::error('Order not found in SendOrderEmailJob');
-            return;
-        }
-
-        Mail::to($order->billing_email)
-            ->send(new OrderConfirmationMail($order));
+    if (!$order) {
+        // If using a queue, the record might not be in the DB yet due to race conditions
+        $this->release(5); 
+        return;
     }
+
+    Mail::to($order->billing_email)->send(new OrderConfirmationMail($order));
+}
 }
 

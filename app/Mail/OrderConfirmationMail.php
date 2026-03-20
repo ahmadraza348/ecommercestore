@@ -2,38 +2,47 @@
 
 namespace App\Mail;
 
+use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Order;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public $order;
-    public function __construct(Order $order)
+    public function __construct(public Order $order)
     {
-        $this->order = $order;
+        // Ensure items are loaded so the PDF doesn't show an empty list
+        $this->order->load('items');
     }
 
-    public function build()
+    public function envelope(): Envelope
     {
-        // 1. Generate the PDF Invoice
+        return new Envelope(
+            subject: 'Order Confirmation #' . ($this->order->order_number ?? $this->order->id),
+        );
+    }
+
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.order_confirmation',
+        );
+    }
+
+    public function attachments(): array
+    {
+        // Generate PDF
         $pdf = Pdf::loadView('frontend.order_invoice', ['order' => $this->order]);
 
-        // 2. Build the email and attach the PDF
-        return $this->subject('Order Confirmation #' . $this->order->id)
-            ->view('emails.order_confirmation') // Your HTML email body
-            ->attachData($pdf->output(), 'invoice_' . $this->order->id . '.pdf', [
-                'mime' => 'application/pdf',
-            ]);
+        return [
+            Attachment::fromData(fn () => $pdf->output(), 'invoice_' . $this->order->id . '.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

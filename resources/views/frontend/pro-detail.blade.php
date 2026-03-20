@@ -98,7 +98,7 @@
                                                             $variantSet->first()->price ?? $product->sale_price;
                                                         $stock = $variantSet->first()->stock ?? $product->stock;
                                                     @endphp
-                                                    @if ($stock > 0)
+                                                 @if ($stock > 0)
                                                         <input type="radio" name="color" id="color_{{ $colorId }}"
                                                             value="{{ $colorId }}" data-name="{{ $colorName }}"
                                                             data-price="{{ $colorPrice }}"
