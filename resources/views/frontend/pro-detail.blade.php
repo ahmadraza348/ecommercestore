@@ -57,7 +57,10 @@
                                     @csrf
 
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <input type="hidden" name="final_price" id="final_price" value="">
+                                    @php
+                                    $simplePro = $product->product_variation_type == 'simple';                                        
+                                    @endphp
+                                    <input type="hidden" name="final_price" id="final_price" value="{{ $simplePro ? $product->sale_price : '' }}">
 
                                     <div class="product-details-des mt-md-34 mt-sm-34">
                                         <h3><a href="product-details.html">{{ $product->name }}</a></h3>
