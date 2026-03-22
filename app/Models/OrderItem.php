@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductImages;
 
 class OrderItem extends Model
 {
@@ -41,5 +42,11 @@ class OrderItem extends Model
     public function attribute()
     {
         return $this->belongsTo(AttributeValue::class, 'attribute_id');
+    }
+
+    // get product images in admin panel sales tab
+
+    public function images(){
+        return $this->hasMany(ProductImages::class, 'product_id', 'product_id');
     }
 }
