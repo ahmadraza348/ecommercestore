@@ -22,6 +22,7 @@ use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SalesController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -247,17 +248,24 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
 
     // Roles And Permissions Routes end here
     Route::prefix('coupons')->name('coupons.')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('index');
-        // ->middleware('permission:view_coupons');
-        Route::post('/store', [CouponController::class, 'store'])->name('store');
-        // ->middleware('permission:create_coupons');
-        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit');
-        // ->middleware('permission:edit_coupons');
-        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update');
-        // ->middleware('permission:edit_coupons');
-        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete');
-        // ->middleware('permission:delete_coupons');
+        Route::get('/', [CouponController::class, 'index'])->name('index')
+        ->middleware('permission:view_coupons');
+        Route::post('/store', [CouponController::class, 'store'])->name('store')
+        ->middleware('permission:create_coupons');
+        Route::get('/edit/{coupon}', [CouponController::class, 'edit'])->name('edit')
+        ->middleware('permission:edit_coupons');
+        Route::put('/update/{coupon}', [CouponController::class, 'update'])->name('update')
+        ->middleware('permission:edit_coupons');
+        Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')
+        ->middleware('permission:delete_coupons');
     });
+
+
+    // Admin Sales Routes end here
+    Route::prefix('sales')->name('sales.')->group(function () {
+        Route::get('/', [SalesController::class, 'index'])->name('index');
+            Route::get('/details/{order}', [SalesController::class, 'details'])->name('detail');          ;
+        });
 
    
 });
