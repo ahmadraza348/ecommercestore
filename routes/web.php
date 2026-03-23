@@ -28,6 +28,7 @@ Route::get('/hash', function () {
     return Hash::make('ahmadraza');
 });
 Route::get('/', [HomePageController::class, 'index'])->name('home');
+Route::get('/search', [HomePageController::class, 'search'])->name('products.search');
 Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageController::class, 'index'])->name('shop');
 Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts'])->name('shop.filter');
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);

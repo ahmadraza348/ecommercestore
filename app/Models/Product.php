@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\ProImages;
 use App\Models\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 
 
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes,  Searchable;
 
     protected $fillable = [
         'name',
@@ -77,6 +77,17 @@ class Product extends Model
     public function categoryCount()
     {
         return $this->categories()->count();
+    }
+
+
+    // Laravel Scout Searchable implementation
+    public function toSearchableArray(): array {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'sku' => $this->sku,
+            'tags' => $this->tags,
+        ];
     }
 
 }

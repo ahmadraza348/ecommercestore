@@ -18,4 +18,11 @@ class HomePageService
         $data['brands'] = Brand::where(['status' => 1])->take(8)->get();
         return $data;
     }
+
+    public function search($request)
+    {
+        $query = $request->input('query');
+        $products = Product::search($query)->paginate(12); // Must be paginate
+        return $products;
+    }
 }
