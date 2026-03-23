@@ -178,18 +178,7 @@
     <div class="main-header-wrapper bdr-bottom1">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
-                    <style>
-                        .main-header-inner .category-toggle-wrap nav.category-menu.hm-1 {
-                            display: {
-                                    {
-                                    in_array(Route::currentRouteName(), ['login', 'register', 'profile.edit', 'verification.notice', 'password.request', 'password.reset', 'shop', 'pro.details']) ? 'none': 'block'
-                                }
-                            }
-
-                            ;
-                        }
-                    </style>
+                <div class="col-lg-12">                   
 
                     <div class="main-header-inner">
                         <div class="category-toggle-wrap">
@@ -200,7 +189,7 @@
                                 </div>
                             </div>
 
-                            <nav class="category-menu hm-1">
+                            <nav class="category-menu hm-1"style="display:{{ Route::currentRouteName() === 'home' ? 'block' : 'none'}}">
                                 <ul>
                                     @foreach ($categories as $category)
                                     <li>
