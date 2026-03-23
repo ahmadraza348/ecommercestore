@@ -170,7 +170,7 @@
                                                                 style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">
                                                                 Reference </font>
                                                         </font><br>
-                                                      
+
                                                         <font style="vertical-align: inherit;">
                                                             <font
                                                                 style="vertical-align: inherit;font-size: 14px;color:#000;font-weight: 400;">
@@ -195,11 +195,13 @@
                                                                 {{ $order->order_status }}</font>
                                                         </font><br>
                                                         <font style="vertical-align: inherit;">
-                                                         
+
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
+
+                                        <p> <strong>Order Note:</strong> {{ $order->order_note ?? ' ' }}</p>
                                     </td>
                                 </tr>
                                 <tr class="heading " style="background: #F3F2F7;">
@@ -261,18 +263,39 @@
                         <div class="row">
                             <div class="col-lg-6 ">
 
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="select">
-                                        <option>Choose Status</option>
-                                        <option>Completed</option>
-                                        <option>Inprogress</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Comment</label>
-                                    <textarea name="comment" class="form-control" rows="5"></textarea>
+                                <form action="{{ route('sales.update.status', $order->id) }}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <select class="select" name="order_status">
+                                            <option>Choose Status</option>
+                                            <option {{ $order->order_status == 'pending' ? 'selected' : '' }}
+                                                value="pending">Pending</option>
+                                            <option {{ $order->order_status == 'completed' ? 'selected' : '' }}
+                                                value="completed">Completed</option>
+                                            <option {{ $order->order_status == 'cancelled' ? 'selected' : '' }}
+                                                value="cancelled">Cancelled</option>
+                                            <option {{ $order->order_status == 'ready_to_pickup' ? 'selected' : '' }}
+                                                value="ready_to_pickup">Ready to pickup</option>
+                                            <option {{ $order->order_status == 'advance_payment' ? 'selected' : '' }}
+                                                value="advance_payment">Advance Payment</option>
+                                            <option {{ $order->order_status == 'on_hold' ? 'selected' : '' }}
+                                                value="on_hold">On Hold</option>
+                                            <option {{ $order->order_status == 'returned' ? 'selected' : '' }}
+                                                value="returned">Order Returned</option>
+
+                                        </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label>Comment</label>
+                                        <textarea name="order_comment" class="form-control" rows="5">{{ $order->order_comment }}</textarea>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <button type="submit" class="btn btn-submit me-2">Update Status</button>
+                                    </div>
+
+                                </form>
 
 
                             </div>
@@ -300,10 +323,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-12">
-                            <a href="javascript:void(0);" class="btn btn-submit me-2">Update</a>
-                            <a href="javascript:void(0);" class="btn btn-cancel">Cancel</a>
-                        </div>
+
                     </div>
                 </div>
             </div>

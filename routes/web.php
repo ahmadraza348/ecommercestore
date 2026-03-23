@@ -264,7 +264,8 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
     // Admin Sales Routes end here
     Route::prefix('sales')->name('sales.')->group(function () {
         Route::get('/', [SalesController::class, 'index'])->name('index');
-            Route::get('/details/{order}', [SalesController::class, 'details'])->name('detail');          ;
+            Route::get('/details/{order}', [SalesController::class, 'details'])->name('detail');   
+            Route::post('/update-order-status/{order}', [SalesController::class, 'updateOrderStatus'])->name('update.status');
         });
 
    
