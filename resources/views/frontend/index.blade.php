@@ -40,32 +40,23 @@
     <div class="banner-area mt-30">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-sm-6 order-1">
-                    <div class="img-container img-full fix imgs-res mb-sm-30">
-                        <a href="#">
-                            <img src="{{ asset('frontend/assets/img/banner/banner_left.jpg') }}" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-5 order-sm-3">
+                
+                <div class="col-lg-6 col-md-6 order-sm-6">
                     <div class="img-container img-full fix mb-30">
                         <a href="#">
                             <img src="{{ asset('frontend/assets/img/banner/banner_static_top1.jpg') }}" alt="">
                         </a>
                     </div>
+                </div>
+                                <div class="col-lg-6 col-md-6 order-sm-6">
+
                     <div class="img-container img-full fix mb-30">
                         <a href="#">
                             <img src="{{ asset('frontend/assets/img/banner/banner_static_top2.jpg') }}" alt="">
                         </a>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-4 col-sm-6 order-2 order-md-3">
-                    <div class="img-container img-full fix">
-                        <a href="#">
-                            <img src="{{ asset('frontend/assets/img/banner/banner_static_top3.jpg') }}" alt="">
-                        </a>
-                    </div>
-                </div>
+            </div>
             </div>
         </div>
     </div>
@@ -246,151 +237,6 @@
         </div>
 
     </div>
-
-
-    {{-- 3  sliderrs --}}
-    <div class="container">
-        <!-- category features area start -->
-        <div class="category-feature-area">
-            <div class="row">
-                <!-- New Products area start -->
-                <div class="col-lg-4">
-                    <div class="category-wrapper mb-md-24 mb-sm-24">
-                        <div class="section-title-2 d-flex justify-content-between mb-28">
-                            <h3>Recently Viewed</h3>
-                            {{-- Products the users has  browsed. --}}
-                            <div class="category-append"></div>
-                        </div> <!-- section title end -->
-                        <div class="category-carousel-active row" data-row="3">
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img1.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $150.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del></del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                        </div>
-                    </div>
-                </div>
-                <!-- New Products area end -->
-                <!-- Most viewed area start -->
-                <div class="col-lg-4">
-                    <div class="category-wrapper mb-md-24 mb-sm-24">
-                        <div class="section-title-2 d-flex justify-content-between mb-28">
-
-                            <h3>Top Rated </h3>
-                            {{-- On the base of customer rating --}}
-                            <div class="category-append"></div>
-                        </div> <!-- section title end -->
-                        <div class="category-carousel-active row" data-row="3">
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img14.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">simple Product 06</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $190.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$210.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Most viewed area end -->
-                <!-- Most viewed area start -->
-                <div class="col-lg-4">
-                    <div class="category-wrapper mb-md-24 mb-sm-24">
-                        <div class="section-title-2 d-flex justify-content-between mb-28">
-                            <h3> Most Popular</h3>
-                            {{-- Products with high sales volumes --}}
-                            <div class="category-append"></div>
-                        </div> <!-- section title end -->
-                        <div class="category-carousel-active row" data-row="3">
-                            <div class="col">
-                                <div class="category-item">
-                                    <div class="category-thumb">
-                                        <a href="product-details.html">
-                                            <img src="{{ asset('frontend/assets/img/product/product-img6.jpg') }}"
-                                                alt="">
-                                        </a>
-                                    </div>
-                                    <div class="category-content">
-                                        <h4><a href="product-details.html">Virtual Product 01</a></h4>
-                                        <div class="price-box">
-                                            <div class="regular-price">
-                                                $120.00
-                                            </div>
-                                            <div class="old-price">
-                                                <del>$150.00</del>
-                                            </div>
-                                        </div>
-                                        <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
-                                            <div class="pro-review">
-                                                <span>1 review(s)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> <!-- end single item -->
-                            </div> <!-- end single item column -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Most viewed area end -->
-            </div>
-        </div>
-        <!-- category features area end -->
-    </div>
-    <!-- 3  sliderrs -->
 
     <!-- latest product start -->
     @if (!empty($new_arrival_pro) && $new_arrival_pro->isNotEmpty())

@@ -174,7 +174,7 @@
                                         <div class="product-item fix mb-20">
                                             <div class="product-thumb">
                                                 <a href="{{ route('shop', ['slug' => buildCategorySlug($item)]) }}">
-                                                    <img style="border-radius:100%; width: 200px; height:200px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}"
+                                                    <img style="border-radius:100%; width: 150px; height:150px"src="{{ $item->image ? asset('storage/' . $item->image) : asset('backend/assets/img/noimage.png') }}"
                                                         class="img-pri" alt="">
                                                 </a>
                                             </div>
@@ -207,7 +207,7 @@
                                 </div>
                                 <div id="product-list" class="row">
                                     @forelse ($products as $item)
-                                        <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <div class="col-lg-4 col-md-4 col-sm-6">
                                             @include('frontend.partials.pro_slide', ['item' => $item])
                                         </div>
                                     @empty
