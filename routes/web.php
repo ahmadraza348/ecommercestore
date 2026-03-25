@@ -35,6 +35,8 @@ Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct'])
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
 
+Route::get('/category-products/{id}', [HomePageController::class, 'getCategoryProducts'])->name('category.products');
+
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartPageController::class, 'cart'])->name('cartPage');
     Route::post('/update', [CartPageController::class, 'cart_update'])->name('cart.update');

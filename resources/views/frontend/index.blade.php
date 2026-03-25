@@ -85,40 +85,42 @@
                         </div>
 
                         <!-- category tab area start -->
+                        <!-- category tab area start -->
                         <div class="category-tab-area mb-30 mt-md-16 mt-sm-16">
                             <div class="category-tab">
-                                <ul class="nav">
-                                    <li>
-                                        <i class="fa fa-star-o"></i>
-                                    </li>
-
+                                <ul class="nav" id="categoryTabs">
                                     @foreach ($featured_categories as $category_tab)
                                         <li>
-                                            <a class="{{ $loop->index == 0 ? 'show active' : '' }}" data-toggle="tab"
-                                                href="#{{ $category_tab->slug }}"> {{ $category_tab->name }}</a>
+                                            <a class="nav-link {{ $loop->first ? 'active' : '' }}" data-toggle="tab"
+                                                href="#tab-{{ $category_tab->id }}" data-id="{{ $category_tab->id }}">
+                                                {{ $category_tab->name }}
+                                            </a>
                                         </li>
                                     @endforeach
-
                                 </ul>
                             </div>
                         </div>
+
                         <div class="tab-content">
                             @foreach ($featured_categories as $category_tab)
-                                <div class="tab-pane fade show {{ $loop->index == 0 ? 'show active' : '' }}"
-                                    id="{{ $category_tab->slug }}">
-                                    <div class="feature-category-carousel-wrapper">
-                                        <div class="container">
-                                            <div class="featured-carousel-active2 row arrow-space slick-arrow-style"
-                                                data-row="2">
+                                <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                                    id="tab-{{ $category_tab->id }}">
 
-                                                @foreach ($category_tab->products()->where('status', 'active')->take(8)->get() as $item)
-                                                    <div class="col">
+                                    <div class="container">
+                                        <div class="row ajax-content" data-loaded="{{ $loop->first ? 'true' : 'false' }}">
+
+                                            {{-- Preload ONLY first tab --}}
+                                            @if ($loop->first)
+                                                @foreach ($category_tab->products as $item)
+                                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-30">
                                                         @include('frontend.partials.pro_slide')
                                                     </div>
                                                 @endforeach
-                                            </div>
+                                            @endif
+
                                         </div>
                                     </div>
+
                                 </div>
                             @endforeach
                         </div>
@@ -183,7 +185,7 @@
     {{-- DOuble Slides Contaner --}}
     <div class="container">
         <div class="row product-feature-wrapper mb-lg-6">
-            
+
 
             <!-- banner statistic end -->
             @if (!empty($sale_pro) && $sale_pro->isNotEmpty())
@@ -201,26 +203,26 @@
                         </div>
                     </div>
                 </div>
-        @endif
-        <!-- hot deals area end -->
-        <!-- most view area start -->
-        @if (!empty($hot_deals_pro) && $hot_deals_pro->isNotEmpty())
-            <div class="col-lg-6">
-                <div class="hot-deals-wrap3 mb-30 mb-md-22 mb-sm-22 mt-sm-14">
-                    <div class="section-title-2 d-flex justify-content-between mb-28">
-                        <h3>Hot Deals</h3>
-                        {{-- Products with limited-time discounts or seasonal relevance. --}}
-                        <div class="category-append"></div>
-                    </div> <!-- section title end -->
-                    <div class="deals-carousel-active2 slick-padding slick-arrow-style">
-                        @foreach ($hot_deals_pro as $item)
-                            @include('frontend.partials.pro_slide', ['item' => $item])
-                        @endforeach
+            @endif
+            <!-- hot deals area end -->
+            <!-- most view area start -->
+            @if (!empty($hot_deals_pro) && $hot_deals_pro->isNotEmpty())
+                <div class="col-lg-6">
+                    <div class="hot-deals-wrap3 mb-30 mb-md-22 mb-sm-22 mt-sm-14">
+                        <div class="section-title-2 d-flex justify-content-between mb-28">
+                            <h3>Hot Deals</h3>
+                            {{-- Products with limited-time discounts or seasonal relevance. --}}
+                            <div class="category-append"></div>
+                        </div> <!-- section title end -->
+                        <div class="deals-carousel-active2 slick-padding slick-arrow-style">
+                            @foreach ($hot_deals_pro as $item)
+                                @include('frontend.partials.pro_slide', ['item' => $item])
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endif
-    </div>
+            @endif
+        </div>
         <!-- most view area end -->
 
         <!-- banner statistic start -->
@@ -442,5 +444,92 @@
             </div>
         </div>
     @endif
+
+    <script>
+        $(document).ready(function() {
+
+            const skeleton = `
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-30">
+            <div class="skeleton-card">
+                <div class="skeleton skeleton-img"></div>
+                <div class="skeleton skeleton-text"></div>
+                <div class="skeleton skeleton-text small"></div>
+            </div>
+        </div>
+    `.repeat(4);
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+
+                let tab = $(e.target);
+                let categoryId = tab.data('id');
+                let target = $(tab.attr('href'));
+                let content = target.find('.ajax-content');
+
+                // STOP if already loaded
+                if (content.data('loaded') === true || content.data('loaded') === 'true') {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/category-products/' + categoryId,
+                    type: 'GET',
+
+                    beforeSend: function() {
+                        content.html(skeleton);
+                    },
+
+                    success: function(res) {
+                        content.hide().html(res.html).fadeIn(300);
+                        content.attr('data-loaded', 'true');
+                    },
+
+                    error: function() {
+                        content.html(
+                            '<div class="col-12 text-center text-danger">Failed to load products</div>'
+                            );
+                    }
+                });
+
+            });
+
+        });
+    </script>
+
+
     <!-- brand area end -->
+    <style>
+        .skeleton-card {
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+            border-radius: 6px;
+        }
+
+        .skeleton-img {
+            height: 180px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-text {
+            height: 15px;
+            margin-bottom: 8px;
+            width: 80%;
+        }
+
+        .skeleton-text.small {
+            width: 40%;
+        }
+
+        @keyframes shimmer {
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
 @endsection
