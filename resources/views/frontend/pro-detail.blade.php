@@ -9,47 +9,25 @@
                         <div class="row">
 
 
+                            <div class="col-lg-6">
 
-                            @if ($product->product_variation_type == 'simple')
-                                <div class="col-lg-6">
-                                    <div class="product-large-slider mb-20 slick-arrow-style_2">
-                                        @foreach ($product->gallery_images as $item)
-                                            <div class="pro-large-img img-zoom">
-                                                <img src="{{ asset('storage/' . $item->image) }} " alt="" />
-                                            </div>
-                                        @endforeach
-
-                                    </div>
-                                    <div class="pro-nav slick-padding2 slick-arrow-style_2">
-                                        @foreach ($product->gallery_images as $item)
-                                            <div class="pro-nav-thumb">
-                                                <img src="{{ asset('storage/' . $item->image) }} " alt="" />
-                                            </div>
-                                        @endforeach
-
-                                    </div>
+                                <div class="product-large-slider mb-20 slick-arrow-style_2" id="main-slider">
+                                    @foreach ($product->gallery_images as $item)
+                                        <div class="pro-large-img img-zoom" data-color="{{ $item->color_id }}">
+                                            <img src="{{ asset('storage/' . $item->image) }}" alt="">
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @else
-                                <div class="col-lg-6">
 
-                                    <div class="product-large-slider mb-20 slick-arrow-style_2" id="main-slider">
-                                        @foreach ($product->gallery_images as $item)
-                                            <div class="pro-large-img img-zoom" data-color="{{ $item->color_id }}">
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="">
-                                            </div>
-                                        @endforeach
-                                    </div>
-
-                                    <div class="pro-nav slick-padding2 slick-arrow-style_2" id="thumb-slider">
-                                        @foreach ($product->gallery_images as $item)
-                                            <div class="pro-nav-thumb" data-color="{{ $item->color_id }}">
-                                                <img src="{{ asset('storage/' . $item->image) }}" alt="">
-                                            </div>
-                                        @endforeach
-                                    </div>
-
+                                <div class="pro-nav slick-padding2 slick-arrow-style_2" id="thumb-slider">
+                                    @foreach ($product->gallery_images as $item)
+                                        <div class="pro-nav-thumb" data-color="{{ $item->color_id }}">
+                                            <img src="{{ asset('storage/' . $item->image) }}" alt="">
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endif
+
+                            </div>
 
 
                             <div class="col-lg-6">
@@ -58,9 +36,10 @@
 
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                                     @php
-                                    $simplePro = $product->product_variation_type == 'simple';                                        
+                                        $simplePro = $product->product_variation_type == 'simple';
                                     @endphp
-                                    <input type="hidden" name="final_price" id="final_price" value="{{ $simplePro ? $product->sale_price : '' }}">
+                                    <input type="hidden" name="final_price" id="final_price"
+                                        value="{{ $simplePro ? $product->sale_price : '' }}">
 
                                     <div class="product-details-des mt-md-34 mt-sm-34">
                                         <h3><a href="product-details.html">{{ $product->name }}</a></h3>
@@ -79,7 +58,19 @@
                                         </div>
                                         <div class="availability mt-10">
                                             <h5>Availability:</h5>
-                                            <span>{{ $product->stock }} in stock</span>
+                                            <span id="stock-display">
+                                                @php
+                                                $totalStock =
+                                                    $product->product_variation_type == 'simple'
+                                                        ? $product->stock
+                                                        : $product->proAttributeValuesRecords->sum('stock');
+                                            @endphp
+                                            @if ($totalStock <= 0)
+                                                <span style="color:red;">Product has been sold out</span>
+                                            @endif
+                                            </span>
+
+                                           
                                         </div>
                                         <div class="pricebox">
                                             <h5 id="price">Rs. {{ $product->sale_price }}</h5>
@@ -87,8 +78,10 @@
                                         <br>
 
                                         @if ($product->proAttributeValuesRecords->isNotEmpty())
+                                        @if ($totalStock > 0)
                                             <label><b>Select Color: <span id="selected-color-name"></span>
                                                 </b></label>
+                                                @endif
                                             <div class="color-options">
 
                                                 @foreach ($product->proAttributeValuesRecords->unique('color_id') as $item)
@@ -99,9 +92,9 @@
                                                         $variantSet = $variants[$colorId] ?? collect([]);
                                                         $colorPrice =
                                                             $variantSet->first()->price ?? $product->sale_price;
-                                                        $stock = $variantSet->first()->stock ?? $product->stock;
+                                                        $stock = $variantSet->sum('stock');
                                                     @endphp
-                                                 @if ($stock > 0)
+                                                    @if ($stock > 0)
                                                         <input type="radio" name="color" id="color_{{ $colorId }}"
                                                             value="{{ $colorId }}" data-name="{{ $colorName }}"
                                                             data-price="{{ $colorPrice }}"
@@ -132,7 +125,8 @@
                                             </div>
 
                                             <div class="action_link">
-                                                <button type="submit" style="border:none;background:none;padding:0;">
+                                                <button type="submit" {{ $totalStock <= 0 ? 'disabled' : '' }}
+                                                    style="border:none;background:none;padding:0;">
                                                     <a class="buy-btn" type="submit" style="cursor:pointer">add to cart<i
                                                             class="fa fa-shopping-cart"></i></a>
                                                 </button>
@@ -461,22 +455,22 @@
 
     <script>
         $(document).ready(function() {
+
             initZoom();
 
-
-            // SIMPLE PRODUCT CHECK
+            // SIMPLE PRODUCT → do nothing
             if ($('input[name="color"]').length === 0) {
-                // No attributes, no variants
                 return;
             }
 
-            // Continue only if product has attributes
+            // Select first color
             let firstColor = $('input[name="color"]').first();
             firstColor.prop('checked', true);
             $('#selected-color-name').text(firstColor.data('name'));
-            updateUI(firstColor);
 
+            updateUI(firstColor);
         });
+
 
         // COLOR CHANGE
         $('input[name="color"]').on('change', function() {
@@ -488,49 +482,53 @@
 
             const variants = colorRadio.data('variants');
             const colorPrice = colorRadio.data('price');
+            const stock = colorRadio.data('stock');
+            const colorId = colorRadio.val();
 
+            // Update stock
+            $('input[name="pro_qty"]').attr('max', stock);
+            $('#stock-display').text(stock + ' in stock');
+
+            // Disable button if needed
+            if (stock <= 0) {
+                $('.buy-btn').prop('disabled', true);
+            } else {
+                $('.buy-btn').prop('disabled', false);
+            }
+
+            // Update price
             $('#price').text('Rs. ' + colorPrice);
-            $('#final_price').val(colorPrice);
 
-            loadColorImages(colorRadio.val());
+            // Move slider to that color image
+            loadColorImages(colorId);
+
+            // Load size/variant
             loadVariantValues(variants);
         }
 
-        // save original HTML
-        let originalMainSlides = $('#main-slider').html();
-        let originalThumbSlides = $('#thumb-slider').html();
 
+        // 🔥 SIMPLE IMAGE SWITCH (NO REBUILD, NO FILTERING)
         function loadColorImages(colorId) {
-            if (!$.fn || !$.fn.slick) {
-                console.warn('Slick not available — skipping slider update');
-                return;
+
+            let index = -1;
+
+            $('#main-slider .pro-large-img').each(function(i) {
+                if ($(this).data('color') == colorId) {
+                    index = i;
+                    return false;
+                }
+            });
+
+            if (index !== -1) {
+                $('#main-slider').slick('slickGoTo', index);
+                $('#thumb-slider').slick('slickGoTo', index);
+            } else {
+                console.warn('No image found for color:', colorId);
             }
-            let main = $(originalMainSlides).filter(`[data-color="${colorId}"]`);
-            let thumb = $(originalThumbSlides).filter(`[data-color="${colorId}"]`);
-
-            if ($('#main-slider').hasClass('slick-initialized')) $('#main-slider').slick('unslick');
-            if ($('#thumb-slider').hasClass('slick-initialized')) $('#thumb-slider').slick('unslick');
-
-            $('#main-slider').html(main);
-            $('#thumb-slider').html(thumb);
-
-            $('#main-slider').slick({
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                fade: true,
-                arrows: true,
-                asNavFor: '#thumb-slider'
-            });
-
-            $('#thumb-slider').slick({
-                slidesToShow: 4,
-                slidesToScroll: 1,
-                focusOnSelect: true,
-                asNavFor: '#main-slider'
-            });
-            initZoom();
         }
 
+
+        // ZOOM
         function initZoom() {
             $(".img-zoom").each(function() {
                 $(this).trigger('zoom.destroy');
@@ -543,6 +541,7 @@
         }
 
 
+        // VARIANTS (SIZE ETC)
         function loadVariantValues(variants) {
 
             variants = variants || [];
@@ -552,7 +551,7 @@
                 return;
             }
 
-            let first = variants[0];
+            let first = variants.find(v => v.stock > 0) || variants[0];
 
             let html = `
         <label><strong>Select ${first.attribute_value.attribute.name}: ${first.attribute_value.name}</strong></label>
@@ -560,16 +559,18 @@
     `;
 
             variants.forEach(v => {
-                html += `
-            <input type="radio"
-                   name="attribute_value_id"
-                   id="variant_${v.id}"
-                   value="${v.attribute_value_id}"
-                   data-price="${v.price}"
-                   data-stock="${v.stock}"
-                   ${v.id == first.id ? 'checked' : ''}>
-            <label for="variant_${v.id}">${v.attribute_value.name}</label>
-        `;
+                if (v.stock > 0) {
+                    html += `
+                <input type="radio"
+                    name="attribute_value_id"
+                    id="variant_${v.id}"
+                    value="${v.attribute_value_id}"
+                    data-price="${v.price}"
+                    data-stock="${v.stock}"
+                    ${v.id == first.id ? 'checked' : ''}>
+                <label for="variant_${v.id}">${v.attribute_value.name}</label>
+            `;
+                }
             });
 
             html += '</div>';
@@ -577,14 +578,25 @@
 
             // Variant change
             $('input[name="attribute_value_id"]').on('change', function() {
+
                 const price = $(this).data('price');
+                const stock = $(this).data('stock');
                 const label = $(this).next().text();
 
                 $('#price').text('Rs. ' + price);
-                $('#final_price').val(price);
+                $('#stock-display').text(stock + ' in stock');
+
+                $('input[name="pro_qty"]').attr('max', stock);
+
+                if (stock <= 0) {
+                    $('.buy-btn').prop('disabled', true);
+                } else {
+                    $('.buy-btn').prop('disabled', false);
+                }
 
                 $('#variant-attribute label strong').text(
-                    `Select ${first.attribute_value.attribute.name}: ${label}`);
+                    `Select ${first.attribute_value.attribute.name}: ${label}`
+                );
             });
         }
     </script>

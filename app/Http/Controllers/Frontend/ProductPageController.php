@@ -20,6 +20,7 @@ class ProductPageController extends Controller
     public function index($slug)
     {
         $data = $this->productPageService->get_data($slug);
+        
         return view('frontend.pro-detail', $data);
     }
 
