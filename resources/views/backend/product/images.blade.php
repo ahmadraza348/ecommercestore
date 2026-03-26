@@ -1,9 +1,10 @@
 @extends('backend.layouts.layout')
+@section('title', 'Manage Product Images - Raza Mall')
 
 @section('content')
 <div class="page-wrapper">
     <div class="content">
-        <h4 class="mb-3">Manage Images — {{ $product->name }}</h4>
+        <h4 class="mb-3">Manage Product Images —  <a href="{{ route('product.edit', $product->id) }}">{{ $product->name }}</a></h4>
 
         {{-- UPLOAD NEW IMAGES --}}
         <form action="{{ route('admin.product.store-images') }}" method="POST" enctype="multipart/form-data">

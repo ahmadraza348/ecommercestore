@@ -1,5 +1,5 @@
 @extends('backend.layouts.layout')
-@section('title', 'Create Product - Raza Mall')
+@section('title', 'Add A Product Attribute - Raza Mall')
 
 @section('content')
     <div class="page-wrapper">
@@ -8,7 +8,7 @@
             {{-- Page Header --}}
             <div class="page-header">
                 <div class="page-title">
-                    <h4>Add Product Attribute</h4>
+                    <h4>Add Product Attribute - <a href="{{ route('product.edit', $product->id) }}">{{ $product->name }}</a> </h4>
                 </div>
             </div>
 
