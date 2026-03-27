@@ -25,12 +25,44 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .page-item.active .page-link {
-  z-index: 1;
-  color: #fff;
-  background-color: #d8373e;
-  border-color: #d8373e;
-}
+            z-index: 1;
+            color: #fff;
+            background-color: #d8373e;
+            border-color: #d8373e;
+        }
 
+        .skeleton {
+            background: linear-gradient(90deg, #eee, #ddd, #eee);
+            background-size: 200% 100%;
+            /* animation: skeleton-loading 1.2s infinite; */
+            border-radius: 6px;
+        }
+
+        /* @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+} */
+
+        .skeleton-img {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+
+        .skeleton-text {
+            height: 15px;
+            width: 80%;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-text.small {
+            width: 60%;
+        }
+
+        .skeleton-price {
+            height: 20px;
+            width: 40%;
+        }
     </style>
 
 </head>
@@ -130,22 +162,22 @@
 </body>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         function fetchFilteredProducts(page = 1) {
             let selectedBrands = [];
             let selectedColors = [];
             let selectedAttributes = [];
             let currentSlug = $('input[name="current_slug"]').val();
 
-            $('.filter-brand:checked').each(function () {
+            $('.filter-brand:checked').each(function() {
                 selectedBrands.push($(this).val());
             });
 
-            $('.filter-color:checked').each(function () {
+            $('.filter-color:checked').each(function() {
                 selectedColors.push($(this).val());
             });
 
-            $('.filter-attribute:checked').each(function () {
+            $('.filter-attribute:checked').each(function() {
                 selectedAttributes.push($(this).val());
             });
 
@@ -166,36 +198,38 @@
                     sortby: sortBy,
                     _token: "{{ csrf_token() }}"
                 },
-                beforeSend: function () {
-                    $('#loader').show();
+                beforeSend: function() {
+                    $('#product-list').hide();
+                    $('#skeleton-loader').show();
                 },
-                success: function (response) {
+                success: function(response) {
                     $('#product-list').html(response.html);
                     $('.paginatoin-area').html(response.pagination);
                 },
-                complete: function () {
-                    $('#loader').hide();
+                complete: function() {
+                    $('#skeleton-loader').hide();
+                    $('#product-list').show();
                 },
-                error: function () {
+                error: function() {
                     alert("Something went wrong! Please try again.");
                 }
             });
         }
 
-        $('.filter-brand, .filter-attribute, .filter-color, #sortby').on('change', function () {
+        $('.filter-brand, .filter-attribute, .filter-color, #sortby').on('change', function() {
             fetchFilteredProducts();
         });
 
-        $(document).on('click', '.pagination a', function (e) {
+        $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             let page = $(this).attr('href').split('page=')[1];
             fetchFilteredProducts(page);
         });
-        $('.price-range').on('slidechange', function (event, ui) {
-        $('#min_price').val(ui.values[0]); // Update min price
-        $('#max_price').val(ui.values[1]); // Update max price
-        fetchFilteredProducts(); // Fetch products
-    });
+        $('.price-range').on('slidechange', function(event, ui) {
+            $('#min_price').val(ui.values[0]); // Update min price
+            $('#max_price').val(ui.values[1]); // Update max price
+            fetchFilteredProducts(); // Fetch products
+        });
     });
 </script>
 

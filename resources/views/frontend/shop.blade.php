@@ -94,7 +94,8 @@
                                                 @foreach ($attribute->attributevalue as $value)
                                                     <li>
                                                         <a>
-                                                            <input type="checkbox" name="attribute_values[]"class="filter-attribute"
+                                                            <input type="checkbox"
+                                                                name="attribute_values[]"class="filter-attribute"
                                                                 value="{{ $value->id }}" id="">
                                                             {{ $value->name }}
                                                         </a>
@@ -229,9 +230,19 @@
                                     </div>
                                     <h3>Products</h3>
                                 </div>
-                                <div id="loader" style="display: none; text-align: center;">
-                                    <img src="{{ asset('frontend/assets/loader.gif') }}"
-                                        style="position:absolute; z-index:999" alt="Loading..." />
+                                <div id="skeleton-loader" class="row" style="display: none;">
+                                    @for ($i = 0; $i < 6; $i++)
+                                        <div class="col-lg-4 col-md-4 col-sm-6 my-3">
+                                            <div class="product-item ">
+                                                <div class="skeleton skeleton-img"></div>
+                                                <div class="product-content">
+                                                    <div class="skeleton skeleton-text"></div>
+                                                    <div class="skeleton skeleton-text small"></div>
+                                                    <div class="skeleton skeleton-price"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endfor
                                 </div>
                                 <div id="product-list" class="row">
                                     @forelse ($products as $item)
