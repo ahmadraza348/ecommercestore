@@ -56,33 +56,61 @@
                         </form>
 
 
+
+
+
+                        @if ($shopPageColors->isNotEmpty())
+                            <div class="sidebar-widget mb-20">
+                                <div class="sidebar-title mb-10">
+                                    <h3>Colors</h3>
+                                </div>
+                                <div class="sidebar-widget-body">
+                                    <ul>
+                                        @foreach ($shopPageColors as $color)
+                                            <li>
+                                                <a>
+                                                    <input type="checkbox" name=""class="filter-attribute"
+                                                        value="{{ $color->id }}" id="">
+                                                    {{ $color->name }}
+                                                </a>
+
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
+
+
                         @if ($shopPageAttributes->isNotEmpty())
                             @foreach ($shopPageAttributes as $attribute)
-                                <div class="sidebar-widget mb-20">
-                                    <div class="sidebar-title mb-10">
-                                        <h3>{{ $attribute->name }}</h3>
-                                    </div>
-                                    <div class="sidebar-widget-body">
-                                        <ul>
-                                            @foreach ($attribute->attributevalue as $value)
-                                                <li>
-                                                    <a>
-                                                        <input type="checkbox" name=""class="filter-attribute"
-                                                            value="{{ $value->id }}" id="">
-                                                        {{ $value->name }}
-                                                    </a>
-                                                    {{-- @if (!empty($currentCategory))                                                  
+                                @if ($attribute->attributevalue->isNotEmpty())
+                                    <div class="sidebar-widget mb-20">
+                                        <div class="sidebar-title mb-10">
+                                            <h3>{{ $attribute->name }}</h3>
+                                        </div>
+                                        <div class="sidebar-widget-body">
+                                            <ul>
+                                                @foreach ($attribute->attributevalue as $value)
+                                                    <li>
+                                                        <a>
+                                                            <input type="checkbox" name=""class="filter-attribute"
+                                                                value="{{ $value->id }}" id="">
+                                                            {{ $value->name }}
+                                                        </a>
+                                                        {{-- @if (!empty($currentCategory))                                                  
                                                 <span>({{ $value->products_count }})</span>
                                                 @else
                                                 <span>({{ $value->products->count() }})</span> 
                                                     
                                                 @endif --}}
 
-                                                </li>
-                                            @endforeach
-                                        </ul>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endforeach
                         @endif
 

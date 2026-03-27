@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Attribute;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,7 @@ class ShopPageService
         $shopPageCategories = Category::where('status', 1)->whereNull('parent_id')->get();
         $shopPageBrands = Brand::where('status', 1)->get();
         $shopPageAttributes = Attribute::where('status', 1)->with('attributevalue')->get();
+        $shopPageColors = Color::where('status', 1)->get();
 
         $productsQuery = Product::query();
         $currentCategory = null;
@@ -69,6 +71,7 @@ class ShopPageService
             'shopPageCategories' => $shopPageCategories,
             'shopPageBrands' => $shopPageBrands,
             'shopPageAttributes' => $shopPageAttributes,
+            'shopPageColors' => $shopPageColors,
             'products' => $products,
             'currentCategory' => $currentCategory,
             'currentBrand' => $currentBrand,
