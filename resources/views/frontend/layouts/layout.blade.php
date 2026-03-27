@@ -133,11 +133,16 @@
     $(document).ready(function () {
         function fetchFilteredProducts(page = 1) {
             let selectedBrands = [];
+            let selectedColors = [];
             let selectedAttributes = [];
             let currentSlug = $('input[name="current_slug"]').val();
 
             $('.filter-brand:checked').each(function () {
                 selectedBrands.push($(this).val());
+            });
+
+            $('.filter-color:checked').each(function () {
+                selectedColors.push($(this).val());
             });
 
             $('.filter-attribute:checked').each(function () {
@@ -154,6 +159,7 @@
                 data: {
                     brand_ids: selectedBrands,
                     attribute_values: selectedAttributes,
+                    color_ids: selectedColors,
                     current_slug: currentSlug,
                     min_price: minPrice,
                     max_price: maxPrice,
@@ -176,7 +182,7 @@
             });
         }
 
-        $('.filter-brand, .filter-attribute, #sortby').on('change', function () {
+        $('.filter-brand, .filter-attribute, .filter-color, #sortby').on('change', function () {
             fetchFilteredProducts();
         });
 

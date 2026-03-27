@@ -16,7 +16,7 @@ class ShopPageService
         $shopPageCategories = Category::where('status', 1)->whereNull('parent_id')->get();
         $shopPageBrands = Brand::where('status', 1)->get();
         $shopPageAttributes = Attribute::where('status', 1)->with('attributevalue')->get();
-        $shopPageColors = Color::where('status', 1)->get();
+        $shopPageColors = Color::where('status', 1)->whereHas('products')->get();
 
         $productsQuery = Product::query();
         $currentCategory = null;
@@ -31,6 +31,9 @@ class ShopPageService
                 $shopPageAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
                     $query->where('category_id', $currentCategory->id);
                 })->with('attributevalue')->get();
+
+                      $shopPageColors = Color::where('status', 1)->whereHas('products')->get();
+
             }
 
             foreach ([$subslug, $childslug, $superchildslug] as $currentSlug) {
@@ -41,6 +44,8 @@ class ShopPageService
                         $shopPageAttributes = Attribute::whereHas('categories', function ($query) use ($currentCategory) {
                             $query->where('category_id', $currentCategory->id);
                         })->with('attributevalue')->get();
+                                $shopPageColors = Color::where('status', 1)->whereHas('products')->get();
+
                     }
                 }
             }
@@ -83,8 +88,10 @@ class ShopPageService
 
     public function filterProducts(Request $request)
     {
+        // dd($request->all());
         $brandIds = $request->input('brand_ids', []);
         $attributeValues = $request->input('attribute_values', []);
+        $colorIds = $request->input('color_ids', []);
         $currentSlug = $request->input('current_slug', '');
         $minPrice = $request->input('min_price', 0);
         $maxPrice = $request->input('max_price', PHP_INT_MAX);
@@ -118,6 +125,13 @@ class ShopPageService
                 });
             }
         }
+
+        if (! empty($colorIds)) {
+            $products->whereHas('colors', function ($query) use ($colorIds) {
+                $query->whereIn('color_id', $colorIds);
+            });
+        }
+      
 
         $products->whereBetween('sale_price', [$minPrice, $maxPrice]);
 

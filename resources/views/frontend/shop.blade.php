@@ -69,7 +69,7 @@
                                         @foreach ($shopPageColors as $color)
                                             <li>
                                                 <a>
-                                                    <input type="checkbox" name=""class="filter-attribute"
+                                                    <input type="checkbox" name="color_ids[]"class="filter-color"
                                                         value="{{ $color->id }}" id="">
                                                     {{ $color->name }}
                                                 </a>
@@ -94,7 +94,7 @@
                                                 @foreach ($attribute->attributevalue as $value)
                                                     <li>
                                                         <a>
-                                                            <input type="checkbox" name=""class="filter-attribute"
+                                                            <input type="checkbox" name="attribute_values[]"class="filter-attribute"
                                                                 value="{{ $value->id }}" id="">
                                                             {{ $value->name }}
                                                         </a>
@@ -140,12 +140,12 @@
 
 
                         <!-- sidebar banner start -->
-                        {{-- <div class="sidebar-widget mb-30">
+                        <div class="sidebar-widget mb-30">
                             <div class="img-container fix img-full">
                                 <a href="#"><img src="{{ asset('frontend/assets/img/banner/banner_shop.jpg') }}"
                                         alt=""></a>
                             </div>
-                        </div> --}}
+                        </div>
                         <!-- sidebar banner end -->
                     </div>
                 </div>
