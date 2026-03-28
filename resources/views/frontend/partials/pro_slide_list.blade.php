@@ -1,5 +1,5 @@
 @forelse ($products as $item)
-    <div class="col-lg-3 col-md-4 col-sm-6">
+    <div class="col-lg-4 col-md-4 col-sm-6">
         @include('frontend.partials.pro_slide', ['item' => $item])
     </div>
 @empty
