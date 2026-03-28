@@ -44,17 +44,27 @@
                                     <div class="product-details-des mt-md-34 mt-sm-34">
                                         <h3><a href="product-details.html">{{ $product->name }}</a></h3>
                                         <div class="ratings">
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span class="good"><i class="fa fa-star"></i></span>
-                                            <span><i class="fa fa-star"></i></span>
+                                            @php
+                                                // Get average rating (defaults to 0 if no reviews exist)
+                                                $avgRating = $product->reviews->avg('rating');
+                                                $totalReviews = $product->reviews->count();
+                                            @endphp
+
+                                            {{-- Loop 5 times to show stars --}}
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="{{ $i <= $avgRating ? 'good' : '' }}">
+                                                    <i class="fa fa-star"></i>
+                                                </span>
+                                            @endfor
+
                                             <div class="pro-review">
-                                                <span>1 review(s)</span>
+                                                <span>{{ $totalReviews }} review(s)</span>
                                             </div>
                                         </div>
+
                                         <div class="customer-rev">
-                                            <a href="#">(1 customer review)</a>
+                                            <a href="#tab_three">({{ $totalReviews }} customer
+                                                review{{ $totalReviews != 1 ? 's' : '' }})</a>
                                         </div>
                                         <div class="availability mt-10">
                                             <h5>Availability:</h5>
@@ -142,28 +152,24 @@
                                                     class="fa fa-heart-o"></i>wishlist</a>
                                         </div>
 
-                                        <div class="shop-sidebar-wrap fix mt-3">
+                                        @if ($product->tags > 0)
+                                            <div class="shop-sidebar-wrap fix mt-3">
 
-                                            <!-- product tag start -->
-                                            <div class="sidebar-widget ">
-
-                                                <div class="sidebar-widget-body">
-                                                    <div class="product-tag">
-                                                        <a href="#">camera</a>
-                                                        <a href="#">computer</a>
-                                                        <a href="#">tablet</a>
-                                                        <a href="#">watch</a>
-                                                        <a href="#">smart phones</a>
-                                                        <a href="#">handbag</a>
-                                                        <a href="#">shoe</a>
-                                                        <a href="#">men</a>
+                                                <!-- product tag start -->
+                                                <div class="sidebar-widget ">
+                                                    <div class="sidebar-widget-body">
+                                                        <div class="product-tag">
+                                                            @foreach (explode(',', $product->tags) as $tag)
+                                                                <a href="{{ url('search?query=' . trim($tag)) }}">
+                                                                    {{ trim($tag) }}
+                                                                </a>
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <!-- product tag end -->
                                             </div>
-                                            <!-- product tag end -->
-
-
-                                        </div>
+                                        @endif
 
                                         <div class="share-icon mt-3">
                                             <a class="facebook" href="#"><i class="fa fa-facebook"></i>like</a>
@@ -201,74 +207,69 @@
                                         </div>
 
                                         <div class="tab-pane fade" id="tab_three">
-                                            <form action="#" class="review-form">
-                                                <h5>1 review for Simple product 12</h5>
-                                                <div class="total-reviews">
-                                                    <div class="rev-avatar">
-                                                        <img src="frontend/assets/img/about/avatar.jpg" alt="">
-                                                    </div>
-                                                    <div class="review-box">
-                                                        <div class="ratings">
-                                                            <span class="good"><i class="fa fa-star"></i></span>
-                                                            <span class="good"><i class="fa fa-star"></i></span>
-                                                            <span class="good"><i class="fa fa-star"></i></span>
-                                                            <span class="good"><i class="fa fa-star"></i></span>
-                                                            <span><i class="fa fa-star"></i></span>
-                                                        </div>
-                                                        <div class="post-author">
-                                                            <p><span>admin -</span> 30 Nov, 2018</p>
-                                                        </div>
-                                                        <p>Aliquam fringilla euismod risus ac bibendum. Sed sit amet sem
-                                                            varius ante feugiat lacinia. Nunc ipsum nulla, vulputate ut
-                                                            venenatis vitae, malesuada ut mi. Quisque iaculis, dui congue
-                                                            placerat pretium, augue erat accumsan lacus</p>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col">
-                                                        <label class="col-form-label"><span class="text-danger">*</span>
-                                                            Your Name</label>
-                                                        <input type="text" class="form-control" required>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col">
-                                                        <label class="col-form-label"><span class="text-danger">*</span>
-                                                            Your Email</label>
-                                                        <input type="email" class="form-control" required>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col">
-                                                        <label class="col-form-label"><span class="text-danger">*</span>
-                                                            Your Review</label>
-                                                        <textarea class="form-control" required></textarea>
-                                                        <div class="help-block pt-10"><span
-                                                                class="text-danger">Note:</span> HTML is not translated!
+                                            <form action="{{ route('review.store', $product->id) }}" method="POST"
+                                                class="review-form">
+                                                @csrf
+                                                <h5>{{ $product->reviews->count() }} review(s) for {{ $product->name }}
+                                                </h5>
+
+                                                @foreach ($product->reviews as $item)
+                                                    <div class="total-reviews">
+                                                        <div class="review-box">
+                                                            <div class="ratings">
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    <span
+                                                                        class="{{ $i <= $item->rating ? 'good' : '' }}"><i
+                                                                            class="fa fa-star"></i></span>
+                                                                @endfor
+                                                            </div>
+                                                            <div class="post-author">
+                                                                <p><span>{{ $item->user_name }} -</span>
+                                                                    {{ $item->created_at->format('d M, Y') }}</p>
+                                                            </div>
+                                                            <p>{{ $item->comment }}</p>
                                                         </div>
                                                     </div>
+                                                @endforeach
+
+                                                <div class="form-group row">
+                                                    <div class="col">
+                                                        <label>Your Name</label>
+                                                        <input type="text" name="name" class="form-control"
+                                                            required>
+                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
                                                     <div class="col">
-                                                        <label class="col-form-label"><span class="text-danger">*</span>
-                                                            Rating</label>
-                                                        &nbsp;&nbsp;&nbsp; Bad&nbsp;
+                                                        <label>Your Email</label>
+                                                        <input type="email" name="email" class="form-control"
+                                                            required>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col">
+                                                        <label>Your Review</label>
+                                                        <textarea name="review" class="form-control" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <div class="col">
+                                                        <label>Rating</label>
+                                                        &nbsp; Bad
                                                         <input type="radio" value="1" name="rating">
-                                                        &nbsp;
                                                         <input type="radio" value="2" name="rating">
-                                                        &nbsp;
                                                         <input type="radio" value="3" name="rating">
-                                                        &nbsp;
                                                         <input type="radio" value="4" name="rating">
-                                                        &nbsp;
                                                         <input type="radio" value="5" name="rating" checked>
-                                                        &nbsp;Good
+                                                        Good
                                                     </div>
                                                 </div>
+
                                                 <div class="buttons">
                                                     <button class="sqr-btn" type="submit">Continue</button>
                                                 </div>
-                                            </form> <!-- end of review-form -->
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -278,24 +279,24 @@
                     <!-- product details reviews end -->
 
                     <!-- related products area start -->
-                    @if($related_pro->isNotEmpty())
-                    <div class="related-products-area mt-34">
-                        <div class="section-title mb-30">
-                            <div class="title-icon">
-                                <i class="fa fa-desktop"></i>
+                    @if ($related_pro->isNotEmpty())
+                        <div class="related-products-area mt-34">
+                            <div class="section-title mb-30">
+                                <div class="title-icon">
+                                    <i class="fa fa-desktop"></i>
+                                </div>
+                                <h3>related products</h3>
+                            </div> <!-- section title end -->
+                            <!-- featured category start -->
+                            <div class="featured-carousel-active slick-padding slick-arrow-style">
+                                <!-- product single item start -->
+                                @foreach ($related_pro as $item)
+                                    @include('frontend.partials.pro_slide', ['item' => $item])
+                                @endforeach
+
                             </div>
-                            <h3>related products</h3>
-                        </div> <!-- section title end -->
-                        <!-- featured category start -->
-                        <div class="featured-carousel-active slick-padding slick-arrow-style">
-                            <!-- product single item start -->
-                            @foreach ($related_pro as $item)
-                                @include('frontend.partials.pro_slide', ['item' => $item])                       
-                            @endforeach
-                            
+                            <!-- featured category end -->
                         </div>
-                        <!-- featured category end -->
-                    </div>
                     @endif
                     <!-- related products area end -->
                 </div>

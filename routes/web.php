@@ -23,6 +23,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SalesController;
+use App\Http\Controllers\Frontend\ReviewController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -34,6 +35,8 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
+
+Route::post('/product/review/{id}', [ReviewController::class, 'store'])->name('review.store');
 
 Route::get('/category-products/{id}', [HomePageController::class, 'getCategoryProducts'])->name('category.products');
 

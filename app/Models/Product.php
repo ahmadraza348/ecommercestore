@@ -84,6 +84,13 @@ class Product extends Model
         return $this->categories()->count();
     }
 
+    // A product can have many reviews
+    public function reviews()
+    {
+        // Order by latest so newest reviews appear first
+        return $this->hasMany(Review::class)->latest();
+    }
+
 
     // Laravel Scout Searchable implementation
     public function toSearchableArray(): array {

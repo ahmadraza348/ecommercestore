@@ -12,6 +12,7 @@ class ProductPageService
         $product = Product::where('slug', $slug)
             ->with([
                 'gallery_images',
+                'reviews',
                 'proAttributeValuesRecords',
                 'categories', // Make sure to load categories here
             ])->firstOrFail();
