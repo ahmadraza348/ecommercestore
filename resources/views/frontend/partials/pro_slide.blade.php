@@ -1,8 +1,8 @@
 <div class="product-item fix mb-30">
     <div class="product-thumb">
         @php
-        $featured_image = $item->gallery_images->where('is_featured', 1)->first()?->image;
-        $back_image = $item->gallery_images->where('is_back', 1)->first()?->image;
+            $featured_image = $item->gallery_images->where('is_featured', 1)->first()?->image;
+            $back_image = $item->gallery_images->where('is_back', 1)->first()?->image;
         @endphp
 
         <a href="{{ route('pro.details', ['slug' => $item->slug]) }}">
@@ -37,21 +37,12 @@
         <div class="pricebox">
             <span class="regular-price">{{ $item->sale_price }}
                 PKR</span>
-            <div class="ratings">
-                <span class="good"><i class="fa fa-star"></i></span>
-                <span class="good"><i class="fa fa-star"></i></span>
-                <span class="good"><i class="fa fa-star"></i></span>
-                <span class="good"><i class="fa fa-star"></i></span>
-                <span><i class="fa fa-star"></i></span>
-                <div class="pro-review">
-                    <span>1 review(s)</span>
-                </div>
-            </div>
+            @include('frontend.partials.review_star', ['product' => $item])
         </div>
     </div>
 </div>
 
-<!-- 
+<!--
 
 <div class="product-list-item mb-30 fix" >
     <div class="product-thumb">
@@ -65,7 +56,7 @@
 </div>
 </div>
 <div class="product-list-content">
-    <h3><a href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{$item->name}}</a></h3>
+    <h3><a href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{ $item->name }}</a></h3>
     <div class="ratings">
         <span class="good"><i class="fa fa-star"></i></span>
         <span class="good"><i class="fa fa-star"></i></span>
@@ -80,7 +71,7 @@
         <span class="regular-price">{{ $item->sale_price }} PKR</span>
         <span class="old-price"><del>{{ $item->previous_price }} PKR</del></span>
     </div>
-    <p>{{$item->short_description}}</p>
+    <p>{{ $item->short_description }}</p>
     <div class="product-list-action-link">
         <a class="buy-btn" href="#" data-toggle="tooltip" data-placement="top" title="Add to cart">go to buy
             <i class="fa fa-shopping-cart"></i> </a>

@@ -43,29 +43,7 @@
 
                                     <div class="product-details-des mt-md-34 mt-sm-34">
                                         <h3><a href="product-details.html">{{ $product->name }}</a></h3>
-                                        <div class="ratings">
-                                            @php
-                                                // Get average rating (defaults to 0 if no reviews exist)
-                                                $avgRating = $product->reviews->avg('rating');
-                                                $totalReviews = $product->reviews->count();
-                                            @endphp
-
-                                            {{-- Loop 5 times to show stars --}}
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                <span class="{{ $i <= $avgRating ? 'good' : '' }}">
-                                                    <i class="fa fa-star"></i>
-                                                </span>
-                                            @endfor
-
-                                            <div class="pro-review">
-                                                <span>{{ $totalReviews }} review(s)</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="customer-rev">
-                                            <a href="#tab_three">({{ $totalReviews }} customer
-                                                review{{ $totalReviews != 1 ? 's' : '' }})</a>
-                                        </div>
+                                       @include('frontend.partials.review_star', ['product' => $product])                                  
                                         <div class="availability mt-10">
                                             <h5>Availability:</h5>
                                             <span id="stock-display">
