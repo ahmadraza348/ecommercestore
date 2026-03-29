@@ -27,8 +27,21 @@
                     class="fa fa-heart-o"></i></a>
             <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i
                     class="fa fa-refresh"></i></a>
-            <a href="#" data-toggle="tooltip" data-placement="left" title="Add to cart"><i
-                    class="fa fa-shopping-cart"></i></a>
+            @if ($item->product_variation_type == 'simple')
+                <form action="{{ route('addToCart') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $item->id }}">
+                    <input type="hidden" name="pro_qty" value="1">
+                    <button type="submit" class="" data-toggle="tooltip" title="Add to cart">
+                        <i class="fa fa-shopping-cart"></i>
+                    </button>
+                </form>
+            @else
+                <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip"
+                    title="Select Options">
+                    <i class="fa fa-external-link"></i>
+                </a>
+            @endif
         </div>
     </div>
     <div class="product-content">
