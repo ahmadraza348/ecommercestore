@@ -130,11 +130,14 @@
 
                                                 <div class="cart-info">
                                                     <h4>{{ $item->product_name }}</h4>
+                                                    @if($item->proColor)
                                                     <h4>Color: {{ $item->proColor?->name ?? null }}</h4>
+                                                    @endif
                                                     @if ($item->proAttribute)
                                                         <h4>{{ $item->proAttribute?->attribute?->name ?? null }}:
                                                             {{ $item->proAttribute?->name ?? null }}</h4>
                                                     @endif
+                                                    Quantity: {{ $item->quantity }} 
                                                     <span>{{ $item->price }} PKR</span>
                                                 </div>
 

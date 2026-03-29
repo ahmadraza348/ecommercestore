@@ -28,14 +28,18 @@
             <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i
                     class="fa fa-refresh"></i></a>
             @if ($item->product_variation_type == 'simple')
-                <form action="{{ route('addToCart') }}" method="POST" style="display:inline;">
+                <form id="add-to-cart-{{ $item->id }}" action="{{ route('addToCart') }}" method="POST"
+                    style="display:none;">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $item->id }}">
                     <input type="hidden" name="pro_qty" value="1">
-                    <button type="submit" class="" data-toggle="tooltip" title="Add to cart">
-                        <i class="fa fa-shopping-cart"></i>
-                    </button>
                 </form>
+
+                <a href="javascript:void(0);"
+                    onclick="document.getElementById('add-to-cart-{{ $item->id }}').submit();" data-toggle="tooltip"
+                    title="Add to cart">
+                    <i class="fa fa-shopping-cart"></i>
+                </a>
             @else
                 <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip"
                     title="Select Options">
