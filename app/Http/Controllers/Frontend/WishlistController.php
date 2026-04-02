@@ -52,4 +52,25 @@ public function index()
     {
         return response()->json(['count' => count(session()->get('wishlist', []))]);
     }
+    public function remove(Request $request )
+    {
+        $productId = $request->product_id;
+        $wishlist = session()->get('wishlist', []);
+
+        if (isset($wishlist[$productId])) {
+            unset($wishlist[$productId]);
+            session()->put('wishlist', $wishlist);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Removed from wishlist',
+                'wishlist_count' => count($wishlist)
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Product not found in wishlist'
+        ]);
+    }
 }

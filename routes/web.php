@@ -63,6 +63,7 @@ Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'downlo
 
     // Wishlist Routes
 Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/count', [WishlistController::class, 'getCount'])->name('wishlist.count');
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 

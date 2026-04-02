@@ -40,14 +40,18 @@
                                                 <span class="text-success">In Stock</span>
                                             </td>
                                             <td class="pro-add-cart">
-                                                <a href="javascript:void(0);" class="sqr-btn add-to-cart-btn" data-id="{{ $product->id }}">
-                                                    Add to Cart
+                                                <a href="{{ route('pro.details', $product->slug) }}" class="" >
+                                                    See Details
                                                 </a>
                                             </td>
                                             <td class="pro-remove">
-                                                <a href="javascript:void(0);" class="remove-wishlist" data-id="{{ $product->id }}">
-                                                    <i class="fa fa-trash-o"></i>
-                                                </a>
+                                                <form action="{{ route('wishlist.remove', $product->id) }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger remove-wishlist" >
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
