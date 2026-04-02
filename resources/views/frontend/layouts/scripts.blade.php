@@ -1,5 +1,9 @@
 <script>
     $(document).ready(function() {
+
+        if (window.performance && window.performance.navigation.type === 2) {
+        location.reload(true);
+    }
         // 1. Global AJAX Setup
         $.ajaxSetup({
             headers: {

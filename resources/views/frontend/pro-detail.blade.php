@@ -38,12 +38,9 @@
                                     @php
                                         $simplePro = $product->product_variation_type == 'simple';
                                     @endphp
-                                    <input type="hidden" name="final_price" id="final_price"
-                                        value="{{ $simplePro ? $product->sale_price : '' }}">
-
                                     <div class="product-details-des mt-md-34 mt-sm-34">
                                         <h3><a href="product-details.html">{{ $product->name }}</a></h3>
-                                       @include('frontend.partials.review_star', ['product' => $product])                                  
+                                        @include('frontend.partials.review_star', ['product' => $product])
                                         <div class="availability mt-10">
                                             <h5>Availability:</h5>
                                             <span id="stock-display">
@@ -124,10 +121,16 @@
                                             </div>
                                         </div>
                                         <div class="useful-links mt-20">
-                                            <a href="#" data-toggle="tooltip" data-placement="top" title="Compare"><i
-                                                    class="fa fa-refresh"></i>compare</a>
-                                            <a href="#" data-toggle="tooltip" data-placement="top" title="Wishlist"><i
-                                                    class="fa fa-heart-o"></i>wishlist</a>
+                                            <a href="javascript:void(0);" class="add-to-compare"
+                                                data-id="{{ $product->id }}" data-toggle="tooltip" data-placement="top"
+                                                title="Compare">
+                                                <i class="fa fa-refresh"></i> compare
+                                            </a>
+                                            <a href="javascript:void(0);" class="add-to-wishlist"
+                                                data-id="{{ $product->id }}" data-toggle="tooltip" data-placement="top"
+                                                title="Wishlist">
+                                                <i class="fa fa-heart-o"></i> wishlist
+                                            </a>
                                         </div>
 
                                         @if ($product->tags > 0)

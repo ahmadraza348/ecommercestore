@@ -17,6 +17,8 @@
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     @include('frontend.layouts.custom_styles') {{-- Optional: Move your skeleton CSS here too --}}
 </head>

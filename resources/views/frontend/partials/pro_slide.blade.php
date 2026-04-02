@@ -15,31 +15,23 @@
         <div class="product-label">
             <span>{{ $item->label }}</span>
         </div>
-        
-        <div class="product-action-link">
-            <a href="#" class="quick-view-btn" data-id="{{ $item->id }}" data-toggle="modal" data-target="#quick_view">
-                <span data-toggle="tooltip" data-placement="left" title="Quick view">
-                    <i class="fa fa-search"></i>
-                </span>
-            </a>
 
-            <a href="javascript:void(0);" class="add-to-wishlist" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="left" title="Wishlist">
+        <div class="product-action-link">
+            {{-- Wishlist & Compare (Keeping these as links for now) --}}
+            <a href="javascript:void(0);" class="add-to-wishlist" data-id="{{ $item->id }}" data-toggle="tooltip"
+                data-placement="left" title="Wishlist">
                 <i class="fa fa-heart-o"></i>
             </a>
 
-            <a href="javascript:void(0);" class="add-to-compare" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="left" title="Compare">
+            <a href="javascript:void(0);" class="add-to-compare" data-id="{{ $item->id }}" data-toggle="tooltip"
+                data-placement="left" title="Compare">
                 <i class="fa fa-refresh"></i>
             </a>
 
-            @if ($item->product_variation_type == 'simple')
-                <a href="javascript:void(0);" class="add-to-cart-btn" data-id="{{ $item->id }}" data-toggle="tooltip" title="Add to cart">
-                    <i class="fa fa-shopping-cart"></i>
-                </a>
-            @else
-                <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip" title="Select Options">
-                    <i class="fa fa-external-link"></i>
-                </a>
-            @endif
+            <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip" title="Select Options">
+                <i class="fa fa-external-link"></i>
+            </a>
+
         </div>
     </div>
     <div class="product-content">

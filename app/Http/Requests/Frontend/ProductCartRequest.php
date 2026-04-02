@@ -26,7 +26,7 @@ class ProductCartRequest extends FormRequest
             'pro_qty' => 'required|integer|min:1',
             'color' => 'nullable|exists:colors,id',
             'attribute_value_id' => 'nullable|exists:attribute_values,id',
-             'final_price' => 'numeric|min:0',
+             'final_price' => 'nullable|min:0',
         ];
     }
 }
