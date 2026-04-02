@@ -50,11 +50,11 @@
                                     </li>
                                 @endif
                                 <li>
-                                    <a href="#">my wishlist</a>
+                                    <a href="{{ route('wishlist.index') }}">my wishlist</a>
                                 </li>
 
                                 <li>
-                                    <a href="#">Compare</a>
+                                    <a href="{{ route('compare.index') }}">Compare</a>
                                 </li>
 
                             </ul>

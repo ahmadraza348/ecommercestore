@@ -15,93 +15,38 @@
         <div class="product-label">
             <span>{{ $item->label }}</span>
         </div>
+        
         <div class="product-action-link">
-
-            <a href="#" class="quick-view-btn" data-id="{{ $item->id }}" data-toggle="modal"
-                data-target="#quick_view">
+            <a href="#" class="quick-view-btn" data-id="{{ $item->id }}" data-toggle="modal" data-target="#quick_view">
                 <span data-toggle="tooltip" data-placement="left" title="Quick view">
                     <i class="fa fa-search"></i>
                 </span>
             </a>
-            <a href="#" data-toggle="tooltip" data-placement="left" title="Wishlist"><i
-                    class="fa fa-heart-o"></i></a>
-            <a href="#" data-toggle="tooltip" data-placement="left" title="Compare"><i
-                    class="fa fa-refresh"></i></a>
-            @if ($item->product_variation_type == 'simple')
-                <form id="add-to-cart-{{ $item->id }}" action="{{ route('addToCart') }}" method="POST"
-                    style="display:none;">
-                    @csrf
-                    <input type="hidden" name="product_id" value="{{ $item->id }}">
-                    <input type="hidden" name="pro_qty" value="1">
-                </form>
 
-                <a href="javascript:void(0);"
-                    onclick="document.getElementById('add-to-cart-{{ $item->id }}').submit();" data-toggle="tooltip"
-                    title="Add to cart">
+            <a href="javascript:void(0);" class="add-to-wishlist" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="left" title="Wishlist">
+                <i class="fa fa-heart-o"></i>
+            </a>
+
+            <a href="javascript:void(0);" class="add-to-compare" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="left" title="Compare">
+                <i class="fa fa-refresh"></i>
+            </a>
+
+            @if ($item->product_variation_type == 'simple')
+                <a href="javascript:void(0);" class="add-to-cart-btn" data-id="{{ $item->id }}" data-toggle="tooltip" title="Add to cart">
                     <i class="fa fa-shopping-cart"></i>
                 </a>
             @else
-                <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip"
-                    title="Select Options">
+                <a href="{{ route('pro.details', ['slug' => $item->slug]) }}" data-toggle="tooltip" title="Select Options">
                     <i class="fa fa-external-link"></i>
                 </a>
             @endif
         </div>
     </div>
     <div class="product-content">
-        <h4><a href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{ $item->name }}</a>
-        </h4>
+        <h4><a href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{ $item->name }}</a></h4>
         <div class="pricebox">
-            <span class="regular-price">{{ $item->sale_price }}
-                PKR</span>
+            <span class="regular-price">{{ $item->sale_price }} PKR</span>
             @include('frontend.partials.review_star', ['product' => $item])
         </div>
     </div>
 </div>
-
-<!--
-
-<div class="product-list-item mb-30 fix" >
-    <div class="product-thumb">
-       <a href="{{ route('pro.details', ['slug' => $item->slug]) }}">
-<img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : asset('backend/assets/img/noimage.png') }}"
-    class="img-pri" alt="">
-<img src="{{ $item->back_image ? asset('storage/' . $item->back_image) : asset('backend/assets/img/noimage.png') }}"
-    class="img-sec" alt="">
-<div class="product-label">
-    <span>{{ $item->label }}</span>
-</div>
-</div>
-<div class="product-list-content">
-    <h3><a href="{{ route('pro.details', ['slug' => $item->slug]) }}">{{ $item->name }}</a></h3>
-    <div class="ratings">
-        <span class="good"><i class="fa fa-star"></i></span>
-        <span class="good"><i class="fa fa-star"></i></span>
-        <span class="good"><i class="fa fa-star"></i></span>
-        <span class="good"><i class="fa fa-star"></i></span>
-        <span><i class="fa fa-star"></i></span>
-        <div class="pro-review">
-            <span>1 review(s)</span>
-        </div>
-    </div>
-    <div class="pricebox">
-        <span class="regular-price">{{ $item->sale_price }} PKR</span>
-        <span class="old-price"><del>{{ $item->previous_price }} PKR</del></span>
-    </div>
-    <p>{{ $item->short_description }}</p>
-    <div class="product-list-action-link">
-        <a class="buy-btn" href="#" data-toggle="tooltip" data-placement="top" title="Add to cart">go to buy
-            <i class="fa fa-shopping-cart"></i> </a>
-        <a href="#" class="quick-view-btn" data-id="{{ $item->id }}" data-toggle="modal"
-            data-target="#quick_view">
-            <span data-toggle="tooltip" data-placement="left" title="Quick view">
-                <i class="fa fa-search"></i>
-            </span>
-        </a>
-        <a href="#" data-toggle="tooltip" data-placement="top" title="Wishlist"><i
-                class="fa fa-heart-o"></i></a>
-        <a href="#" data-toggle="tooltip" data-placement="top" title="Compare"><i
-                class="fa fa-refresh"></i></a>
-    </div>
-</div>
-</div>  -->

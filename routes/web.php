@@ -13,17 +13,19 @@ use App\Http\Controllers\Admin\ProductColorsController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProImagesController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SalesController;
 use App\Http\Controllers\Frontend\CartPageController;
-use App\Http\Controllers\Frontend\OrderPageController;
+use App\Http\Controllers\Frontend\CompareController;
 use App\Http\Controllers\Frontend\HomePageController;
 use App\Http\Controllers\Frontend\OrderInvoiceController;
+use App\Http\Controllers\Frontend\OrderPageController;
 use App\Http\Controllers\Frontend\ProductPageController;
+use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\ShopPageController;
+use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\SalesController;
-use App\Http\Controllers\Frontend\ReviewController;
 
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
@@ -57,6 +59,18 @@ Route::get('/order/{order}/invoice', [OrderInvoiceController::class, 'show'])
 
 Route::get('/order/{order}/invoice/pdf', [OrderInvoiceController::class, 'download'])
     ->name('order.invoice.pdf');
+
+
+    // Wishlist Routes
+Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::get('/wishlist/count', [WishlistController::class, 'getCount'])->name('wishlist.count');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+
+// Compare Routes
+Route::post('/compare/add', [CompareController::class, 'add'])->name('compare.add');
+Route::delete('/compare/remove', [CompareController::class, 'remove'])->name('compare.remove');
+Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
+Route::get('/compare/count', [CompareController::class, 'getCount'])->name('compare.count');
 
 // Admin Panel Routes
  Route::prefix('admin')->group(function () {
