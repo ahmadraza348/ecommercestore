@@ -15,11 +15,15 @@
                                     <tr>
                                         <td class="first-column">Actions</td>
                                         @foreach ($products as $product)
-                                            <td class="pro-remove text-center" id="compare-col-{{ $product->id }}">
-                                                <button class="btn btn-link text-danger remove-compare"
-                                                    data-id="{{ $product->id }}">
-                                                    <i class="fa fa-trash"></i> Remove
-                                                </button>
+                                            <td class="text-center" id="compare-col-{{ $product->id }}">
+                                                 <form action="{{ route('compare.remove', $product->id) }}" method="POST"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fa fa-trash-o"></i>
+                                                    </button>
+                                                </form>
                                             </td>
                                         @endforeach
                                     </tr>
@@ -77,9 +81,9 @@
                                         <td class="first-column">Buy Now</td>
                                         @foreach ($products as $product)
                                             <td class="text-center">
-                                                <a href="javascript:void(0);" class="sqr-btn add-to-cart-btn"
+                                                <a href="{{ route('pro.details', $product->slug) }}" class="sqr-btn add-to-cart-btn"
                                                     data-id="{{ $product->id }}">
-                                                    Add to Cart
+                                                    View Details
                                                 </a>
                                             </td>
                                         @endforeach
@@ -115,21 +119,4 @@
         }
     </style>
 
-    <script>
-        $(document).ready(function() {
-            $('.remove-compare').on('click', function() {
-                let id = $(this).data('id');
-                if (confirm('Remove this product from comparison?')) {
-                    $.post("{{ route('compare.remove') }}", {
-                        _token: "{{ csrf_token() }}",
-                        product_id: id
-                    }, function(res) {
-                        if (res.status === 'success') {
-                            location.reload(); // Reload to refresh the comparison grid
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 @endsection

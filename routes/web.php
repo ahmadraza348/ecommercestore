@@ -69,7 +69,7 @@ Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.in
 
 // Compare Routes
 Route::post('/compare/add', [CompareController::class, 'add'])->name('compare.add');
-Route::delete('/compare/remove', [CompareController::class, 'remove'])->name('compare.remove');
+Route::delete('/compare/remove/{id}', [CompareController::class, 'remove'])->name('compare.remove');
 Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
 Route::get('/compare/count', [CompareController::class, 'getCount'])->name('compare.count');
 

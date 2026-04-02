@@ -17,21 +17,24 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(isset($products) && $products->count() > 0)
+                                @if (isset($products) && $products->count() > 0)
                                     @foreach ($products as $product)
                                         @php
-                                            $featuredImage = $product->gallery_images->where('is_featured', 1)->first() ?? $product->gallery_images->first();
+                                            $featuredImage =
+                                                $product->gallery_images->where('is_featured', 1)->first() ??
+                                                $product->gallery_images->first();
                                         @endphp
                                         <tr id="wishlist-row-{{ $product->id }}">
                                             <td class="pro-thumbnail">
                                                 <a href="{{ route('pro.details', $product->slug) }}">
-                                                    <img class="img-fluid" 
-                                                         src="{{ $featuredImage ? asset('storage/' . $featuredImage->image) : asset('backend/assets/img/noimage.png') }}" 
-                                                         alt="Product" />
+                                                    <img class="img-fluid"
+                                                        src="{{ $featuredImage ? asset('storage/' . $featuredImage->image) : asset('backend/assets/img/noimage.png') }}"
+                                                        alt="Product" />
                                                 </a>
                                             </td>
                                             <td class="pro-title">
-                                                <a href="{{ route('pro.details', $product->slug) }}">{{ $product->name }}</a>
+                                                <a
+                                                    href="{{ route('pro.details', $product->slug) }}">{{ $product->name }}</a>
                                             </td>
                                             <td class="pro-price">
                                                 <span>{{ $product->sale_price }} PKR</span>
@@ -40,15 +43,16 @@
                                                 <span class="text-success">In Stock</span>
                                             </td>
                                             <td class="pro-add-cart">
-                                                <a href="{{ route('pro.details', $product->slug) }}" class="" >
+                                                <a href="{{ route('pro.details', $product->slug) }}" class="">
                                                     See Details
                                                 </a>
                                             </td>
                                             <td class="pro-remove">
-                                                <form action="{{ route('wishlist.remove', $product->id) }}" method="POST" style="display: inline;">
+                                                <form action="{{ route('wishlist.remove', $product->id) }}" method="POST"
+                                                    style="display: inline;">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger remove-wishlist" >
+                                                    <button type="submit" class="btn btn-danger">
                                                         <i class="fa fa-trash-o"></i>
                                                     </button>
                                                 </form>
@@ -68,5 +72,5 @@
         </div>
     </div>
 
-   
+
 @endsection

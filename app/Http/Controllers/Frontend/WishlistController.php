@@ -52,25 +52,21 @@ public function index()
     {
         return response()->json(['count' => count(session()->get('wishlist', []))]);
     }
-    public function remove(Request $request )
-    {
-        $productId = $request->product_id;
-        $wishlist = session()->get('wishlist', []);
+public function remove(Request $request, $id) // Added $id here
+{
+    // 1. Fetch the current wishlist from session
+    $wishlist = session()->get('wishlist', []);
 
-        if (isset($wishlist[$productId])) {
-            unset($wishlist[$productId]);
-            session()->put('wishlist', $wishlist);
+    // 2. Check if the ID (passed from URL) exists in the session keys
+    if (isset($wishlist[$id])) {
+        unset($wishlist[$id]);
+        
+        // 3. Update the session
+        session()->put('wishlist', $wishlist);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Removed from wishlist',
-                'wishlist_count' => count($wishlist)
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Product not found in wishlist'
-        ]);
+        return redirect()->back()->with('success', 'Item removed from wishlist!');
     }
+
+    return redirect()->back()->with('error', 'Item not found in wishlist.');
+}
 }

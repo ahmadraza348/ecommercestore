@@ -51,18 +51,21 @@ class CompareController extends Controller
         return view('frontend.compare', compact('products'));
     }
 
-    public function remove(Request $request)
-    {
-        $compare = session()->get('compare', []);
-        if(isset($compare[$request->product_id])) {
-            unset($compare[$request->product_id]);
-            session()->put('compare', $compare);
-        }
+  public function remove(Request $request, $id) // Added $id here
+{
+    // 1. Fetch the current wishlist from session
+    $compare = session()->get('compare', []);
 
-        return response()->json([
-            'status' => 'success', 
-            'message' => 'Product removed from comparison',
-            'compare_count' => count($compare)
-        ]);
+    // 2. Check if the ID (passed from URL) exists in the session keys
+    if (isset($compare[$id])) {
+        unset($compare[$id]);
+        
+        // 3. Update the session
+        session()->put('compare', $compare);
+
+        return redirect()->back()->with('success', 'Item removed from compare!');
     }
+
+    return redirect()->back()->with('error', 'Item not found in compare.');
+}
 }
