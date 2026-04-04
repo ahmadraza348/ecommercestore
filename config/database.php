@@ -50,6 +50,14 @@ return [
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
             'password' => env('DB_PASSWORD', ''),
+
+            // ADD THIS SECTION HERE:
+            'dump' => [
+                'dump_binary_path' => env('DUMP_BINARY_PATH'),
+                'use_single_transaction',
+                'timeout' => 60 * 5,
+            ],
+
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),

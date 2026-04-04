@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\CartItem;
 use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
@@ -12,11 +11,19 @@ class Cart extends Model
         'session_id',
         'subtotal',
         'discount',
-        'total'
+        'total',
     ];
 
     public function items()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    // Ensure items are deleted when a cart is deleted
+    protected static function booted()
+    {
+        static::deleting(function ($cart) {
+            $cart->items()->delete();
+        });
     }
 }

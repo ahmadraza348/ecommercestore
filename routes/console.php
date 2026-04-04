@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('app:clear-abandoned-carts')->daily();
+Schedule::command('app:website-backup')->dailyAt('02:00');
+Schedule::command('backup:clean')->dailyAt('03:00');

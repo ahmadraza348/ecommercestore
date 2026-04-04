@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Cart;
 use Illuminate\Console\Command;
+use Carbon\Carbon;
 
 class ClearAbandonedCarts extends Command
 {
@@ -19,15 +20,22 @@ class ClearAbandonedCarts extends Command
      *
      * @var string
      */
-    protected $description = 'Delete abandoned guest carts older than 2 days';
+    protected $description = 'Delete abandoned carts older than 2 days';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        Cart::whereNull('user_id')
-            ->where('updated_at', '<', now()->subDays(2))
-            ->delete();
+        $expirationDate = Carbon::now()->subHours(24);
+
+       $expiredCarts = Cart::get();
+       $count = $expiredCarts->count();
+
+       foreach ($expiredCarts as $cart) {
+            $cart->delete();
+        }
+        $this->info("Successfully deleted {$count} abandoned carts.");
+   
     }
 }
