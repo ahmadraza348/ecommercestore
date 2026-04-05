@@ -17,17 +17,16 @@
     <link href="{{ asset('frontend/assets/css/skin-default.css') }}" rel="stylesheet" id="galio-skin">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-    @include('frontend.layouts.custom_styles') {{-- Optional: Move your skeleton CSS here too --}}
+    @include('frontend.layouts.custom_styles')
 </head>
 
 <body>
     <div class="wrapper">
         @include('frontend.layouts.header')
 
-        {{-- Breadcrumb Logic --}}
         @if(Route::currentRouteName() != 'home')
             @include('frontend.partials.breadcrumbs')
         @endif
@@ -41,7 +40,6 @@
 
     <div class="scroll-top not-visible"><i class="fa fa-angle-up"></i></div>
 
-    <script src="{{ asset('frontend/assets/js/vendor/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/vendor/modernizr-3.6.0.min.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/plugins.js') }}"></script>
     <script src="{{ asset('frontend/assets/js/vendor/popper.min.js') }}"></script>
@@ -55,4 +53,3 @@
     @include('frontend.layouts.scripts') 
 </body>
 </html>
-

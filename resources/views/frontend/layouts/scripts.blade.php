@@ -1,9 +1,14 @@
 <script>
+(function($) {
+    "use strict";
+
     $(document).ready(function() {
 
+        // Force reload on back button to sync cart/session
         if (window.performance && window.performance.navigation.type === 2) {
             location.reload(true);
         }
+
         // 1. Global AJAX Setup
         $.ajaxSetup({
             headers: {
@@ -25,20 +30,10 @@
 
         // 3. Shop Filtering Logic
         function fetchFilteredProducts(page = 1) {
-            let selectedBrands = [];
-            let selectedColors = [];
-            let selectedAttributes = [];
+            let selectedBrands = $('.filter-brand:checked').map(function() { return $(this).val(); }).get();
+            let selectedColors = $('.filter-color:checked').map(function() { return $(this).val(); }).get();
+            let selectedAttributes = $('.filter-attribute:checked').map(function() { return $(this).val(); }).get();
             let currentSlug = $('input[name="current_slug"]').val();
-
-            $('.filter-brand:checked').each(function() {
-                selectedBrands.push($(this).val());
-            });
-            $('.filter-color:checked').each(function() {
-                selectedColors.push($(this).val());
-            });
-            $('.filter-attribute:checked').each(function() {
-                selectedAttributes.push($(this).val());
-            });
 
             $.ajax({
                 url: "{{ route('shop.filter') }}?page=" + page,
@@ -68,24 +63,30 @@
         }
 
         // Filter Events
-        $('.filter-brand, .filter-attribute, .filter-color, #sortby').on('change', fetchFilteredProducts);
-        $(document).on('click', '.pagination a', function(e) {
-            e.preventDefault();
-            fetchFilteredProducts($(this).attr('href').split('page=')[1]);
+        $('.filter-brand, .filter-attribute, .filter-color, #sortby').on('change', function() {
+            fetchFilteredProducts(1);
         });
 
+        // Pagination Click (Consolidated)
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             let page = $(this).attr('href').split('page=')[1];
             fetchFilteredProducts(page);
         });
+
+        // Price Range Slider Debounce
+        let priceTimer;
         $('.price-range').on('slidechange', function(event, ui) {
-            $('#min_price').val(ui.values[0]); // Update min price
-            $('#max_price').val(ui.values[1]); // Update max price
-            fetchFilteredProducts(); // Fetch products
+            $('#min_price').val(ui.values[0]);
+            $('#max_price').val(ui.values[1]);
+            
+            clearTimeout(priceTimer);
+            priceTimer = setTimeout(function() {
+                fetchFilteredProducts(1);
+            }, 500); 
         });
 
-        // 4. E-commerce Actions (Cart, Wishlist, Compare)
+        // 4. E-commerce Actions
         $(document).on('click', '.add-to-cart-btn', function(e) {
             e.preventDefault();
             $.post("{{ route('addToCart') }}", {
@@ -108,54 +109,40 @@
             }, notify);
         });
 
-
-
-
-        // Home Page category based porudtcs filterng
-
+        // 5. Home Page Category Tabs
         const skeleton = `
-        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-30">
-            <div class="skeleton-card">
-                <div class="skeleton skeleton-img"></div>
-                <div class="skeleton skeleton-text"></div>
-                <div class="skeleton skeleton-text small"></div>
-            </div>
-        </div>
-     `.repeat(4);
+            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-30">
+                <div class="skeleton-card">
+                    <div class="skeleton skeleton-img"></div>
+                    <div class="skeleton skeleton-text"></div>
+                    <div class="skeleton skeleton-text small"></div>
+                </div>
+            </div>`.repeat(4);
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-
             let tab = $(e.target);
             let categoryId = tab.data('id');
             let target = $(tab.attr('href'));
             let content = target.find('.ajax-content');
 
-            // STOP if already loaded
-            if (content.data('loaded') === true || content.data('loaded') === 'true') {
-                return;
-            }
+            if (content.data('loaded') == true) return;
 
             $.ajax({
                 url: '/category-products/' + categoryId,
                 type: 'GET',
-
                 beforeSend: function() {
                     content.html(skeleton);
                 },
-
                 success: function(res) {
                     content.hide().html(res.html).fadeIn(300);
-                    content.attr('data-loaded', 'true');
+                    content.data('loaded', true);
                 },
-
                 error: function() {
-                    content.html(
-                        '<div class="col-12 text-center text-danger">Failed to load products</div>'
-                    );
+                    content.html('<div class="col-12 text-center text-danger">Failed to load products</div>');
                 }
             });
-
         });
 
     });
+})(jQuery);
 </script>

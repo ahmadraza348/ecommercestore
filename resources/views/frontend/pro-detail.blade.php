@@ -327,152 +327,145 @@
             background-color: #d8373e;
         }
     </style>
+<script>
+(function($) {
+    "use strict";
 
-    <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
+        // 1. Initialize Zoom
+        initZoom();
 
-            initZoom();
+        // 2. Handle Simple Products
+        // If no color variations exist, we stop here to avoid script errors
+        if ($('input[name="color"]').length === 0) {
+            return;
+        }
 
-            // SIMPLE PRODUCT → do nothing
-            if ($('input[name="color"]').length === 0) {
-                return;
-            }
+        // 3. Initial UI Setup
+        // Select first available color on page load
+        let firstColor = $('input[name="color"]:checked').length ? 
+                         $('input[name="color"]:checked') : 
+                         $('input[name="color"]').first();
+        
+        firstColor.prop('checked', true);
+        $('#selected-color-name').text(firstColor.data('name'));
+        updateUI(firstColor);
 
-            // Select first color
-            let firstColor = $('input[name="color"]').first();
-            firstColor.prop('checked', true);
-            $('#selected-color-name').text(firstColor.data('name'));
-
-            updateUI(firstColor);
+        // 4. Color Change Event
+        $(document).on('change', 'input[name="color"]', function() {
+            let $this = $(this);
+            $('#selected-color-name').text($this.data('name'));
+            updateUI($this);
         });
 
-
-        // COLOR CHANGE
-        $('input[name="color"]').on('change', function() {
-            $('#selected-color-name').text($(this).data('name'));
-            updateUI($(this));
-        });
-
+        // 5. Main UI Update Function
         function updateUI(colorRadio) {
-
             const variants = colorRadio.data('variants');
             const colorPrice = colorRadio.data('price');
             const stock = colorRadio.data('stock');
             const colorId = colorRadio.val();
 
-            // Update stock
-            $('input[name="pro_qty"]').attr('max', stock);
-            $('#stock-display').text(stock + ' in stock');
+            // Update Stock Display & Input Constraints
+            const qtyInput = $('input[name="pro_qty"]');
+            qtyInput.attr('max', stock);
+            if (parseInt(qtyInput.val()) > stock) qtyInput.val(stock);
+            
+            $('#stock-display').html(stock > 0 ? 
+                `<span class="text-success">${stock} in stock</span>` : 
+                `<span class="text-danger">Product has been sold out</span>`
+            );
 
-            // Disable button if needed
-            if (stock <= 0) {
-                $('.buy-btn').prop('disabled', true);
-            } else {
-                $('.buy-btn').prop('disabled', false);
-            }
+            // Toggle Buy Button State
+            $('.buy-btn').css('pointer-events', stock <= 0 ? 'none' : 'auto')
+                         .css('opacity', stock <= 0 ? '0.5' : '1');
+            $('button[type="submit"]').prop('disabled', stock <= 0);
 
-            // Update price
+            // Update Price
             $('#price').text('Rs. ' + colorPrice);
 
-            // Move slider to that color image
-            loadColorImages(colorId);
+            // Sync Slider to Selected Color
+            syncSliderToColor(colorId);
 
-            // Load size/variant
+            // Re-load Size/Attribute Variants
             loadVariantValues(variants);
         }
 
-
-        // 🔥 SIMPLE IMAGE SWITCH (NO REBUILD, NO FILTERING)
-        function loadColorImages(colorId) {
-
-            let index = -1;
+        // 6. Slider Synchronization
+        function syncSliderToColor(colorId) {
+            let targetIndex = -1;
 
             $('#main-slider .pro-large-img').each(function(i) {
                 if ($(this).data('color') == colorId) {
-                    index = i;
-                    return false;
+                    targetIndex = i;
+                    return false; // break loop
                 }
             });
 
-            if (index !== -1) {
-                $('#main-slider').slick('slickGoTo', index);
-                $('#thumb-slider').slick('slickGoTo', index);
-            } else {
-                console.warn('No image found for color:', colorId);
+            if (targetIndex !== -1) {
+                // We use both to ensure full sync across thumbnails
+                $('#main-slider').slick('slickGoTo', targetIndex);
+                $('#thumb-slider').slick('slickGoTo', targetIndex);
             }
         }
 
-
-        // ZOOM
-        function initZoom() {
-            $(".img-zoom").each(function() {
-                $(this).trigger('zoom.destroy');
-            });
-
-            $(".img-zoom").zoom({
-                on: 'mouseover',
-                magnify: 1.5
-            });
-        }
-
-
-        // VARIANTS (SIZE ETC)
+        // 7. Dynamic Variant Loader (Size/Attributes)
         function loadVariantValues(variants) {
-
             variants = variants || [];
+            const container = $('#variant-attribute');
 
             if (variants.length === 0) {
-                $('#variant-attribute').html('');
+                container.empty();
                 return;
             }
 
-            let first = variants.find(v => v.stock > 0) || variants[0];
+            let firstValid = variants.find(v => v.stock > 0) || variants[0];
+            let attrName = firstValid.attribute_value?.attribute?.name || 'Attribute';
 
             let html = `
-        <label><strong>Select ${first.attribute_value.attribute.name}: ${first.attribute_value.name}</strong></label>
-        <div class="variant-options">
-    `;
+                <label><strong>Select ${attrName}: <span id="current-variant-name">${firstValid.attribute_value.name}</span></strong></label>
+                <div class="variant-options">
+            `;
 
             variants.forEach(v => {
                 if (v.stock > 0) {
                     html += `
-                <input type="radio"
-                    name="attribute_value_id"
-                    id="variant_${v.id}"
-                    value="${v.attribute_value_id}"
-                    data-price="${v.price}"
-                    data-stock="${v.stock}"
-                    ${v.id == first.id ? 'checked' : ''}>
-                <label for="variant_${v.id}">${v.attribute_value.name}</label>
-            `;
+                        <input type="radio" name="attribute_value_id" id="variant_${v.id}" 
+                               value="${v.attribute_value_id}" data-price="${v.price}" 
+                               data-stock="${v.stock}" data-name="${v.attribute_value.name}"
+                               ${v.id == firstValid.id ? 'checked' : ''}>
+                        <label for="variant_${v.id}">${v.attribute_value.name}</label>
+                    `;
                 }
             });
 
             html += '</div>';
-            $('#variant-attribute').html(html);
+            container.html(html);
 
-            // Variant change
+            // Bind Variant Change Event
             $('input[name="attribute_value_id"]').on('change', function() {
+                const vPrice = $(this).data('price');
+                const vStock = $(this).data('stock');
+                const vName = $(this).data('name');
 
-                const price = $(this).data('price');
-                const stock = $(this).data('stock');
-                const label = $(this).next().text();
-
-                $('#price').text('Rs. ' + price);
-                $('#stock-display').text(stock + ' in stock');
-
-                $('input[name="pro_qty"]').attr('max', stock);
-
-                if (stock <= 0) {
-                    $('.buy-btn').prop('disabled', true);
-                } else {
-                    $('.buy-btn').prop('disabled', false);
-                }
-
-                $('#variant-attribute label strong').text(
-                    `Select ${first.attribute_value.attribute.name}: ${label}`
-                );
+                $('#price').text('Rs. ' + vPrice);
+                $('#current-variant-name').text(vName);
+                $('#stock-display').text(vStock + ' in stock');
+                
+                $('input[name="pro_qty"]').attr('max', vStock);
             });
         }
-    </script>
+
+        // 8. Zoom Functionality
+        function initZoom() {
+            if ($.fn.zoom) {
+                $(".img-zoom").each(function() {
+                    $(this).trigger('zoom.destroy');
+                    $(this).zoom({ on: 'mouseover', magnify: 1.5 });
+                });
+            }
+        }
+    });
+
+})(jQuery);
+</script>
 @endsection
