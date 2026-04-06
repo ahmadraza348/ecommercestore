@@ -335,127 +335,116 @@
         // 1. Initialize Zoom
         initZoom();
 
-        // 2. Handle Simple Products
-        // If no color variations exist, we stop here to avoid script errors
-        if ($('input[name="color"]').length === 0) {
-            return;
+        // 2. Initial Setup for Color Products
+        if ($('input[name="color"]').length > 0) {
+            let activeColor = $('input[name="color"]:checked').length ? 
+                             $('input[name="color"]:checked') : 
+                             $('input[name="color"]').first();
+            
+            activeColor.prop('checked', true);
+            updateUI(activeColor);
         }
 
-        // 3. Initial UI Setup
-        // Select first available color on page load
-        let firstColor = $('input[name="color"]:checked').length ? 
-                         $('input[name="color"]:checked') : 
-                         $('input[name="color"]').first();
-        
-        firstColor.prop('checked', true);
-        $('#selected-color-name').text(firstColor.data('name'));
-        updateUI(firstColor);
-
-        // 4. Color Change Event
+        // 3. Color Change Event
         $(document).on('change', 'input[name="color"]', function() {
-            let $this = $(this);
-            $('#selected-color-name').text($this.data('name'));
-            updateUI($this);
+            updateUI($(this));
         });
 
-        // 5. Main UI Update Function
+        // 4. Main Update Function
         function updateUI(colorRadio) {
-            const variants = colorRadio.data('variants');
-            const colorPrice = colorRadio.data('price');
-            const stock = colorRadio.data('stock');
+            // Get Data from the Radio Button
             const colorId = colorRadio.val();
+            const colorName = colorRadio.data('name');
+            const colorPrice = colorRadio.data('price');
+            const colorStock = colorRadio.data('stock');
+            const variants = colorRadio.data('variants'); // This holds the sizes/extra attrs
 
-            // Update Stock Display & Input Constraints
-            const qtyInput = $('input[name="pro_qty"]');
-            qtyInput.attr('max', stock);
-            if (parseInt(qtyInput.val()) > stock) qtyInput.val(stock);
-            
-            $('#stock-display').html(stock > 0 ? 
-                `<span class="text-success">${stock} in stock</span>` : 
-                `<span class="text-danger">Product has been sold out</span>`
-            );
+            // A. Update Color Name Label
+            $('#selected-color-name').text(colorName);
 
-            // Toggle Buy Button State
-            $('.buy-btn').css('pointer-events', stock <= 0 ? 'none' : 'auto')
-                         .css('opacity', stock <= 0 ? '0.5' : '1');
-            $('button[type="submit"]').prop('disabled', stock <= 0);
-
-            // Update Price
+            // B. Update Price & Stock (Immediately based on Color)
             $('#price').text('Rs. ' + colorPrice);
+            
+            const stockDisplay = $('#stock-display');
+            if (colorStock > 0) {
+                stockDisplay.html(`<span class="text-success">${colorStock} in stock</span>`);
+                $('.buy-btn').css({'pointer-events': 'auto', 'opacity': '1'});
+                $('button[type="submit"]').prop('disabled', false);
+                $('input[name="pro_qty"]').attr('max', colorStock);
+            } else {
+                stockDisplay.html(`<span class="text-danger">Out of Stock</span>`);
+                $('.buy-btn').css({'pointer-events': 'none', 'opacity': '0.5'});
+                $('button[type="submit"]').prop('disabled', true);
+            }
 
-            // Sync Slider to Selected Color
+            // C. Sync Slider Image
             syncSliderToColor(colorId);
 
-            // Re-load Size/Attribute Variants
+            // D. Load Secondary Attributes (Sizes, etc.) if they exist
             loadVariantValues(variants);
         }
 
-        // 6. Slider Synchronization
+        // 5. Slider Synchronization
         function syncSliderToColor(colorId) {
             let targetIndex = -1;
-
             $('#main-slider .pro-large-img').each(function(i) {
                 if ($(this).data('color') == colorId) {
                     targetIndex = i;
-                    return false; // break loop
+                    return false; 
                 }
             });
 
             if (targetIndex !== -1) {
-                // We use both to ensure full sync across thumbnails
                 $('#main-slider').slick('slickGoTo', targetIndex);
                 $('#thumb-slider').slick('slickGoTo', targetIndex);
             }
         }
 
-        // 7. Dynamic Variant Loader (Size/Attributes)
+        // 6. Secondary Attribute Loader (Only runs if product has sizes/etc)
         function loadVariantValues(variants) {
-            variants = variants || [];
             const container = $('#variant-attribute');
-
-            if (variants.length === 0) {
+            
+            // If variants is empty or only contains a dummy "Default" attribute, clear container
+            if (!variants || variants.length === 0) {
                 container.empty();
                 return;
             }
 
-            let firstValid = variants.find(v => v.stock > 0) || variants[0];
-            let attrName = firstValid.attribute_value?.attribute?.name || 'Attribute';
+            // Check if these are real attributes (not just a placeholder for the color)
+            let firstValid = variants.find(v => v.attribute_value != null);
+            if (!firstValid) {
+                container.empty();
+                return;
+            }
 
-            let html = `
-                <label><strong>Select ${attrName}: <span id="current-variant-name">${firstValid.attribute_value.name}</span></strong></label>
-                <div class="variant-options">
-            `;
+            let attrName = firstValid.attribute_value.attribute.name;
+            let html = `<label><strong>Select ${attrName}: <span id="current-v-name">${firstValid.attribute_value.name}</span></strong></label>
+                        <div class="variant-options">`;
 
             variants.forEach(v => {
                 if (v.stock > 0) {
                     html += `
-                        <input type="radio" name="attribute_value_id" id="variant_${v.id}" 
+                        <input type="radio" name="attribute_value_id" id="v_${v.id}" 
                                value="${v.attribute_value_id}" data-price="${v.price}" 
                                data-stock="${v.stock}" data-name="${v.attribute_value.name}"
                                ${v.id == firstValid.id ? 'checked' : ''}>
-                        <label for="variant_${v.id}">${v.attribute_value.name}</label>
-                    `;
+                        <label for="v_${v.id}">${v.attribute_value.name}</label>`;
                 }
             });
 
             html += '</div>';
             container.html(html);
 
-            // Bind Variant Change Event
+            // Re-bind click for these new radio buttons
             $('input[name="attribute_value_id"]').on('change', function() {
-                const vPrice = $(this).data('price');
-                const vStock = $(this).data('stock');
-                const vName = $(this).data('name');
-
-                $('#price').text('Rs. ' + vPrice);
-                $('#current-variant-name').text(vName);
-                $('#stock-display').text(vStock + ' in stock');
-                
-                $('input[name="pro_qty"]').attr('max', vStock);
+                $('#price').text('Rs. ' + $(this).data('price'));
+                $('#stock-display').text($(this).data('stock') + ' in stock');
+                $('#current-v-name').text($(this).data('name'));
+                $('input[name="pro_qty"]').attr('max', $(this).data('stock'));
             });
         }
 
-        // 8. Zoom Functionality
+        // 7. Zoom Utility
         function initZoom() {
             if ($.fn.zoom) {
                 $(".img-zoom").each(function() {
@@ -465,7 +454,6 @@
             }
         }
     });
-
 })(jQuery);
 </script>
 @endsection
