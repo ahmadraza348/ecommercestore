@@ -16,12 +16,13 @@
                         <h2>Sale Detail : {{ $order->order_number }}</h2>
                         <ul>
                             <li>
-                                <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/pdf.svg') }}"
-                                        alt="img"></a>
+                                <a href="{{ route('sales.download_pdf', ['id' => $order->id]) }}"><img
+                                        src="{{ asset('backend/assets/img/icons/pdf.svg') }}" alt="img"></a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);"><img src="{{ asset('backend/assets/img/icons/printer.svg') }}"
-                                        alt="img"></a>
+                                <a href="{{ route('sales.print', ['id' => $order->id]) }}" target="_blank">
+                                    <img src="{{ asset('backend/assets/img/icons/printer.svg') }}" alt="img">
+                                </a>
                             </li>
                         </ul>
                     </div>
