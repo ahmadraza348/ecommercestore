@@ -3,12 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\Admin\DashboardService;
 
 class DashboardController extends Controller
 {
-    public function dashboard(){
-        return view('backend.dashboard');
+    protected $service;
+    public function __construct(DashboardService $service)
+    {
+        $this->service = $service;
     }
+   public function dashboard()
+{
+    $dashboardData = $this->service->getDashboardData();
+    return view('backend.dashboard', compact('dashboardData'));
+}
 
 }

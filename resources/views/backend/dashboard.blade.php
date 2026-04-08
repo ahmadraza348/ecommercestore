@@ -177,40 +177,7 @@
                                             <a href="productlist.html">Apple Earpods</a>
                                         </td>
                                         <td>$891.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="{{ asset('backend/assets/img/product/product23.jpg') }}"
-                                                    alt="product">
-                                            </a>
-                                            <a href="productlist.html">iPhone 11</a>
-                                        </td>
-                                        <td>$668.51</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="{{ asset('backend/assets/img/product/product24.jpg') }}"
-                                                    alt="product">
-                                            </a>
-                                            <a href="productlist.html">samsung</a>
-                                        </td>
-                                        <td>$522.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="{{ asset('backend/assets/img/product/product6.jpg') }}"
-                                                    alt="product">
-                                            </a>
-                                            <a href="productlist.html">Macbook Pro</a>
-                                        </td>
-                                        <td>$291.01</td>
-                                    </tr>
+                                    </tr>                          
                                 </tbody>
                             </table>
                         </div>
@@ -234,49 +201,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><a href="javascript:void(0);">IT0001</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="{{ asset('backend/assets/img/product/product2.jpg') }}"
-                                            alt="product">
-                                    </a>
-                                    <a href="productlist.html">Orange</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>12-12-2022</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><a href="javascript:void(0);">IT0002</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="{{ asset('backend/assets/img/product/product3.jpg') }}"
-                                            alt="product">
-                                    </a>
-                                    <a href="productlist.html">Pineapple</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>25-11-2022</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><a href="javascript:void(0);">IT0003</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="{{ asset('backend/assets/img/product/product4.jpg') }}"
-                                            alt="product">
-                                    </a>
-                                    <a href="productlist.html">Stawberry</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>19-11-2022</td>
-                            </tr>
-                            <tr>
+                                              <tr>
                                 <td>4</td>
                                 <td><a href="javascript:void(0);">IT0004</a></td>
                                 <td class="productimgname">
@@ -296,11 +221,6 @@
             </div>
         </div>
     </div>
-
-     <div class="content">
-        <h2>Welcome to the dashboard!</h2>
-    </div>
-
 </div>
 
 @endsection

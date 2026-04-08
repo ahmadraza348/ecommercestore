@@ -288,9 +288,9 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
             Route::get('/details/{order}', [SalesController::class, 'details'])->name('detail');   
             Route::post('/update-order-status/{order}', [SalesController::class, 'updateOrderStatus'])->name('update.status');
 
-            Route::get('/sales/pdf/{id}', [SalesController::class, 'download_pdf'])->name('download_pdf');
-            Route::get('/sales/print/{id}', [SalesController::class, 'print'])->name('print');
-            // Route::get('/sales/all', [SalesController::class, 'downloadExcel'])->name('download_excel');
+            Route::get('/pdf/{id}', [SalesController::class, 'download_pdf'])->name('download_pdf');
+            Route::get('/print/{id}', [SalesController::class, 'print'])->name('print');
+            Route::get('/sales/export', [SalesController::class, 'export'])->name('export');
         });
 
     }
