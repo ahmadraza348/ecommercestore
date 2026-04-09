@@ -23,6 +23,7 @@ use App\Http\Controllers\Frontend\ProductPageController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\Frontend\WishlistController;
+use App\Http\Controllers\Frontend\ContactUsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,11 @@ Route::post('/compare/add', [CompareController::class, 'add'])->name('compare.ad
 Route::delete('/compare/remove/{id}', [CompareController::class, 'remove'])->name('compare.remove');
 Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
 Route::get('/compare/count', [CompareController::class, 'getCount'])->name('compare.count');
+
+Route::controller(ContactUsController::class)->prefix('/contact-us')->name('user.')->group(function () {
+    Route::get('/', 'index')->name('contact');
+    Route::post('/submit', 'submit')->name('contact.submit');
+});
 
 // Admin Panel Routes
  Route::prefix('admin')->group(function () {

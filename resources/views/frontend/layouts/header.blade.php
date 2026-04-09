@@ -265,7 +265,7 @@
                                     </li>
                                 </ul>
                                 </li>
-                                <li><a href="contact-us.html">Contact</a></li>
+                                <li><a href="{{ route('user.contact') }}">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
