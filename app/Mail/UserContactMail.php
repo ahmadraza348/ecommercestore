@@ -29,7 +29,7 @@ class UserContactMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'User Contact Mail',
+            subject: 'Thanks for contacting us, ' . $this->userName,
         );
     }
 
