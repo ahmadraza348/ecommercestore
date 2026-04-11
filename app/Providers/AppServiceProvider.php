@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use App\Events\UserContact;
+use App\Listeners\UserContactEmail;
+use App\Listeners\LogUserContact;
+use App\Listeners\NotifyAdmin;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen(UserContact::class, UserContactEmail::class);
+        Event::listen(UserContact::class, LogUserContact::class);
+        Event::listen(UserContact::class, NotifyAdmin::class);
+
         View::composer('*', function ($view) {
             $data['categories'] = Category::where(['status' => 1, 'parent_id' => null])
                 ->with('subcategories')

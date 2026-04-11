@@ -22,7 +22,6 @@ class UserContact
     public function __construct($userContact)
     {
         $this->userContact = $userContact;
-        dd($this->userContact->name);
     }
 
     /**

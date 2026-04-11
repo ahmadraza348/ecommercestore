@@ -24,19 +24,8 @@ public function submit(UserContactRequest $contactRequest)
 {
     $validatedData = $contactRequest->validated();
     $userContact = UserContact::create($validatedData);  
-
-    if ($userContact) {
-        // Mail::to($userContact->email)->send(new UserContactMail($userContact->name));     
-        // Log::info('Contact message logged for: ' . $userContact->email);
-
-        // // Notify admin about user query
-        // $admins = Admin::where('status', 1)->get(); 
-        // foreach ($admins as $admin) {
-        //     Notification::send($admin, new CustomerContactNotification($userContact));
-        // }
-
+    if ($userContact) {     
         Event::dispatch(new UserContactEvent($userContact)); 
-
     }
     toastr()->success('Thank you for contacting us!');
     return redirect()->back();
