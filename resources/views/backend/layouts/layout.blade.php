@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta name="description" content="POS - Bootstrap Admin Template">
-    <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, html5, responsive">
+    <meta name="keywords"
+        content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern, html5, responsive">
     <meta name="author" content="Dreamguys - Bootstrap Admin Template">
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('title', 'Raza Mall')</title>
@@ -22,10 +23,10 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/custom.css') }}">
-    <link rel="stylesheet" href="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('backend/assets/plugins/summernote/summernote-bs4.min.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-
+    @vite(['resources/js/app.js'])
 
 </head>
 
@@ -39,7 +40,7 @@
     <div class="main-wrapper">
         @include('backend.layouts.header')
         @include('backend.layouts.sidebar')
-        
+
         <!-- Content -->
         <div class="page-content">
             @yield('content')
@@ -61,11 +62,10 @@
     <script src="{{ asset('backend/assets/plugins/sweetalert/sweetalerts.min.js') }}"></script>
     <script src="{{ asset('backend/assets/js/script.js') }}"></script>
     <script src="{{ asset('backend/customscript.js') }}"></script>
-    <script src="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.js')}}"></script>
-    <script src="{{asset('backend/assets/plugins/fileupload/fileupload.min.js')}}"></script>
-  
+    <script src="{{ asset('backend/assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/plugins/fileupload/fileupload.min.js') }}"></script>
 
-    
+
 
 </body>
 

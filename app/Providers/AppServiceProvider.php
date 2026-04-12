@@ -29,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(UserContact::class, UserContactEmail::class);
-        Event::listen(UserContact::class, LogUserContact::class);
-        Event::listen(UserContact::class, NotifyAdmin::class);
+        // Event::listen(UserContact::class, LogUserContact::class);
+        // Event::listen(UserContact::class, NotifyAdmin::class);
 
         View::composer('*', function ($view) {
             $data['categories'] = Category::where(['status' => 1, 'parent_id' => null])
