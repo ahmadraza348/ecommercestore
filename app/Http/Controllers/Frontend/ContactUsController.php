@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Events\NewsletterSubscribed;
-use App\Events\UserContact as UserContactEvent;
+use App\Events\AdminNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\UserContactRequest;
 use App\Models\Newsletter;
 use App\Models\UserContact;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 
 class ContactUsController extends Controller
 {
@@ -23,7 +21,11 @@ class ContactUsController extends Controller
         $validatedData = $contactRequest->validated();
         $userContact = UserContact::create($validatedData);
         if ($userContact) {
-            Event::dispatch(new UserContactEvent($userContact));
+            event(new AdminNotificationEvent([
+                'type' => 'contact',
+                'title' => $userContact->name,
+                'message' => $userContact->subject,
+            ]));
         }
         toastr()->success('Thank you for contacting us!');
 
@@ -41,7 +43,13 @@ class ContactUsController extends Controller
             'name' => $request->name ?? null,
         ]);
 
-        event(new NewsletterSubscribed($newsletter));
+        if ($newsletter) {
+            event(new AdminNotificationEvent([
+                'type' => 'newsletter',
+                'title' => $newsletter->email,
+                'message' => 'subscribed to newsletter',
+            ]));
+        }
 
         toastr()->success('Thank you for subscribing!');
 
