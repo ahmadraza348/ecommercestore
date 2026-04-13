@@ -14,9 +14,13 @@
                         </div>
                     </div>
                     <div class="newsletter__box">
-                        <form id="mc-form">
-                            <input type="email" id="mc-email" autocomplete="off" placeholder="Email">
-                            <button id="mc-submit">subscribe!</button>
+                        <form method="post" action="{{ route('newsletter.subscribe') }}" >
+                            @csrf
+                            <input type="email" name="email" id="mc-email" autocomplete="off" placeholder="Email">
+                            @error('email')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            <button type="submit" >subscribe!</button>
                         </form>
                     </div>
                     <!-- mailchimp-alerts Start -->

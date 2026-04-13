@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/hash', function () {
     return Hash::make('ahmadraza');
 });
+Route::post('/newsletter/subscribe', [ContactUsController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::get('/', [HomePageController::class, 'index'])->name('home');
 Route::get('/search', [HomePageController::class, 'search'])->name('products.search');
 Route::get('/shop/{slug?}/{subslug?}/{childslug?}/{superchildslug?}', [ShopPageController::class, 'index'])->name('shop');
@@ -38,6 +39,7 @@ Route::post('/shop/filter-products', [ShopPageController::class, 'filterProducts
 Route::get('quick-view-product/{id}', [HomePageController::class, 'getProduct']);
 Route::get('/product/{slug}', [ProductPageController::class, 'index'])->name('pro.details');
 Route::post('/product/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
+
 
 Route::post('/product/review/{id}', [ReviewController::class, 'store'])->name('review.store');
 
@@ -76,7 +78,7 @@ Route::get('/compare/count', [CompareController::class, 'getCount'])->name('comp
 
 Route::controller(ContactUsController::class)->prefix('/contact-us')->name('user.')->group(function () {
     Route::get('/', 'index')->name('contact');
-    Route::post('/submit', 'submit')->name('contact.submit');
+    Route::post('/submit', 'submit')->name('contact.submit');    
 });
 
 // Admin Panel Routes

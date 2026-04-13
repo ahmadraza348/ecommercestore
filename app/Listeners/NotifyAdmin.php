@@ -2,8 +2,6 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Events\UserContact;
 use App\Models\Admin;
 use App\Notifications\CustomerContactNotification;
@@ -24,9 +22,8 @@ class NotifyAdmin
      */
     public function handle(UserContact $event): void
     {
-        $admins = Admin::where('status', 1)->get(); 
-        foreach ($admins as $admin) {
-            Notification::send($admin, new CustomerContactNotification($event->userContact));
-        }
+        $admin = Admin::where('status', 1)->get();        
+        Notification::send($admin, new CustomerContactNotification($event->userContact));
+        
     }
 }
