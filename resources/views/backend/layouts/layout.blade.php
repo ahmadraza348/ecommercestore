@@ -64,8 +64,7 @@
     <script src="{{ asset('backend/customscript.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/fileupload/fileupload.min.js') }}"></script>
-
-
+    @include('backend.layouts.scripts') 
 
 </body>
 
