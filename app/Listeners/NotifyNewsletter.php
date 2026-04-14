@@ -4,8 +4,9 @@ namespace App\Listeners;
 
 use App\Events\NewsletterSubmit;
 use App\Events\AdminNotificationEvent;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NotifyNewsletter 
+class NotifyNewsletter implements ShouldQueue
 {
 
     public function handle(NewsletterSubmit $event): void
@@ -13,7 +14,6 @@ class NotifyNewsletter
         event(new AdminNotificationEvent([
             'type' => 'newsletter',
             'title' => $event->newsletter->email,
-            'message' => 'subscribed to newsletter',
         ]));
     }
 }

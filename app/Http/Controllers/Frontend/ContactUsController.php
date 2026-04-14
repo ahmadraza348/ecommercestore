@@ -30,20 +30,19 @@ class ContactUsController extends Controller
         return redirect()->back();
     }
 
-    public function subscribe(Request $request)
+  public function subscribe(Request $request)
     {
-        $request->validate([
+        // 1. Validate all inputs properly
+        $validated = $request->validate([
             'email' => 'required|email|unique:newsletters,email',
+            'name'  => 'nullable|string|max:255',
         ]);
 
-        $newsletter = Newsletter::create([
-            'email' => $request->email,
-            'name' => $request->name ?? null,
-        ]);
+        // 2. Create the record
+        $newsletter = Newsletter::create($validated);
 
-        if ($newsletter) {
-             event(new NewsletterSubmit($newsletter));          
-        }
+        // 3. Fire the event (no if-statement needed, create() throws an exception if it fails)
+        event(new NewsletterSubmit($newsletter));
 
         toastr()->success('Thank you for subscribing!');
 

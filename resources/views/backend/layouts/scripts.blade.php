@@ -1,27 +1,30 @@
 <script type="module">
+    // 1. Initialize the array
     let notifications = [];
+
+    // 2. Load stored notifications as soon as the page loads
+    $(document).ready(function() {
+        loadStoredNotifications();
+    });
 
     window.Echo.channel('admin-notifications')
         .listen('.App\\Events\\AdminNotificationEvent', (e) => {
-
             handleIncomingNotification(e);
         });
 
-
     function handleIncomingNotification(data) {
-
+        // Add new notification to the beginning of the array
         notifications.unshift(data);
-
+        
         addNotificationToUI(data);
-
         updateNotificationCount();
-
         playNotificationSound();
+        
+        // Save the updated array to LocalStorage
+        saveNotifications();
     }
 
-
     function addNotificationToUI(data) {
-
         let label = '';
 
         if (data.type === 'contact') {
@@ -54,11 +57,9 @@
         $('#notification-list').prepend(html);
     }
 
-
     function updateNotificationCount() {
         $('#notification-count').text(notifications.length);
     }
-
 
     function playNotificationSound() {
         let sound = document.getElementById("notificationSound");
@@ -67,11 +68,39 @@
         }
     }
 
-
     $('#clearNotifications').on('click', function () {
+        // Clear the array, the UI, and the LocalStorage
         notifications = [];
         $('#notification-list').html('');
         updateNotificationCount();
+        localStorage.removeItem('admin_notifications');
     });
 
+    // --- NEW FUNCTIONS FOR PERSISTENCE --- //
+
+    function saveNotifications() {
+        // Convert the array to a JSON string and save it
+        localStorage.setItem('admin_notifications', JSON.stringify(notifications));
+    }
+
+    function loadStoredNotifications() {
+        // Retrieve the JSON string from LocalStorage
+        let stored = localStorage.getItem('admin_notifications');
+        
+        if (stored) {
+            // Parse it back into a JavaScript array
+            notifications = JSON.parse(stored);
+            
+            // Re-build the UI
+            $('#notification-list').html('');
+            
+            // We loop backwards because addNotificationToUI uses .prepend()
+            // This ensures they render in the correct original order
+            for (let i = notifications.length - 1; i >= 0; i--) {
+                addNotificationToUI(notifications[i]);
+            }
+            
+            updateNotificationCount();
+        }
+    }
 </script>

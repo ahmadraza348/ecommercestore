@@ -12,21 +12,25 @@ class AdminNotificationEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
- public $data;
+    public $data;
 
     public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('admin-notifications');
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'AdminNotification';
     }
 
     public function broadcastWith(): array
     {
         return $this->data;
     }
-
 }

@@ -10,14 +10,7 @@ use App\Mail\ContactUserMail;
 
 class SendContactEmail implements ShouldQueue
 {
-    /**
-     * Create the event listener.
-     */
-
-    /**
-     * Handle the event.
-     */
-    public function handle(UserContactSubmitted $event): void
+      public function handle(UserContactSubmitted $event): void
     {
         Mail::to($event->userContact->email)->queue(new ContactUserMail($event->userContact));
         
