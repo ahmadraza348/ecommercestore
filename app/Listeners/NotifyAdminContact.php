@@ -4,8 +4,9 @@ namespace App\Listeners;
 
 use App\Events\UserContactSubmitted;
 use App\Events\AdminNotificationEvent;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NotifyAdminContact 
+class NotifyAdminContact implements ShouldQueue
 {
 
     public function handle(UserContactSubmitted  $event): void

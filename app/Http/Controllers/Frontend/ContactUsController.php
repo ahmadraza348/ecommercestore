@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Events\AdminNotificationEvent;
+use App\Events\NewsletterSubmit;
 use App\Events\UserContactSubmitted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\UserContactRequest;
@@ -41,11 +42,7 @@ class ContactUsController extends Controller
         ]);
 
         if ($newsletter) {
-            event(new AdminNotificationEvent([
-                'type' => 'newsletter',
-                'title' => $newsletter->email,
-                'message' => 'subscribed to newsletter',
-            ]));
+             event(new NewsletterSubmit($newsletter));          
         }
 
         toastr()->success('Thank you for subscribing!');
