@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Events\AdminNotificationEvent;
+use App\Events\UserContactSubmitted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\UserContactRequest;
 use App\Models\Newsletter;
@@ -21,11 +22,7 @@ class ContactUsController extends Controller
         $validatedData = $contactRequest->validated();
         $userContact = UserContact::create($validatedData);
         if ($userContact) {
-            event(new AdminNotificationEvent([
-                'type' => 'contact',
-                'title' => $userContact->name,
-                'message' => $userContact->subject,
-            ]));
+            event(new UserContactSubmitted($userContact));
         }
         toastr()->success('Thank you for contacting us!');
 
