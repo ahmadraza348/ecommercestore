@@ -8,9 +8,10 @@
     });
 
     window.Echo.channel('admin-notifications')
-        .listen('.App\\Events\\AdminNotificationEvent', (e) => {
-            handleIncomingNotification(e);
-        });
+   .listen('.AdminNotification', (e) => {
+    console.log("Notification received:", e); // Add this to debug!
+    handleIncomingNotification(e);
+});
 
     function handleIncomingNotification(data) {
         // Add new notification to the beginning of the array
