@@ -37,16 +37,11 @@ class SendOrderEmailJob implements ShouldQueue
             Mail::to($order->billing_email)->send(new OrderConfirmationMail($order));
             Log::info("Successfully sent Order Email to: {$order->billing_email} for Order #{$order->order_number}");
         } catch (Throwable $e) {
-            Log::error("Failed to send email for Order ID: {$this->orderId}. Error: " . $e->getMessage());
-            
-            // Re-throw so the queue knows the job failed and can retry
+            Log::error("Failed to send email for Order ID: {$this->orderId}. Error: " . $e->getMessage());            
             throw $e;
         }
     }
 
-    /**
-     * Handle a job failure.
-     */
     public function failed(Throwable $exception): void
     {
         Log::critical("SendOrderEmailJob permanently failed for Order ID: {$this->orderId}. Exception: {$exception->getMessage()}");

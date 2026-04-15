@@ -31,6 +31,9 @@
         if (data.type === 'contact') {
             label = 'sent a message';
         } 
+        else if (data.type === 'order') {
+            label = 'placed a new order';
+        }
         else if (data.type === 'newsletter') {
             label = 'joined newsletter';
         }

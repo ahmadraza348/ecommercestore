@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\OrderSubmit;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
@@ -125,7 +126,8 @@ class OrderService
         $cart->delete();
         session()->forget('coupon_discount');
 
-        SendOrderEmailJob::dispatch($order->id)->afterCommit();
+        // SendOrderEmailJob::dispatch($order->id)->afterCommit();
+        event(new OrderSubmit($order->id));
 
         return $order;
     }
