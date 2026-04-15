@@ -12,6 +12,7 @@ use Throwable;
 
 class SaleEmailCustomer implements ShouldQueue
 {
+    public $afterCommit = true;
     public function handle(OrderSubmit $event): void
     {
         $orderId = $event->orderId;

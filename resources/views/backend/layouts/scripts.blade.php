@@ -25,41 +25,37 @@
         saveNotifications();
     }
 
-    function addNotificationToUI(data) {
-        let label = '';
+function addNotificationToUI(data) {
+    let label = '';
+    if (data.type === 'contact') { label = 'sent a message'; } 
+    else if (data.type === 'order') { label = 'placed a new order'; }
+    else if (data.type === 'newsletter') { label = 'joined newsletter'; }
 
-        if (data.type === 'contact') {
-            label = 'sent a message';
-        } 
-        else if (data.type === 'order') {
-            label = 'placed a new order';
-        }
-        else if (data.type === 'newsletter') {
-            label = 'joined newsletter';
-        }
+    // Use the timestamp from the server, or fallback to "Just now" if missing
+    let displayTime = data.created_at ? moment(data.created_at).format('h:mm A') : 'Just now';
 
-        let html = `
-        <li class="notification-message">
-            <a href="javascript:void(0);">
-                <div class="media d-flex">
-                    <span class="avatar flex-shrink-0">
-                        <img src="/backend/assets/img/profiles/avatar-02.jpg">
-                    </span>
-                    <div class="media-body flex-grow-1">
-                        <p class="noti-details">
-                            <span class="noti-title">${data.title}</span> ${label}
-                        </p>
-                        <p class="noti-time">
-                            <span class="notification-time">Just now</span>
-                        </p>
-                    </div>
+    let html = `
+    <li class="notification-message">
+        <a href="javascript:void(0);">
+            <div class="media d-flex">
+                <span class="avatar flex-shrink-0">
+                    <img src="/backend/assets/img/profiles/avatar-02.jpg">
+                </span>
+                <div class="media-body flex-grow-1">
+                    <p class="noti-details">
+                        <span class="noti-title">${data.title}</span> ${label}
+                    </p>
+                    <p class="noti-time">
+                        <span class="notification-time">${displayTime}</span>
+                    </p>
                 </div>
-            </a>
-        </li>
-        `;
+            </div>
+        </a>
+    </li>
+    `;
 
-        $('#notification-list').prepend(html);
-    }
+    $('#notification-list').prepend(html);
+}
 
     function updateNotificationCount() {
         $('#notification-count').text(notifications.length);

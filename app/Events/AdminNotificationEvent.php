@@ -14,10 +14,11 @@ class AdminNotificationEvent implements ShouldBroadcast
 
     public $data;
 
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-    }
+public function __construct(array $data)
+{
+    $data['created_at'] = now()->toIso8601String(); 
+    $this->data = $data;
+}
 
     public function broadcastOn(): Channel
     {
