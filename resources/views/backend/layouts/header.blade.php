@@ -1,7 +1,7 @@
 <div class="header">
 
     <div class="header-left active">
-        <a href="index.html" class="logo">
+        <a href="{{ route('admin.dashboard') }}" class="logo">
             <img src="{{ asset('backend/assets/img/logo.png') }}" alt="">
         </a>
         <a href="index.html" class="logo-small">
@@ -18,10 +18,11 @@
             <span></span>
         </span>
     </a>
+    <a href="{{ route('pos.dashboard') }}"class="mt-3 mx-3 btn btn-primary btn-sm">POS</a>
 
     <ul class="nav user-menu">
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <div class="top-nav-search">
                 <a href="javascript:void(0);" class="responsive-search">
                     <i class="fa fa-search"></i>
@@ -37,33 +38,7 @@
                             alt="img"></a>
                 </form>
             </div>
-        </li>
-
-
-        <li class="nav-item dropdown has-arrow flag-nav">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button">
-                <img src="{{ asset('backend/assets/img/flags/us1.png') }}" alt="" height="20">
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ asset('backend/assets/img/flags/us.png') }}" alt="" height="16">
-                    English
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ asset('backend/assets/img/flags/fr.png') }}" alt="" height="16">
-                    French
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ asset('backend/assets/img/flags/es.png') }}" alt="" height="16">
-                    Spanish
-                </a>
-                <a href="javascript:void(0);" class="dropdown-item">
-                    <img src="{{ asset('backend/assets/img/flags/de.png') }}" alt="" height="16">
-                    German
-                </a>
-            </div>
-        </li>
-
+        </li> --}}
 
         <li class="nav-item dropdown">
             <audio id="notificationSound" src="{{ asset('sounds/notification.mp3') }}" preload="auto"></audio>

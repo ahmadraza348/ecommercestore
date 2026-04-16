@@ -25,6 +25,7 @@ use App\Http\Controllers\Frontend\ShopPageController;
 use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\ContactUsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\PosController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -274,6 +275,7 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         });
         Route::delete('delete/{role_permission}', [RoleController::class, 'delete_roles_permissions'])->name('delete')->middleware('permission:delete_roles_permissions');
     });
+    
 
     // Roles And Permissions Routes end here
     Route::prefix('coupons')->name('coupons.')->group(function () {
@@ -287,6 +289,16 @@ Route::prefix('admin')->middleware('adminauth')->group(function () {
         ->middleware('permission:edit_coupons');
         Route::delete('/destroy/{coupon}', [CouponController::class, 'destroy'])->name('delete')
         ->middleware('permission:delete_coupons');
+    });
+
+   
+        // Point of Sale Routes
+    Route::prefix('pos')->controller(PosController::class)->name('pos.')->group(function(){
+        Route::get('/', 'dashboard')->name('dashboard');
+        // Route::post('/add-to-cart', [ProductPageController::class, 'addToCart'])->name('addToCart');
+        // Route::post('/cart/update', [CartPageController::class, 'cart_update'])->name('cart.update');
+        // Route::delete('/cart/remove/{id}', [CartPageController::class, 'cart_remove'])->name('cart.remove');
+        // Route::post('/place-order', [OrderPageController::class, 'placeOrder'])->name('order.place');
     });
 
 

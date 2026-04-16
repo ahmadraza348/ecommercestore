@@ -50,4 +50,8 @@ class Category extends Model
     {
         return $query->orderBy('name', 'ASC');
     }
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
 }

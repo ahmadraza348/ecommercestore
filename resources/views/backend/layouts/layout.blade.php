@@ -22,6 +22,15 @@
     <link rel="stylesheet" href="{{ asset('backend/assets/plugins/fontawesome/css/fontawesome.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/plugins/fontawesome/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}">
+       <link
+      rel="stylesheet"
+      href="{{ asset('backend/assets/plugins/owlcarousel/owl.carousel.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ asset('backend/assets/plugins/owlcarousel/owl.theme.default.min.css') }}"
+    />
+
     <link rel="stylesheet" href="{{ asset('backend/assets/css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/assets/plugins/summernote/summernote-bs4.min.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -39,7 +48,10 @@
     <!-- Main Wrapper -->
     <div class="main-wrapper">
         @include('backend.layouts.header')
-        @include('backend.layouts.sidebar')
+
+    @if(!request()->routeIs('pos.*'))
+    @include('backend.layouts.sidebar')
+   @endif
 
         <!-- Content -->
         <div class="page-content">
@@ -64,6 +76,8 @@
     <script src="{{ asset('backend/customscript.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/fileupload/fileupload.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/plugins/owlcarousel/owl.carousel.min.js') }}"></script>
+
     @include('backend.layouts.scripts') 
 
 </body>
