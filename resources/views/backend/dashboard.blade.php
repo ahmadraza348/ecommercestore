@@ -169,6 +169,8 @@
 
             <div class="row mt-4">
                 {{-- Top Products Table --}}
+
+                @if($dashboardData['topProducts']->isNotEmpty())
                 <div class="col-lg-5 col-sm-12 col-12 d-flex">
                     <div class="card flex-fill">
                         <div class="card-header pb-0 d-flex justify-content-between align-items-center">
@@ -200,6 +202,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 {{-- Recent Orders Table --}}
                 <div class="col-lg-7 col-sm-12 col-12 d-flex">
