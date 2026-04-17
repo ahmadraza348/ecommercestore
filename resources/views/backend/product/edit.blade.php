@@ -79,10 +79,10 @@
                                                 <label class="form-label" for="status">Status*</label>
                                                 <select name="status" required class="form-select" id="status">
                                                     <option value="active"
-                                                        {{ old('status', $pro_data->status) == 'active' ? 'selected' : '' }}>
+                                                        {{ old('status', $pro_data->status) == 1 ? 'selected' : '' }}>
                                                         Active</option>
                                                     <option value="inactive"
-                                                        {{ old('status', $pro_data->status) == 'inactive' ? 'selected' : '' }}>
+                                                        {{ old('status', $pro_data->status) == 0 ? 'selected' : '' }}>
                                                         Blocked</option>
                                                 </select>
                                             </div>

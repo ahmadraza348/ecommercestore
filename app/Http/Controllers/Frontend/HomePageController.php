@@ -43,7 +43,7 @@ class HomePageController extends Controller
         $products = Product::whereHas('categories', function ($query) use ($id) {
             $query->where('categories.id', $id);
         })
-            ->where('status', 'active')
+            ->where('status', 1)
             ->latest()
             ->take(8)
             ->get();

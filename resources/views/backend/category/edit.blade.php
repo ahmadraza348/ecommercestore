@@ -125,13 +125,13 @@
                                     </div>
                                 </div>
                             </div>
-
+<input type="hidden" name="is_featured" value="0">
                             <!-- Featured Checkbox -->
                             <div class="col-lg-12">
                                 <div class="form-group mb-0">
                                     <div class="form-check mb-3">
-                                        <input type="checkbox" value="1" name="is_featured" class="form-check-input" id="is_featured"
-                                            {{ old('is_featured', $category->is_featured) ? 'checked' : '' }}>
+                                       <input type="checkbox" value="1" name="is_featured" class="form-check-input" id="is_featured"
+    {{ old('is_featured', $category->is_featured) ? 'checked' : '' }}>
                                         <label class="form-check-label" for="is_featured">Is Featured</label>
                                         <div class="invalid-feedback"></div>
                                     </div>

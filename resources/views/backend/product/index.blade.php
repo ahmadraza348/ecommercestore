@@ -78,7 +78,7 @@
                                         <td>{{ $item->sale_price }} </td>
 
                                         <td>
-                                            @if ($item->status == 'active')
+                                            @if ($item->status == 1)
                                                 <span class="badge rounded-pill bg-success">Active</span>
                                             @else
                                                 <span class="badge rounded-pill bg-danger">Inactive</span>

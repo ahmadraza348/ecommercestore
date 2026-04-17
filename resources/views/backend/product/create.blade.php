@@ -68,11 +68,11 @@
                                         <div class="form-group mb-0">
                                             <label class="form-label" for="status">Status*</label>
                                             <select name="status" required class="form-select" id="status">
-                                                <option value="active"
-                                                    {{ old('status') == 'active' ? 'selected' : '' }}>
+                                                <option value="1"
+                                                    {{ old('status') == 1 ? 'selected' : '' }}>
                                                     Active</option>
-                                                <option value="inactive"
-                                                    {{ old('status') == 'inactive' ? 'selected' : '' }}>
+                                                <option value="0"
+                                                    {{ old('status') == 0 ? 'selected' : '' }}>
                                                     Blocked</option>
                                             </select>
                                         </div>
