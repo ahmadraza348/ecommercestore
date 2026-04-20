@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
       // Stripe SDK ko register karna taake API key hamesha set rahe
-        $this->app->singleton(\Stripe\StripeClient::class, function ($app) {
-            return new \Stripe\StripeClient(config('services.stripe.secret'));
+        $this->app->singleton(StripeClient::class, function ($app) {
+            return new StripeClient(config('services.stripe.secret'));
         });
     }
 
