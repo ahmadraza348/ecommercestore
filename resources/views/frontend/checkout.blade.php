@@ -421,7 +421,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+           var stripe = Stripe('{{ config('services.stripe.key') }}');
             var elements = stripe.elements();
 
             // Custom styling for the element to make it look like your other inputs

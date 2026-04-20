@@ -17,7 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+      // Stripe SDK ko register karna taake API key hamesha set rahe
+        $this->app->singleton(\Stripe\StripeClient::class, function ($app) {
+            return new \Stripe\StripeClient(config('services.stripe.secret'));
+        });
     }
 
     public function boot(): void

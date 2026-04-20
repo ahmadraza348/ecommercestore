@@ -18,7 +18,7 @@
             <span></span>
         </span>
     </a>
-    <a href="{{ route('pos.dashboard') }}"class="mt-3 mx-3 btn btn-primary btn-sm">POS</a>
+    {{-- <a href="{{ route('pos.dashboard') }}"class="mt-3 mx-3 btn btn-primary btn-sm">POS</a> --}}
 
     <ul class="nav user-menu">
 
